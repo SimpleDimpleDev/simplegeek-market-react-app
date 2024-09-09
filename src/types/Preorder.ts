@@ -1,4 +1,4 @@
-import { PreorderAdminSchema, PreorderShopSchema, PreorderStatusSchema } from "~/schemas/Preorder";
+import { PreorderAdminSchema, PreorderShopSchema, PreorderStatusSchema } from "../schemas/Preorder";
 import { z } from "zod";
 
 export type PreorderShop = z.infer<typeof PreorderShopSchema>;

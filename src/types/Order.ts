@@ -6,7 +6,7 @@ import {
 	OrderStatusSchema,
 	OrderAdminSchema,
 	OrderItemAdminSchema,
-} from "~/schemas/Order";
+} from "../schemas/Order";
 
 export type OrderCreate = z.infer<typeof OrderCreateSchema>;
 export type OrderItemShop = z.infer<typeof OrderItemShopSchema>;
