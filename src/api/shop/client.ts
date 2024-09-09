@@ -13,7 +13,7 @@ import {
 } from "./schemas";
 
 const axiosInstance = axios.create({
-	baseURL: import.meta.env.SHOP_API_URL || "http://localhost:8000",
+	baseURL: import.meta.env.SHOP_API_URL,
 	withCredentials: true,
 });
 
@@ -85,7 +85,7 @@ class ShopApiClient {
 
 	public static getItemsAvailability = async () => {
 		return this.makeRequest({
-			method: "post",
+			method: "get",
 			url: "/market/availability/catalog",
 		}).then((response) => this.parseJson(CatalogItemsAvailabilityResponseSchema, response.data));
 	};
