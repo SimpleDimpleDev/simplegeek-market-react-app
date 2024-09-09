@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import {
 	CreditAdminSchema,
-	CreditInfoSchema,
 	CreditShopSchema,
 	InvoiceAdminSchema,
 	InvoiceShopSchema,
