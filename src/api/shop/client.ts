@@ -86,7 +86,7 @@ class ShopApiClient {
 	public static getItemsAvailability = async () => {
 		return this.makeRequest({
 			method: "post",
-			url: "/availability/catalog",
+			url: "/market/availability/catalog",
 		}).then((response) => this.parseJson(CatalogItemsAvailabilityResponseSchema, response.data));
 	};
 

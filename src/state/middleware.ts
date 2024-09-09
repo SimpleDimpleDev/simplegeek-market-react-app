@@ -7,9 +7,9 @@ import { fetchCatalog, fetchCatalogItemsAvailability } from "./shop/thunks";
  * Useful for debugging.
  */
 const loggingMiddleware: Middleware = (store) => (next) => (action) => {
+	const result = next(action);
 	console.log("%cDispatching:", "color: green; padding-top: 2px", action);
 	console.log("%cPrev state:", "color: orange; padding-top: 2px", store.getState());
-	const result = next(action);
 	console.log("%cNext state:", "color: blue; padding-top: 2px", store.getState());
 	return result;
 };
