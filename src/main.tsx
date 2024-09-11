@@ -1,32 +1,29 @@
-/* eslint-disable react-refresh/only-export-components */
 import theme from "./theme.ts";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { lazy, StrictMode } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider as ReduxProvider } from "react-redux";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { store } from "./state/store";
-
 import App from "./App.tsx";
-
-const AuthLayout = lazy(() => import("./routes/auth/_layout.tsx"));
-const Home = lazy(() => import("./routes/_index/index.tsx"));
-const Login = lazy(() => import("./routes/auth/login/_route.tsx"));
-const Recovery = lazy(() => import("./routes/auth/recovery/_route.tsx"));
-const Registration = lazy(() => import("./routes/auth/registration/_route.tsx"));
-const ShopLayout = lazy(() => import("./routes/_layout.tsx"));
-const Verification = lazy(() => import("./routes/auth/verification/_route.tsx"));
-const Cart = lazy(() => import("./routes/cart/_route.tsx"));
-const Catalog = lazy(() => import("./routes/catalog/$categoryName/_route.tsx"));
-const FAQ = lazy(() => import("./routes/faq/_route.tsx"));
-const Favorites = lazy(() => import("./routes/favorites/_route.tsx"));
-const ItemPage = lazy(() => import("./routes/item.$publicationLink/_route.tsx"));
-const Order = lazy(() => import("./routes/order/_route.tsx"));
-const UserOrder = lazy(() => import("./routes/orders.$orderId/_route.tsx"));
-const ProfileLayout = lazy(() => import("./routes/profile/_layout.tsx"));
-const UserOrders = lazy(() => import("./routes/profile/orders/_route.tsx"));
-const Me = lazy(() => import("./routes/profile/settings/_route.tsx"));
-const Search = lazy(() => import("./routes/search/_route.tsx"));
+import AuthLayout from "./routes/auth/_layout.tsx";
+import Home from "./routes/_index/index.tsx";
+import Login from "./routes/auth/login/_route.tsx";
+import Recovery from "./routes/auth/recovery/_route.tsx";
+import Registration from "./routes/auth/registration/_route.tsx";
+import ShopLayout from "./routes/_layout.tsx";
+import Verification from "./routes/auth/verification/_route.tsx";
+import Cart from "./routes/cart/_route.tsx";
+import Catalog from "./routes/catalog/$categoryName/_route.tsx";
+import FAQ from "./routes/faq/_route.tsx";
+import Favorites from "./routes/favorites/_route.tsx";
+import ItemPage from "./routes/item.$publicationLink/_route.tsx";
+import Order from "./routes/order/_route.tsx";
+import UserOrder from "./routes/orders.$orderId/_route.tsx";
+import ProfileLayout from "./routes/profile/_layout.tsx";
+import UserOrders from "./routes/profile/orders/_route.tsx";
+import Me from "./routes/profile/settings/_route.tsx";
+import Search from "./routes/search/_route.tsx";
 
 const router = createBrowserRouter([
 	{
