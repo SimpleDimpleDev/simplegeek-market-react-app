@@ -43,6 +43,7 @@ export const addCartItem = createAsyncThunk<
 	{ itemId: string },
 	{ rejectValue: StringMessageError }
 >("user/items/cart/add", async ({ itemId }, { rejectWithValue }) => {
+	console.log("addCartItem async", itemId);
 	try {
 		const response = await ShopApiClient.addCartItem(itemId);
 		if (!response.ok) {
