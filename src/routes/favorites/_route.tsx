@@ -6,7 +6,6 @@ import { Empty } from "@components/Empty";
 import { FavoritesSection } from "./section";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
-import { addCartItem, addFavoriteItem, removeFavoriteItem } from "@state/user/thunks";
 
 export default function Favorites() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
@@ -44,10 +43,7 @@ export default function Favorites() {
 							items={mappedItems.available}
 							isAvailable={true}
 							cartItems={userCartItems}
-							onAddItemToCart={(id) => addCartItem({ itemId: id })}
 							favoriteItems={userFavoriteItems}
-							onAddItemToFavorites={(id) => addFavoriteItem({ itemId: id })}
-							onRemoveItemFromFavorites={(id) => removeFavoriteItem({ itemId: id })}
 						/>
 					</Box>
 				)}
@@ -61,10 +57,7 @@ export default function Favorites() {
 								items={mappedItems.unavailable}
 								isAvailable={false}
 								cartItems={userCartItems}
-								onAddItemToCart={(id) => addCartItem({ itemId: id })}
 								favoriteItems={userFavoriteItems}
-								onAddItemToFavorites={(id) => addFavoriteItem({ itemId: id })}
-								onRemoveItemFromFavorites={(id) => removeFavoriteItem({ itemId: id })}
 							/>
 						</Box>
 					</>

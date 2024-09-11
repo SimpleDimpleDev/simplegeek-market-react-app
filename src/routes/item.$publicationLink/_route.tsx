@@ -9,9 +9,8 @@ import { useMemo, useState } from "react";
 
 import ImageCarousel from "./ImageCarousel";
 import { getImageUrl } from "@utils/image";
-import { getSuggestedItems } from "@utils/items";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@state/store";
 import { addCartItem, addFavoriteItem, removeFavoriteItem } from "@state/user/thunks";
 
 export default function ItemPage() {
@@ -27,10 +26,11 @@ export default function ItemPage() {
 	const itemVariationIndexString = searchParams[0].get("v");
 	const itemVariationIndex = itemVariationIndexString === null ? 0 : parseInt(itemVariationIndexString) - 1;
 
+	const dispatch = useDispatch<AppDispatch>();
+
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
 	const publications = useSelector((state: RootState) => state.catalog.publications);
-	const catalogItems = useSelector((state: RootState) => state.catalog.items);
 	const availableItemsIds = useSelector((state: RootState) => state.availability.items);
 
 	const userCart = useSelector((state: RootState) => state.userCart.items);
@@ -66,9 +66,9 @@ export default function ItemPage() {
 
 	const handleToggleFavorite = () => {
 		if (selectedVariationIsFavorite) {
-			removeFavoriteItem({ itemId: selectedVariation.id });
+			dispatch(removeFavoriteItem({ itemId: selectedVariation.id }));
 		} else {
-			addFavoriteItem({ itemId: selectedVariation.id });
+			dispatch(addFavoriteItem({ itemId: selectedVariation.id }));
 		}
 	};
 
@@ -76,7 +76,7 @@ export default function ItemPage() {
 		if (selectedVariationIsInCart) {
 			navigate("/cart");
 		} else {
-			addCartItem({ itemId: selectedVariation.id });
+			dispatch(addCartItem({ itemId: selectedVariation.id }));
 		}
 	};
 
@@ -408,16 +408,7 @@ export default function ItemPage() {
 					</Box>
 				</>
 			)}
-			<SuggestedItems
-				isMobile={isMobile}
-				itemsData={getSuggestedItems(catalogItems)}
-				userFavorites={userFavorites}
-				userCart={userCart}
-				onAddToCart={(id) => addCartItem({ itemId: id })}
-				onAddToFavorites={(id) => addFavoriteItem({ itemId: id })}
-				onRemoveFromFavorites={(id) => removeFavoriteItem({ itemId: id })}
-				availableItemIds={availableItemsIds}
-			/>
+			<SuggestedItems />
 		</>
 	);
 }

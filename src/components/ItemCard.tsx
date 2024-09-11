@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { getImageUrl } from "@utils/image";
 import { CatalogItem } from "@appTypes/CatalogItem";
 import { CreditInfo } from "@appTypes/Credit";
+import { useDispatch } from "react-redux";
+import { addCartItem, addFavoriteItem, removeFavoriteItem } from "@state/user/thunks";
+import { AppDispatch } from "@state/store";
 
 interface ItemCardProps {
 	data: CatalogItem;
@@ -13,49 +16,38 @@ interface ItemCardProps {
 	isInCart: boolean;
 	isFavorite: boolean;
 	isTracked?: boolean;
-	onClick: () => void;
-	onAddToCart: () => void;
-	onAddToFavorites: () => void;
-	onRemoveFromFavorites: () => void;
-	clientOnly?: boolean;
 }
 
-export default function ItemCard({
-	data,
-	isAvailable,
-	isInCart,
-	isFavorite,
-	onClick,
-	onAddToCart,
-	onAddToFavorites,
-	onRemoveFromFavorites,
-}: ItemCardProps) {
+export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: ItemCardProps) {
 	const navigate = useNavigate();
+	const dispatch = useDispatch<AppDispatch>();
 
 	function handleToggleFavorite() {
 		if (isFavorite) {
-			onRemoveFromFavorites();
+			dispatch(addFavoriteItem({ itemId: data.id }));
 		} else {
-			onAddToFavorites();
+			dispatch(removeFavoriteItem({ itemId: data.id }));
 		}
 	}
 
 	const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-		console.log("adding to cart");
-		console.log("isInCart", isInCart);
-		console.log("isAvailable", isAvailable);
 		if (isInCart) {
 			navigate("/cart");
 		} else if (isAvailable) {
-			onAddToCart();
+			dispatch(addCartItem({ itemId: data.id }));
 		} else {
 			alert("Товар отсутствует в наличии");
 		}
 		event.stopPropagation();
 	};
 
+	const handleClick = () => {
+		const variationParam = data.variationIndex !== null ? `?v=${data.variationIndex}` : "";
+		navigate(`/item/${data.publicationLink}${variationParam}`);
+	};
+
 	return (
-		<div className="w-mc h-mc d-f fd-c gap-2 p-1 pb-2 br-2 tr-a-2 hov-item" onClick={onClick}>
+		<div className="w-mc h-mc d-f fd-c gap-2 p-1 pb-2 br-2 tr-a-2 hov-item" onClick={handleClick}>
 			<div className="w-mc h-mc d-f jc-c of-h br-2 bg-primary">
 				<img
 					style={{ width: "300px", height: "300px" }}

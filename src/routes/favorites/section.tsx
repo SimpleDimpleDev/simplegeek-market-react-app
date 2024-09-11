@@ -1,5 +1,3 @@
-import { useNavigate } from "react-router-dom";
-
 import { Grid2, Grow } from "@mui/material";
 
 import { CatalogItem } from "@appTypes/CatalogItem";
@@ -10,29 +8,12 @@ import LazyLoad from "@components/LazyLoad";
 
 interface FavoritesSectionProps {
 	items: CatalogItem[];
-
 	isAvailable: boolean;
 	cartItems: UserCartItem[];
-	onAddItemToCart: (id: string) => void;
-
 	favoriteItems: UserFavoriteItem[];
-	onAddItemToFavorites: (id: string) => void;
-	onRemoveItemFromFavorites: (id: string) => void;
 }
 
-export const FavoritesSection = ({
-	items,
-
-	isAvailable,
-	cartItems,
-	onAddItemToCart,
-
-	favoriteItems,
-	onAddItemToFavorites,
-	onRemoveItemFromFavorites,
-}: FavoritesSectionProps) => {
-	const navigate = useNavigate();
-
+export const FavoritesSection = ({ items, isAvailable, cartItems, favoriteItems }: FavoritesSectionProps) => {
 	const favoriteItemsIds = favoriteItems.map((item) => item.id);
 	const cartItemsIds = cartItems.map((item) => item.id);
 
@@ -56,14 +37,6 @@ export const FavoritesSection = ({
 									isAvailable={isAvailable}
 									isFavorite={favoriteItemsIds.includes(data.id)}
 									isInCart={cartItemsIds.includes(data.id)}
-									onClick={() => {
-										const variationParam =
-											data.variationIndex !== null ? `?v=${data.variationIndex}` : "";
-										navigate(`/item/${data.publicationLink}${variationParam}`);
-									}}
-									onAddToCart={() => onAddItemToCart(data.id)}
-									onAddToFavorites={() => onAddItemToFavorites(data.id)}
-									onRemoveFromFavorites={() => onRemoveItemFromFavorites(data.id)}
 								/>
 							</div>
 						</Grow>

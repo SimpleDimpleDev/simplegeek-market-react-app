@@ -19,6 +19,9 @@ import { useEffect, useMemo, useState } from "react";
 import { getImageUrl } from "@utils/image";
 import { CatalogItemCart, FormedCartSection } from "@appTypes/Cart";
 import { UserCartItem, UserFavoriteItem } from "@appTypes/UserItems";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@state/store";
+import { addFavoriteItem, patchCartItem, removeCartItems, removeFavoriteItem } from "@state/user/thunks";
 
 interface CartSectionHeaderProps {
 	allChecked: boolean;
@@ -137,13 +140,7 @@ interface CartItemProps {
 	checked: boolean;
 	onCheck: () => void;
 
-	onIncrement: () => void;
-	onDecrement: () => void;
-	onDelete: () => void;
-
 	isFavorite: boolean;
-	onAddItemToFavorites: () => void;
-	onRemoveItemFromFavorites: () => void;
 }
 
 const CartItem = ({
@@ -155,20 +152,28 @@ const CartItem = ({
 	checked,
 	onCheck,
 
-	onIncrement,
-	onDecrement,
-	onDelete,
-
 	isFavorite,
-	onAddItemToFavorites,
-	onRemoveItemFromFavorites,
 }: CartItemProps) => {
+	const dispatch = useDispatch<AppDispatch>();
+
 	const handleToggleFavorite = () => {
 		if (isFavorite) {
-			onRemoveItemFromFavorites();
+			dispatch(removeFavoriteItem({ itemId: item.id }));
 		} else {
-			onAddItemToFavorites();
+			dispatch(addFavoriteItem({ itemId: item.id }));
 		}
+	};
+
+	const handleDelete = () => {
+		dispatch(removeCartItems({ itemIds: [item.id] }));
+	};
+
+	const handleIncrement = () => {
+		dispatch(patchCartItem({ itemId: item.id, action: "INCREMENT" }));
+	};
+
+	const handleDecrement = () => {
+		dispatch(patchCartItem({ itemId: item.id, action: "DECREMENT" }));
 	};
 
 	return (
@@ -222,8 +227,8 @@ const CartItem = ({
 							{!isMobile && (
 								<ControlButtons
 									isFavorite={isFavorite}
-									onDelete={() => onDelete()}
-									onFavoriteClick={() => handleToggleFavorite()}
+									onDelete={handleDelete}
+									onFavoriteClick={handleToggleFavorite}
 								/>
 							)}
 						</Box>
@@ -235,8 +240,8 @@ const CartItem = ({
 
 							<QuantityButtons
 								quantity={item.quantity}
-								onIncrement={() => onIncrement()}
-								onDecrement={() => onDecrement()}
+								onIncrement={handleIncrement}
+								onDecrement={handleDecrement}
 							/>
 						</Box>
 					)}
@@ -245,13 +250,13 @@ const CartItem = ({
 					<Box display="flex" flexDirection="row" justifyContent="space-between">
 						<ControlButtons
 							isFavorite={isFavorite}
-							onDelete={() => onDelete()}
-							onFavoriteClick={() => handleToggleFavorite()}
+							onDelete={handleDelete}
+							onFavoriteClick={handleToggleFavorite}
 						/>
 						<QuantityButtons
 							quantity={item.quantity}
-							onIncrement={() => onIncrement()}
-							onDecrement={() => onDecrement()}
+							onIncrement={handleIncrement}
+							onDecrement={handleDecrement}
 						/>
 					</Box>
 				)}
@@ -268,13 +273,6 @@ interface CartSectionProps {
 	userCart: UserCartItem[];
 	userFavorites: UserFavoriteItem[];
 
-	onDeleteItemsFromCart: (ids: string[]) => void;
-	onIncrementItemQuantity: (id: string) => void;
-	onDecrementItemQuantity: (id: string) => void;
-
-	onAddItemToFavorites: (id: string) => void;
-	onRemoveItemFromFavorites: (id: string) => void;
-
 	onMakeOrder: (items: UserCartItem[]) => void;
 }
 
@@ -285,16 +283,10 @@ export const CartSection = ({
 
 	userFavorites,
 
-	onDeleteItemsFromCart,
-	onIncrementItemQuantity,
-	onDecrementItemQuantity,
-
-	onAddItemToFavorites,
-	onRemoveItemFromFavorites,
-
 	onMakeOrder,
 }: CartSectionProps) => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch<AppDispatch>();
 
 	const [checkedIds, setCheckedIds] = useState<string[]>(data.unavailable ? [] : data.items.map((item) => item.id));
 	const [deleteModalIsOpened, setDeleteModalIsOpened] = useState(false);
@@ -314,7 +306,7 @@ export const CartSection = ({
 		.reduce((a, b) => a + b, 0);
 
 	const handleDeleteSelected = () => {
-		onDeleteItemsFromCart(checkedIds);
+		dispatch(removeCartItems({ itemIds: checkedIds }));
 		setCheckedIds([]);
 		setDeleteModalIsOpened(false);
 	};
@@ -399,11 +391,6 @@ export const CartSection = ({
 										onCheck={() => {
 											handleCheckItem(cartItem.id);
 										}}
-										onDelete={() => onDeleteItemsFromCart([cartItem.id])}
-										onIncrement={() => onIncrementItemQuantity(cartItem.id)}
-										onDecrement={() => onDecrementItemQuantity(cartItem.id)}
-										onAddItemToFavorites={() => onAddItemToFavorites(cartItem.id)}
-										onRemoveItemFromFavorites={() => onRemoveItemFromFavorites(cartItem.id)}
 									/>
 								</Box>
 							</Grow>

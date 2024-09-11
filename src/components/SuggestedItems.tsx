@@ -1,11 +1,10 @@
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { Box, IconButton, Typography, styled } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { UserCartItem, UserFavoriteItem } from "@appTypes/UserItems";
+import { Box, CircularProgress, IconButton, Typography, styled } from "@mui/material";
 import { createRef } from "react";
 
 import ItemCard from "./ItemCard";
-import { CatalogItem } from "@appTypes/CatalogItem";
+import { useSelector } from "react-redux";
+import { RootState } from "@state/store";
 
 const ItemBar = styled(Box)({
 	display: "flex",
@@ -32,32 +31,19 @@ const ScrollButton = styled(IconButton)({
 	},
 });
 
-interface SuggestedItemsProps {
-	isMobile: boolean;
-	itemsData: CatalogItem[];
-	userFavorites: UserFavoriteItem[];
-	userCart: UserCartItem[];
-	availableItemIds: string[];
-	onAddToCart: (id: string) => void;
-	onAddToFavorites: (id: string) => void;
-	onRemoveFromFavorites: (id: string) => void;
-}
-
-export default function SuggestedItems({
-	isMobile,
-	itemsData,
-	userFavorites,
-	userCart,
-	availableItemIds,
-	onAddToCart,
-	onAddToFavorites,
-	onRemoveFromFavorites,
-}: SuggestedItemsProps) {
-	const navigate = useNavigate();
+export default function SuggestedItems() {
 	const scrollRef = createRef<HTMLDivElement>();
 
-	const userFavoritesIds = userFavorites.map((item) => item.id);
-	const userCartIds = userCart.map((item) => item.id);
+	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
+	const userCartItems = useSelector((state: RootState) => state.userCart.items);
+	const userFavoriteItems = useSelector((state: RootState) => state.userFavorites.items);
+	const availableItemIds = useSelector((state: RootState) => state.availability.items);
+	const catalogItems = useSelector((state: RootState) => state.catalog.items);
+
+	const catalogItemsLoading = useSelector((state: RootState) => state.catalog.loading);
+
+	const userCartIds = userCartItems.map((item) => item.id);
+	const userFavoritesIds = userFavoriteItems.map((item) => item.id);
 
 	const scroll = (direction: "left" | "right") => {
 		if (scrollRef.current) {
@@ -69,38 +55,35 @@ export default function SuggestedItems({
 	return (
 		<Box padding={"40px 0 24px 0"} width={"100%"} gap={3}>
 			<Typography variant="h5">Также может понравится</Typography>
-			<Box display="flex" alignItems="center" position={"relative"}>
-				{!isMobile && (
-					<ScrollButton sx={{ left: "-2%" }} onClick={() => scroll("left")}>
-						<ChevronLeft />
-					</ScrollButton>
-				)}
-				<ItemBar ref={scrollRef} style={{}}>
-					{itemsData.map((data) => (
-						<Box minWidth={346} key={data.id}>
-							<ItemCard
-								data={data}
-								isFavorite={userFavoritesIds.includes(data.id)}
-								isInCart={userCartIds.includes(data.id)}
-								onClick={() => {
-									const variationParam =
-										data.variationIndex !== null ? `?v=${data.variationIndex}` : "";
-									navigate(`/item/${data.publicationLink}${variationParam}`);
-								}}
-								onAddToCart={() => onAddToCart(data.id)}
-								onAddToFavorites={() => onAddToFavorites(data.id)}
-								onRemoveFromFavorites={() => onRemoveFromFavorites(data.id)}
-								isAvailable={availableItemIds.includes(data.id)}
-							/>
-						</Box>
-					))}
-				</ItemBar>
-				{!isMobile && (
-					<ScrollButton sx={{ right: "-2%" }} onClick={() => scroll("right")}>
-						<ChevronRight />
-					</ScrollButton>
-				)}
-			</Box>
+			{catalogItemsLoading ? (
+				<CircularProgress />
+			) : (
+				<Box display="flex" alignItems="center" position={"relative"}>
+					{!isMobile && (
+						<ScrollButton sx={{ left: "-2%" }} onClick={() => scroll("left")}>
+							<ChevronLeft />
+						</ScrollButton>
+					)}
+					<ItemBar ref={scrollRef} style={{}}>
+						{/* TODO: mechanism for suggesting items */}
+						{catalogItems.map((data) => (
+							<Box minWidth={346} key={data.id}>
+								<ItemCard
+									data={data}
+									isFavorite={userFavoritesIds.includes(data.id)}
+									isInCart={userCartIds.includes(data.id)}
+									isAvailable={availableItemIds.includes(data.id)}
+								/>
+							</Box>
+						))}
+					</ItemBar>
+					{!isMobile && (
+						<ScrollButton sx={{ right: "-2%" }} onClick={() => scroll("right")}>
+							<ChevronRight />
+						</ScrollButton>
+					)}
+				</Box>
+			)}
 		</Box>
 	);
 }

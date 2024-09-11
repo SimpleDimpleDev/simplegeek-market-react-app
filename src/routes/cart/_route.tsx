@@ -11,11 +11,9 @@ import { CartSection } from "./section";
 import type { CatalogItemCart, FormedCart, FormedCartSection } from "@appTypes/Cart";
 import { CatalogItem } from "@appTypes/CatalogItem";
 import SuggestedItems from "@components/SuggestedItems";
-import { getSuggestedItems } from "@utils/items";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
 import ShopApiClient from "@api/shop/client";
-import { addCartItem, addFavoriteItem, patchCartItem, removeCartItems, removeFavoriteItem } from "@state/user/thunks";
 
 interface FormCartArgs {
 	catalogItems: CatalogItem[];
@@ -140,11 +138,6 @@ export default function Cart() {
 								data={section}
 								userCart={userSectionItems}
 								userFavorites={userFavoriteItems}
-								onDeleteItemsFromCart={(ids) => removeCartItems({ itemIds: ids })}
-								onIncrementItemQuantity={(id) => patchCartItem({ itemId: id, action: "INCREMENT" })}
-								onDecrementItemQuantity={(id) => patchCartItem({ itemId: id, action: "DECREMENT" })}
-								onAddItemToFavorites={(id) => addFavoriteItem({itemId: id})}
-								onRemoveItemFromFavorites={(id) => removeFavoriteItem({itemId: id})}
 								onMakeOrder={createOrder}
 							/>
 						)
@@ -172,16 +165,7 @@ export default function Cart() {
 					/>
 				)
 			)}
-			<SuggestedItems
-				isMobile={isMobile}
-				itemsData={getSuggestedItems(catalogItems)}
-				userFavorites={userFavoriteItems}
-				userCart={userCartItems}
-				onAddToCart={(id) => addCartItem({ itemId: id })}
-				onAddToFavorites={(id) => addFavoriteItem({ itemId: id })}
-				onRemoveFromFavorites={(id) => removeFavoriteItem({ itemId: id })}
-				availableItemIds={availableItemsIds}
-			/>
+			<SuggestedItems />
 		</>
 	);
 }

@@ -23,7 +23,6 @@ import { CatalogItem } from "@appTypes/CatalogItem";
 import { Empty } from "@components/Empty";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
-import { addCartItem, addFavoriteItem, removeFavoriteItem } from "@state/user/thunks";
 
 type Sorting = "expensive" | "cheap";
 const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] => {
@@ -219,22 +218,6 @@ export default function Catalog() {
 																isAvailable={availableItemsIds.includes(data.id)}
 																isInCart={cartItemsIds.includes(data.id)}
 																isFavorite={favoriteItemsIds.includes(data.id)}
-																onClick={() => {
-																	const variationParam =
-																		data.variationIndex !== null
-																			? `?v=${data.variationIndex}`
-																			: "";
-																	navigate(
-																		`/item/${data.publicationLink}${variationParam}`
-																	);
-																}}
-																onAddToCart={() => addCartItem({ itemId: data.id })}
-																onAddToFavorites={() =>
-																	addFavoriteItem({ itemId: data.id })
-																}
-																onRemoveFromFavorites={() =>
-																	removeFavoriteItem({ itemId: data.id })
-																}
 															/>
 														</div>
 													</Grow>
