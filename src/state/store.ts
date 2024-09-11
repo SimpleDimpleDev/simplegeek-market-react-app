@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import counterReducer from "./counter/counterSlice";
 
 import userAuthorityReducer from "./user/authoritySlice";
 import userCartReducer from "./user/cartSlice";
@@ -7,6 +6,9 @@ import userFavoritesReducer from "./user/favoritesSlice";
 
 import availabilityReducer from "./shop/availabilitySlice";
 import catalogReducer from "./shop/catalogSlice";
+
+import responsiveReducer from "./ui/responsiveSlice";
+
 import {
 	crashReporterMiddleware,
 	loggingMiddleware,
@@ -16,12 +18,12 @@ import {
 
 const store = configureStore({
 	reducer: {
-		counter: counterReducer,
 		userAuthority: userAuthorityReducer,
 		userCart: userCartReducer,
 		userFavorites: userFavoritesReducer,
 		availability: availabilityReducer,
 		catalog: catalogReducer,
+		responsive: responsiveReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware()

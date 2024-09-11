@@ -1,0 +1,1 @@
+export const baseFadeTime = 150
