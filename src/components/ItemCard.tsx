@@ -41,6 +41,9 @@ export default function ItemCard({
 	}
 
 	const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		console.log("adding to cart");
+		console.log("isInCart", isInCart);
+		console.log("isAvailable", isAvailable);
 		if (isInCart) {
 			navigate("/cart");
 		} else if (isAvailable) {
@@ -113,7 +116,7 @@ export default function ItemCard({
 							)}
 						</IconButton>
 						<IconButton
-							onClick={handleAddToCart}
+							onClick={(event) => handleAddToCart(event)}
 							style={{
 								width: 48,
 								height: 48,
