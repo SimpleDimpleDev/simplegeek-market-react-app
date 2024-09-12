@@ -78,6 +78,15 @@ export default function Catalog() {
 	const favoriteItemsIds = useMemo(() => userFavoriteItems.map((item) => item.id), [userFavoriteItems]);
 	const cartItemsIds = useMemo(() => userCartItems.map((item) => item.id), [userCartItems]);
 
+	const [showNothing, setShowNothing] = useState(false);
+
+	useEffect(() => {
+		setShowNothing(true);
+		setTimeout(() => {
+			setShowNothing(false);
+		}, 0);
+	}, [categoryItems]);
+
 	useEffect(() => {
 		setFilteredItems(categoryItems);
 	}, [categoryItems]);
@@ -202,30 +211,31 @@ export default function Catalog() {
 								/>
 							) : (
 								<Grid2 container justifyContent="flex-start" spacing={2}>
-									{sortedItems.map((data, index) => (
-										<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
-											<LazyLoad
-												key={index}
-												width={"100%"}
-												height={420}
-												observerOptions={{
-													rootMargin: "100px",
-												}}
-												once
-											>
-												<Grow key={index} in={true} timeout={200}>
-													<div>
-														<ItemCard
-															data={data}
-															isAvailable={availableItemsIds.includes(data.id)}
-															isInCart={cartItemsIds.includes(data.id)}
-															isFavorite={favoriteItemsIds.includes(data.id)}
-														/>
-													</div>
-												</Grow>
-											</LazyLoad>
-										</Grid2>
-									))}
+									{!showNothing &&
+										sortedItems.map((data, index) => (
+											<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
+												<LazyLoad
+													key={index}
+													width={"100%"}
+													height={420}
+													observerOptions={{
+														rootMargin: "100px",
+													}}
+													once
+												>
+													<Grow key={index} in={true} timeout={200}>
+														<div>
+															<ItemCard
+																data={data}
+																isAvailable={availableItemsIds.includes(data.id)}
+																isInCart={cartItemsIds.includes(data.id)}
+																isFavorite={favoriteItemsIds.includes(data.id)}
+															/>
+														</div>
+													</Grow>
+												</LazyLoad>
+											</Grid2>
+										))}
 								</Grid2>
 							)}
 						</div>
