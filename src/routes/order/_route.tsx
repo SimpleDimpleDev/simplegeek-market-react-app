@@ -295,7 +295,6 @@ export default function Order() {
 							)}
 							{itemsCreditUnavailable.length > 0 && (
 								<div className="d-f fd-c gap-1">
-									<Typography variant="h4">Недоступна рассрочка</Typography>
 									<Stack divider={<Divider />} direction={"column"}>
 										{itemsCreditUnavailable.map((item) => (
 											<ShopOrderItemCard

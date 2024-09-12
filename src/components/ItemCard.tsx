@@ -181,14 +181,14 @@ export const ShopOrderItemCard: React.FC<ShopOrderItemCardProps> = ({ imgUrl, ti
 				<div className="d-f jc-c ai-c br-2 fs-0 of-h" style={{ width: 96, height: 96 }}>
 					<img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
 				</div>
-				<div className="d-f fd-c gap-1">
+				<div className="d-f fd-c gap-1 pt-2">
 					<Typography variant="body1">{title}</Typography>
 					<Typography variant="body2" sx={{ color: "typography.secondary" }}>
 						{quantity} шт.
 					</Typography>
 				</div>
 			</div>
-			<div>
+			<div className="pt-2">
 				<Typography variant="subtitle1">{price} ₽</Typography>
 			</div>
 		</div>
