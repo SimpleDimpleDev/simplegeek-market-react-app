@@ -217,9 +217,9 @@ export const CatalogFilters = ({
 		onFilter(items);
 	}, [filterGroups, items, onFilter, lastFilters, lastTypeFilter, lastPriceRange]);
 
-	useEffect(() => {
-		handleResetFilters();
-	}, [items, handleResetFilters]);
+	// useEffect(() => {
+	// 	handleResetFilters();
+	// }, [items, handleResetFilters]);
 
 	useEffect(() => {
 		if (filtersReset && setFiltersReset) {
