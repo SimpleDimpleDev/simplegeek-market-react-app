@@ -23,6 +23,7 @@ import { CatalogItem } from "@appTypes/CatalogItem";
 import { Empty } from "@components/Empty";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
+import { ScrollTop } from "@components/ScrollToTopButton";
 
 type Sorting = "expensive" | "cheap";
 const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] => {
@@ -102,6 +103,7 @@ export default function Catalog() {
 
 	return (
 		<>
+			<ScrollTop />
 			{catalogLoading ? (
 				<div className="w-100 h-100 d-f jc-c ai-c">
 					<CircularProgress />
@@ -197,7 +199,6 @@ export default function Catalog() {
 								)}
 							</div>
 
-							{}
 							{sortedItems.length === 0 && !itemsFiltering ? (
 								<Empty
 									title={"Ничего не найдено"}
