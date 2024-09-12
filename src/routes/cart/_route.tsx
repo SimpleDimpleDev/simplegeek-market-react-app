@@ -1,5 +1,5 @@
 import { ShoppingCart } from "@mui/icons-material";
-import { Divider, Stack, Typography } from "@mui/material";
+import { CircularProgress, Divider, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { CountPageHeader } from "@components/CountPageHeader";
 import { Empty } from "@components/Empty";
@@ -89,6 +89,8 @@ export default function Cart() {
 	const userCartItems = useSelector((state: RootState) => state.userCart.items);
 	const userFavoriteItems = useSelector((state: RootState) => state.userFavorites.items);
 
+	const userCartLoading = useSelector((state: RootState) => state.userCart.loading);
+
 	console.log("availableItemsIds", availableItemsIds);
 	console.log("userCartItems", userCartItems);
 	console.log("catalogItems", catalogItems);
@@ -143,21 +145,24 @@ export default function Cart() {
 					);
 				})}
 			</Stack>
-			{userCartItems.length === 0 && (
-				<Empty
-					title="В корзине ничего нет"
-					description="Добавьте в корзину что-нибудь"
-					icon={
-						<ShoppingCart
-							sx={{
-								width: 91,
-								height: 91,
-								color: "icon.tetriary",
-							}}
-						/>
-					}
-				/>
-			)}
+			{userCartItems.length === 0 &&
+				(userCartLoading ? (
+					<CircularProgress />
+				) : (
+					<Empty
+						title="В корзине ничего нет"
+						description="Добавьте в корзину что-нибудь"
+						icon={
+							<ShoppingCart
+								sx={{
+									width: 91,
+									height: 91,
+									color: "icon.tetriary",
+								}}
+							/>
+						}
+					/>
+				))}
 			<SuggestedItems />
 		</>
 	);

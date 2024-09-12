@@ -63,19 +63,16 @@ export default function Favorites() {
 					</>
 				)}
 			</Stack>
-			{userFavoritesLoading ? (
-				<div className="w-100 h-100 d-f jc-c ai-c">
+			{mappedItems.empty &&
+				(userFavoritesLoading ? (
 					<CircularProgress />
-				</div>
-			) : (
-				mappedItems.empty && (
+				) : (
 					<Empty
 						title="В избранном ничего нет"
 						description="Добавляйте сюда понравившиеся товары. Для этого жмите на сердечко в карточке товара"
 						icon={<FavoriteIcon sx={{ width: 91, height: 91, color: "icon.tetriary" }} />}
 					/>
-				)
-			)}
+				))}
 		</>
 	);
 }

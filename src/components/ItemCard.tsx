@@ -24,9 +24,9 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 
 	function handleToggleFavorite() {
 		if (isFavorite) {
-			dispatch(addFavoriteItem({ itemId: data.id }));
-		} else {
 			dispatch(removeFavoriteItem({ itemId: data.id }));
+		} else {
+			dispatch(addFavoriteItem({ itemId: data.id }));
 		}
 	}
 
