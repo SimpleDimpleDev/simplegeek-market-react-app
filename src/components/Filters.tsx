@@ -142,7 +142,7 @@ const FilterGroup = ({ data, checkedFiltersIds, changedFiltersIds, onToggleFilte
 interface CatalogFiltersProps {
 	items: CatalogItem[];
 	isMobile: boolean;
-	preFilter?: Record<string, string>;
+	preFilter?: { title: string; value: string };
 	onFilter: (filteredItems: CatalogItem[]) => void;
 	filtersReset?: boolean;
 	setFiltersReset?: (value: boolean) => void;
@@ -200,20 +200,26 @@ export const CatalogFilters = ({
 
 	const handleResetFilters = useCallback(() => {
 		const initialFilters = getInitialFilters(filterGroups);
+		const initialTypeFilter = "all";
+		const initialPriceRange = getInitialPriceRange(items);
 		const lastFilteredItems = items.filter((item) =>
 			filterCatalogItem({ item, filters: lastFilters, typeFilter: lastTypeFilter, priceRange: lastPriceRange })
 		);
 		setFilters(initialFilters);
 		setLastFilters(initialFilters);
-		setTypeFilter("all");
-		setLastTypeFilter("all");
-		setPriceRange(getInitialPriceRange(items));
-		setLastPriceRange(getInitialPriceRange(items));
+		setTypeFilter(initialTypeFilter);
+		setLastTypeFilter(initialTypeFilter);
+		setPriceRange(initialPriceRange);
+		setLastPriceRange(initialPriceRange);
 		if (JSON.stringify(lastFilteredItems) === JSON.stringify(items)) {
 			return;
 		}
 		onFilter(items);
 	}, [filterGroups, items, onFilter, lastFilters, lastTypeFilter, lastPriceRange]);
+
+	useEffect(() => {
+		handleResetFilters();
+	}, [items, handleResetFilters]);
 
 	useEffect(() => {
 		if (filtersReset && setFiltersReset) {
@@ -222,35 +228,23 @@ export const CatalogFilters = ({
 		}
 	}, [filtersReset, setFiltersReset, handleResetFilters]);
 
-	console.log(preFilter);
-	// useEffect(() => {
-	// 	const setupPreFilter = () => {
-	// 		if (preFilter) {
-	// 			const newSelectedFiltersIndices = [...filters];
-	// 			for (const [key, value] of Object.entries(preFilter)) {
-	// 				const groupIndex = filterGroups.findIndex((group) => group.title === key);
-	// 				if (groupIndex !== -1) {
-	// 					const filterIndex = filterGroups[groupIndex].filters.findIndex((filter) => filter === value);
-	// 					if (filterIndex !== -1) {
-	// 						newSelectedFiltersIndices[groupIndex] = [filterIndex];
-	// 					}
-	// 				}
-	// 			}
-	// 			setFilters(newSelectedFiltersIndices);
-	// 			setLastFilters(newSelectedFiltersIndices);
-	// 			const filteredItems = filterCatalogItems({
-	// 				items: items,
-	// 				filterGroups,
-	// 				selectedFiltersIndices: newSelectedFiltersIndices,
-	// 				availabilityFilter,
-	// 				priceRange,
-	// 			});
-	// 			onFilter(filteredItems);
-	// 		}
-	// 	};
+	useEffect(() => {
+		const setupPreFilter = () => {
+			if (!preFilter) return;
+			const newFilters: CheckedFilterGroup[] = [];
+			const foundFilterGroup = filterGroups.find((group) => group.title === preFilter.title);
+			if (!foundFilterGroup) return;
+			const foundFilter = foundFilterGroup.filters.find((filter) => filter.value === preFilter.value);
+			if (!foundFilter) return;
+			newFilters.push({
+				id: foundFilterGroup.id,
+				filtersIds: [foundFilter.id],
+			});
+			setFilters(newFilters);
+		};
 
-	// 	setupPreFilter();
-	// }, []);
+		setupPreFilter();
+	}, [filterGroups, preFilter]);
 
 	const canApplyFilters =
 		JSON.stringify(filters) != JSON.stringify(lastFilters) ||

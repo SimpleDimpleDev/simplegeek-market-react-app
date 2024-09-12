@@ -226,7 +226,7 @@ export default function ItemPage() {
 												navigate(
 													`/catalog/${
 														selectedVariation.product.category.link
-													}${`?${filterGroup.title}=${filter.value}`}`
+													}${`?f=${filterGroup.title}:${filter.value}`}`
 												);
 											}}
 										>

@@ -52,25 +52,27 @@ export default function Catalog() {
 
 	const params = useParams();
 	const searchParams = useSearchParams();
-	const preFilter = useMemo(
-		() =>
-			Object.keys(Object.fromEntries(searchParams[0].entries())).length
-				? Object.fromEntries(searchParams[0].entries())
-				: undefined,
-		[searchParams]
-	);
+	const preFilter = useMemo(() => {
+		const preFilterString = searchParams[0].get("f");
+		if (!preFilterString) return undefined;
+		const preFilter = preFilterString.split(":");
+		const preFilterGroupTitle = preFilter.at(0);
+		const preFilterValue = preFilter.at(1);
+		if (!preFilterGroupTitle || !preFilterValue) return undefined;
+		return { title: preFilterGroupTitle, value: preFilterValue };
+	}, [searchParams]);
 
 	const categoryItems = useMemo(
 		() => catalogItems.filter((item) => item.product.category.link === params.categoryName),
-		[catalogItems, params.categoryName]
+		[catalogItems, params]
 	);
 
 	const [filtersOpen, setFiltersOpen] = useState(false);
 	const [filtersReset, setFiltersReset] = useState(false);
 	const [itemsFiltering, setItemsFiltering] = useState<boolean>(false);
+	const [filteredItems, setFilteredItems] = useState<CatalogItem[]>(categoryItems);
 
 	const [sorting, setSorting] = useState<Sorting>("expensive");
-	const [filteredItems, setFilteredItems] = useState<CatalogItem[]>(categoryItems);
 	const sortedItems = useMemo(() => getSortedItems(filteredItems, sorting), [filteredItems, sorting]);
 
 	const favoriteItemsIds = useMemo(() => userFavoriteItems.map((item) => item.id), [userFavoriteItems]);
@@ -187,46 +189,45 @@ export default function Catalog() {
 							</div>
 
 							{}
-								{sortedItems.length === 0 && !itemsFiltering ? (
-									<Empty
-										title={"Ничего не найдено"}
-										description="Попробуйте изменить фильтры"
-										icon={<Search sx={{ height: 96, width: 96 }} />}
-										button={
-											<Button variant="contained" onClick={() => setFiltersReset(true)}>
-												Сбросить фильтры
-											</Button>
-										}
-									/>
-								) : (
-									<Grid2 container justifyContent="flex-start" spacing={2}>
-										{sortedItems.map((data, index) => (
-											<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
-												<LazyLoad
-													key={index}
-													width={"100%"}
-													height={420}
-													observerOptions={{
-														rootMargin: "100px",
-													}}
-													once
-												>
-													<Grow key={index} in={true} timeout={200}>
-														<div>
-															<ItemCard
-																data={data}
-																isAvailable={availableItemsIds.includes(data.id)}
-																isInCart={cartItemsIds.includes(data.id)}
-																isFavorite={favoriteItemsIds.includes(data.id)}
-															/>
-														</div>
-													</Grow>
-												</LazyLoad>
-											</Grid2>
-										))}
-									</Grid2>
-								)}
-
+							{sortedItems.length === 0 && !itemsFiltering ? (
+								<Empty
+									title={"Ничего не найдено"}
+									description="Попробуйте изменить фильтры"
+									icon={<Search sx={{ height: 96, width: 96 }} />}
+									button={
+										<Button variant="contained" onClick={() => setFiltersReset(true)}>
+											Сбросить фильтры
+										</Button>
+									}
+								/>
+							) : (
+								<Grid2 container justifyContent="flex-start" spacing={2}>
+									{sortedItems.map((data, index) => (
+										<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
+											<LazyLoad
+												key={index}
+												width={"100%"}
+												height={420}
+												observerOptions={{
+													rootMargin: "100px",
+												}}
+												once
+											>
+												<Grow key={index} in={true} timeout={200}>
+													<div>
+														<ItemCard
+															data={data}
+															isAvailable={availableItemsIds.includes(data.id)}
+															isInCart={cartItemsIds.includes(data.id)}
+															isFavorite={favoriteItemsIds.includes(data.id)}
+														/>
+													</div>
+												</Grow>
+											</LazyLoad>
+										</Grid2>
+									))}
+								</Grid2>
+							)}
 						</div>
 					</div>
 				</div>
