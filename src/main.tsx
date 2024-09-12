@@ -1,4 +1,4 @@
-import theme from "./theme.ts";
+import theme, { oryTheme } from "./theme.ts";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -24,6 +24,9 @@ import ProfileLayout from "./routes/profile/_layout.tsx";
 import UserOrders from "./routes/profile/orders/_route.tsx";
 import Me from "./routes/profile/settings/_route.tsx";
 import Search from "./routes/search/_route.tsx";
+import { CustomTranslations, IntlProvider } from "@ory/elements";
+import { customTranslations } from "./oryLocale.ts";
+import { ThemeProvider as OryThemeProvider } from "@ory/elements";
 
 const router = createBrowserRouter([
 	{
@@ -119,8 +122,16 @@ createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		<ReduxProvider store={store}>
 			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<RouterProvider router={router} />
+				<OryThemeProvider themeOverrides={oryTheme}>
+					<CssBaseline />
+					<IntlProvider<CustomTranslations>
+						locale="ru"
+						defaultLocale="ru"
+						customTranslations={customTranslations}
+					>
+						<RouterProvider router={router} />
+					</IntlProvider>
+				</OryThemeProvider>
 			</ThemeProvider>
 		</ReduxProvider>
 	</StrictMode>
