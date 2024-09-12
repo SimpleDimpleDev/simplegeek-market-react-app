@@ -189,6 +189,21 @@ export const CatalogFilters = ({
 		return existingGroups;
 	}, [items]);
 
+	useEffect(() => {
+		const updateFilters = () => {
+			const initialFilters = getInitialFilters(filterGroups);
+			const initialTypeFilter = "all";
+			const initialPriceRange = getInitialPriceRange(items);
+			setFilters(initialFilters);
+			setLastFilters(initialFilters);
+			setTypeFilter(initialTypeFilter);
+			setLastTypeFilter(initialTypeFilter);
+			setPriceRange(initialPriceRange);
+			setLastPriceRange(initialPriceRange);
+		}
+		updateFilters();
+	}, [items, filterGroups]);
+
 	const [filters, setFilters] = useState<CheckedFilterGroup[]>(getInitialFilters(filterGroups));
 	const [lastFilters, setLastFilters] = useState<CheckedFilterGroup[]>(getInitialFilters(filterGroups));
 
@@ -217,9 +232,6 @@ export const CatalogFilters = ({
 		onFilter(items);
 	}, [filterGroups, items, onFilter, lastFilters, lastTypeFilter, lastPriceRange]);
 
-	// useEffect(() => {
-	// 	handleResetFilters();
-	// }, [items, handleResetFilters]);
 
 	useEffect(() => {
 		if (filtersReset && setFiltersReset) {
