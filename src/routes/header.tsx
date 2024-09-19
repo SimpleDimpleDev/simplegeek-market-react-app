@@ -25,7 +25,8 @@ import {
 	Search,
 	ShoppingCart,
 } from "@mui/icons-material";
-
+import { oryClient } from "@api/auth/client";
+import { fetchUserAuthority } from "@state/user/thunks";
 
 interface HeaderButtonProps {
 	isMobile?: boolean;
@@ -376,9 +377,15 @@ export default function Header({ isMobile }: HeaderWrapperProps) {
 		navigate("/auth/login");
 	};
 
-	const onLogoutClick = () => {
-		navigate("/logout");
-	}
+	const onLogoutClick = async () => {
+		// Create a "logout flow" in Ory Identities
+		const { data: flow } = await oryClient.createBrowserLogoutFlow();
+		// Use the received token to "update" the flow and thus perform the logout
+		await oryClient.updateLogoutFlow({
+			token: flow.logout_token,
+		});
+		fetchUserAuthority();
+	};
 
 	return (
 		<>
