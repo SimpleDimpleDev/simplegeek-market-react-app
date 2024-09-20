@@ -4,7 +4,7 @@ import { CatalogItem } from "@appTypes/CatalogItem";
 import { CategoryShop } from "@appTypes/Category";
 import { UserAuthority } from "@appTypes/User";
 import { UserCartItem, UserFavoriteItem } from "@appTypes/UserItems";
-import { Button, Menu, MenuItem, TextField, Typography } from "@mui/material";
+import { Button, CircularProgress, Menu, MenuItem, TextField, Typography } from "@mui/material";
 import { Autocomplete, Badge, IconButton, Slide, useScrollTrigger } from "@mui/material";
 import { AppDispatch, RootState } from "@state/store";
 import { getImageUrl } from "@utils/image";
@@ -137,6 +137,7 @@ interface HeaderProps {
 	categories: CategoryShop[];
 	catalogItems: CatalogItem[];
 	userAuthority: UserAuthority | null;
+	userAuthorityLoading: boolean;
 	userCartItems: UserCartItem[];
 	userFavoritesItems: UserFavoriteItem[];
 }
@@ -148,6 +149,7 @@ const DesktopHeader: React.FC<HeaderProps> = ({
 	categories,
 	catalogItems,
 	userAuthority,
+	userAuthorityLoading,
 	userCartItems,
 	userFavoritesItems,
 }) => {
@@ -231,8 +233,8 @@ const DesktopHeader: React.FC<HeaderProps> = ({
 							badgeCount: userFavoritesItems.length,
 						},
 						{
-							text: userAuthority ? "Профиль" : "Войти",
-							icon: <Person />,
+							text: userAuthorityLoading ? "" : userAuthority ? "Профиль" : "Войти",
+							icon: userAuthorityLoading ? <CircularProgress /> : <Person />,
 							onClick: userAuthority
 								? (event) => setAnchorElProfile(event.currentTarget)
 								: () => onLoginClick(),
@@ -370,6 +372,7 @@ export default function Header({ isMobile }: HeaderWrapperProps) {
 	const categories = useSelector((state: RootState) => state.catalog.categories);
 	const catalogItems = useSelector((state: RootState) => state.catalog.items);
 	const userAuthority = useSelector((state: RootState) => state.userAuthority.authority);
+	const userAuthorityLoading = useSelector((state: RootState) => state.userAuthority.loading);
 	const userCartItems = useSelector((state: RootState) => state.userCart.items);
 	const userFavoritesItems = useSelector((state: RootState) => state.userFavorites.items);
 
@@ -398,6 +401,7 @@ export default function Header({ isMobile }: HeaderWrapperProps) {
 					categories={categories}
 					catalogItems={catalogItems}
 					userAuthority={userAuthority}
+					userAuthorityLoading={userAuthorityLoading}
 					userCartItems={userCartItems}
 					userFavoritesItems={userFavoritesItems}
 				/>
@@ -408,6 +412,7 @@ export default function Header({ isMobile }: HeaderWrapperProps) {
 					categories={categories}
 					catalogItems={catalogItems}
 					userAuthority={userAuthority}
+					userAuthorityLoading={userAuthorityLoading}
 					userCartItems={userCartItems}
 					userFavoritesItems={userFavoritesItems}
 				/>
