@@ -6,10 +6,10 @@ import { UserAuthority } from "@appTypes/User";
 import { UserCartItem, UserFavoriteItem } from "@appTypes/UserItems";
 import { Button, Menu, MenuItem, TextField, Typography } from "@mui/material";
 import { Autocomplete, Badge, IconButton, Slide, useScrollTrigger } from "@mui/material";
-import { RootState } from "@state/store";
+import { AppDispatch, RootState } from "@state/store";
 import { getImageUrl } from "@utils/image";
 import { isCatalogItemMatchQuery } from "@utils/search";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MobileMenu } from "./MobileMenu";
 
@@ -373,6 +373,8 @@ export default function Header({ isMobile }: HeaderWrapperProps) {
 	const userCartItems = useSelector((state: RootState) => state.userCart.items);
 	const userFavoritesItems = useSelector((state: RootState) => state.userFavorites.items);
 
+	const dispatch = useDispatch<AppDispatch>();
+
 	const onLoginClick = () => {
 		navigate("/auth/login");
 	};
@@ -384,7 +386,7 @@ export default function Header({ isMobile }: HeaderWrapperProps) {
 		await oryClient.updateLogoutFlow({
 			token: flow.logout_token,
 		});
-		fetchUserAuthority();
+		dispatch(fetchUserAuthority());
 	};
 
 	return (
