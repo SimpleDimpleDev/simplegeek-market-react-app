@@ -2,8 +2,10 @@ import { SdkError, oryClient } from "@api/auth/client";
 import { CircularProgress } from "@mui/material";
 import { RegistrationFlow, UpdateRegistrationFlowBody } from "@ory/client";
 import { UserAuthCard } from "@ory/elements";
+import { AppDispatch } from "@state/store";
 import { fetchUserAuthority } from "@state/user/thunks";
 import { useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 /** Registration is a React component that renders the Registration form using Ory Elements.
@@ -17,7 +19,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 export default function Registration() {
 	const [flow, setFlow] = useState<RegistrationFlow | null>(null);
 	const [searchParams, setSearchParams] = useSearchParams();
-
+	const dispatch = useDispatch<AppDispatch>();
+	
 	// The return_to is a query parameter is set by you when you would like to redirect
 	// the user back to a specific URL after registration is successful
 	// In most cases it is not necessary to set a return_to if the UI business logic is
@@ -95,7 +98,12 @@ export default function Registration() {
 				}
 
 				// we successfully submitted the login flow, so lets redirect to the dashboard
-				fetchUserAuthority();
+				dispatch(fetchUserAuthority());
+				if (returnTo) {
+					navigate(returnTo, { replace: true });
+				} else {
+					navigate("/", { replace: true });
+				}
 			})
 			.catch(sdkErrorHandler);
 	};

@@ -2,8 +2,10 @@ import { SdkError, oryClient } from "@api/auth/client";
 import { CircularProgress } from "@mui/material";
 import { LoginFlow, UpdateLoginFlowBody } from "@ory/client";
 import { UserAuthCard } from "@ory/elements";
+import { AppDispatch } from "@state/store";
 import { fetchUserAuthority } from "@state/user/thunks";
 import { useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 /**
@@ -19,6 +21,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 export default function Login() {
 	const [flow, setFlow] = useState<LoginFlow | null>(null);
 	const [searchParams, setSearchParams] = useSearchParams();
+
+	const dispatch = useDispatch<AppDispatch>();
 
 	// The aal is set as a query parameter by your Ory project
 	// aal1 is the default authentication level (Single-Factor)
@@ -83,7 +87,12 @@ export default function Login() {
 		oryClient
 			.updateLoginFlow({ flow: flow.id, updateLoginFlowBody: body })
 			.then(() => {
-				fetchUserAuthority();
+				dispatch(fetchUserAuthority());
+				if (returnTo) {
+					navigate(returnTo, { replace: true });
+				} else {
+					navigate("/", { replace: true });
+				}
 			})
 			.catch(sdkErrorHandler);
 	};
