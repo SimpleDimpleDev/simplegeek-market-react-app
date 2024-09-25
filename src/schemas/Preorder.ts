@@ -1,8 +1,7 @@
 import { z } from "zod";
 
 import { ISOToDateSchema } from "./Primitives";
-import { AdminGetBaseSchema } from "./Admin";
-import { InvoiceAdminSchema, InvoiceShopSchema } from "./Payment";
+import { InvoiceShopSchema } from "./Payment";
 
 export const PreorderStatusSchema = z.enum([
 	"NEW",
@@ -20,16 +19,8 @@ export const PreorderShopSchema = z.object({
 	expectedArrival: ISOToDateSchema.nullable(),
 });
 
-export const PreorderAdminSchema = AdminGetBaseSchema.merge(PreorderShopSchema);
-
 export const PreorderOrderShopSchema = PreorderShopSchema.extend({
 	shippingCostIncluded: ShippingCostIncludedSchema,
 	foreignShippingInvoice: InvoiceShopSchema.nullable(),
 	localShippingInvoice: InvoiceShopSchema.nullable(),
-});
-
-export const PreorderOrderAdminSchema = PreorderAdminSchema.extend({
-	shippingCostIncluded: ShippingCostIncludedSchema,
-	foreignShippingInvoice: InvoiceAdminSchema.nullable(),
-	localShippingInvoice: InvoiceAdminSchema.nullable(),
 });

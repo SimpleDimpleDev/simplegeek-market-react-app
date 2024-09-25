@@ -5,7 +5,7 @@ import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import { ItemCreditInfo } from "@components/CreditTimeline";
 import SuggestedItems from "@components/SuggestedItems";
 import { DateFormatter } from "@utils/format";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import ImageCarousel from "./ImageCarousel";
 import { getImageUrl } from "@utils/image";
@@ -60,9 +60,31 @@ export default function ItemPage() {
 		[userFavorites, selectedVariation]
 	);
 	const preparedImageUrls = useMemo(
-		() => selectedVariation.product.images.map((image) => getImageUrl(image, "large")),
+		() => selectedVariation.product.images.map((image) => getImageUrl(image.url, "large")),
 		[selectedVariation]
 	);
+
+	useEffect(() => {
+		const recordPublicationVisited = () => {
+			const publicationLink = params.publicationLink;
+			if (!publicationLink) return
+			const publicationVisitsString = localStorage.getItem("publicationVisits");
+			if (!publicationVisitsString) return;
+			const publicationVisits: { publicationLink: string; publicationVisits: number }[] = JSON.parse(publicationVisitsString);
+			if (!publicationVisits) return;
+			const publicationVisitsCopy = { ...publicationVisits };
+			const currentPublicationVisit = publicationVisitsCopy.find(
+				(publicationVisit) => publicationVisit.publicationLink === publicationLink
+			);
+			if (currentPublicationVisit) {
+				currentPublicationVisit.publicationVisits++;
+			} else {
+				publicationVisitsCopy.push({ publicationLink, publicationVisits: 1 });
+			}
+			localStorage.setItem("publicationVisits", JSON.stringify(publicationVisitsCopy));
+		};
+		recordPublicationVisited();
+	}, [ params.publicationLink ]); 
 
 	const handleToggleFavorite = () => {
 		if (selectedVariationIsFavorite) {

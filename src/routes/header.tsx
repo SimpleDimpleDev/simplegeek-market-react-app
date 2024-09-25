@@ -210,7 +210,7 @@ const DesktopHeader: React.FC<HeaderProps> = ({
 								>
 									<div className="d-f fd-r ai-c gap-12px">
 										<div className="ps-r w-7 h-7 br-1 d-f jc-c of-h">
-											<img className="cover" src={getImageUrl(category.image, "small")}></img>
+											<img className="cover" src={getImageUrl(category.icon.url, "small")}></img>
 										</div>
 										<Typography variant="body1">{category.title}</Typography>
 									</div>

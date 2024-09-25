@@ -273,7 +273,7 @@ export default function Order() {
 										{itemsCreditAvailable.map((item) => (
 											<ShopOrderItemCardCredit
 												key={item.id}
-												imgUrl={getImageUrl(item.product.images[0], "small")}
+												imgUrl={getImageUrl(item.product.images.at(0)?.url ?? "", "small")}
 												title={item.product.title}
 												price={item.price}
 												quantity={item.quantity}
@@ -299,7 +299,7 @@ export default function Order() {
 										{itemsCreditUnavailable.map((item) => (
 											<ShopOrderItemCard
 												key={item.id}
-												imgUrl={getImageUrl(item.product.images[0], "small")}
+												imgUrl={getImageUrl(item.product.images.at(0)?.url ?? "", "small")}
 												title={item.product.title}
 												price={item.price}
 												quantity={item.quantity}

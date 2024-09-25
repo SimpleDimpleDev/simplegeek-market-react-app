@@ -51,7 +51,7 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 			<div className="w-mc h-mc d-f jc-c of-h br-2 bg-primary">
 				<img
 					style={{ width: "300px", height: "300px" }}
-					src={getImageUrl(data.product.images.at(0) ?? "", "medium")}
+					src={getImageUrl(data.product.images.at(0)?.url ?? "", "medium")}
 				/>
 			</div>
 			<div className="d-f fd-c gap-1 px-2">
@@ -122,7 +122,6 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 								},
 							}}
 						>
-							{" "}
 							{isAvailable ? (
 								isInCart ? (
 									<ShoppingCart sx={{ color: "icon.primary" }} />

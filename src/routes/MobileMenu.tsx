@@ -148,7 +148,7 @@ export const MobileMenu = ({
 											onMenuClose();
 										}}
 										title={category.title}
-										imgUrl={getImageUrl(category.image, "small")}
+										imgUrl={getImageUrl(category.icon.url, "small")}
 									/>
 								))}
 							</div>

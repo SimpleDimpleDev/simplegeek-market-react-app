@@ -73,7 +73,7 @@ export default function Home() {
 							isMobile={isMobile}
 							onClick={() => navigate(`/catalog/${category.link}`)}
 						>
-							<img style={{ height: 300, width: 696 }} src={getImageUrl(category.image, "large")} />
+							<img style={{ height: 300, width: 696 }} src={getImageUrl(category.banner.url, "large")} />
 							<SectionTypographyWrapper>
 								<Typography variant="h4" color="white">
 									{category.title}

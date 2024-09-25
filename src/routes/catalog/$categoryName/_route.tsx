@@ -82,6 +82,29 @@ export default function Catalog() {
 	const [showNothing, setShowNothing] = useState(false);
 
 	useEffect(() => {
+		const recordCategoryVisited = () => {
+			const categoryLink = params.categoryName;
+			if (!categoryLink) return;
+			const categoryVisitsString = localStorage.getItem("categoryVisits");
+			if (!categoryVisitsString) return;
+			const categoryVisits: { categoryLink: string; categoryVisits: number }[] = JSON.parse(categoryVisitsString);
+			if (!categoryVisits) return;
+			const categoryVisitsCopy = { ...categoryVisits };
+			const currentCategoryVisit = categoryVisitsCopy.find(
+				(categoryVisit) => categoryVisit.categoryLink === categoryLink
+			);
+			if (currentCategoryVisit) {
+				currentCategoryVisit.categoryVisits++;
+			} else {
+				categoryVisitsCopy.push({ categoryLink, categoryVisits: 1 });
+			}
+			localStorage.setItem("categoryVisits", JSON.stringify(categoryVisitsCopy));
+		};
+
+		recordCategoryVisited();
+	}, [params.categoryName]);
+
+	useEffect(() => {
 		setShowNothing(true);
 		setTimeout(() => {
 			setShowNothing(false);

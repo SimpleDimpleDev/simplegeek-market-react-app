@@ -196,7 +196,7 @@ const CartItem = ({
 							overflow="hidden"
 						>
 							<img
-								src={getImageUrl(item.product.images.at(0) ?? "", "medium")}
+								src={getImageUrl(item.product.images.at(0)?.url ?? "", "medium")}
 								style={{ width: "100%", height: "100%", objectFit: "cover" }}
 							/>
 						</Box>
