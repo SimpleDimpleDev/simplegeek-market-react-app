@@ -64,7 +64,7 @@ export default function Catalog() {
 	}, [searchParams]);
 
 	const categoryItems = useMemo(
-		() => catalogItems.filter((item) => item.product.category.link === params.categoryName),
+		() => catalogItems.filter((item) => item.product.category.link === params.categoryLink),
 		[catalogItems, params]
 	);
 
@@ -83,7 +83,7 @@ export default function Catalog() {
 
 	useEffect(() => {
 		const recordCategoryVisited = () => {
-			const categoryLink = params.categoryName;
+			const categoryLink = params.categoryLink;
 			if (!categoryLink) return;
 			const categoryVisitsString = localStorage.getItem("categoryVisits");
 			if (!categoryVisitsString) return;
@@ -102,7 +102,7 @@ export default function Catalog() {
 		};
 
 		recordCategoryVisited();
-	}, [params.categoryName]);
+	}, [params.categoryLink]);
 
 	useEffect(() => {
 		setShowNothing(true);
@@ -128,12 +128,12 @@ export default function Catalog() {
 		<>
 			<ScrollTop />
 			{catalogLoading ? (
-				<div className="w-100 h-100 d-f jc-c ai-c">
+				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
 			) : categoryItems.length === 0 ? (
 				<Empty
-					title={`В категории ${params.categoryName} пока нет товаров`}
+					title={`В категории ${params.categoryLink} пока нет товаров`}
 					description="Вернитесь позже"
 					icon={<Search sx={{ height: 96, width: 96 }} />}
 					button={<Button onClick={() => navigate("/")}>На главную</Button>}
@@ -141,8 +141,8 @@ export default function Catalog() {
 			) : (
 				<div>
 					<Modal open={filtersOpen} onClose={() => setFiltersOpen(false)}>
-						<div className="ps-f top-0 left-0 w-100v h-100v d-f fd-c jc-fs ai-fs of-a bg-primary">
-							<div className="w-100 h-9 d-f fd-r jc-sb ai-c px-2">
+						<div className="top-0 left-0 bg-primary w-100v h-100v ai-fs d-f fd-c jc-fs of-a ps-f">
+							<div className="px-2 w-100 h-9 ai-c d-f fd-r jc-sb">
 								<IconButton>
 									<Close sx={{ opacity: 0 }} />
 								</IconButton>
@@ -170,7 +170,7 @@ export default function Catalog() {
 						current={categoryItems[0].product.category.title}
 					/>
 
-					<div className="d-f fd-r gap-2">
+					<div className="gap-2 d-f fd-r">
 						{!isMobile && (
 							<CatalogFilters
 								items={categoryItems}
@@ -182,8 +182,8 @@ export default function Catalog() {
 							/>
 						)}
 
-						<div className="w-100 d-f fd-c gap-2">
-							<div className="d-f fd-r ai-c gap-1">
+						<div className="gap-2 w-100 d-f fd-c">
+							<div className="gap-1 ai-c d-f fd-r">
 								<div className="w-100">
 									<FormControl fullWidth>
 										<Select

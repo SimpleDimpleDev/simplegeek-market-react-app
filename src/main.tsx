@@ -14,7 +14,7 @@ import Registration from "./routes/auth/registration/_route.tsx";
 import ShopLayout from "./routes/_layout.tsx";
 import Verification from "./routes/auth/verification/_route.tsx";
 import Cart from "./routes/cart/_route.tsx";
-import Catalog from "./routes/catalog/$categoryName/_route.tsx";
+import Catalog from "./routes/catalog/$categoryLink/_route.tsx";
 import FAQ from "./routes/faq/_route.tsx";
 import Favorites from "./routes/favorites/_route.tsx";
 import ItemPage from "./routes/item.$publicationLink/_route.tsx";
@@ -68,7 +68,7 @@ const router = createBrowserRouter([
 						element: <Cart />,
 					},
 					{
-						path: "catalog/:categoryName",
+						path: "catalog/:categoryLink",
 						element: <Catalog />,
 					},
 					{

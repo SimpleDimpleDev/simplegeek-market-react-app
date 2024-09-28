@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { CreditInfoSchema } from "./Payment";
-import { IdSchema } from "./Primitives";
+import { IdSchema, ISOToDateSchema } from "./Primitives";
 import { ProductShopSchema } from "./Product";
 
 export const CatalogItemShopSchema = z.object({
@@ -11,6 +11,7 @@ export const CatalogItemShopSchema = z.object({
 	discount: z.number().nullable(),
 	variationIndex: z.number().nullable(),
 	creditInfo: CreditInfoSchema.nullable(),
+	createdAt: ISOToDateSchema,
 });
 
 export const CatalogItemsAvailabilitySchema = IdSchema.array();
