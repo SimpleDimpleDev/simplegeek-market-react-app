@@ -1,0 +1,43 @@
+import { Typography } from "@mui/material";
+import vkIcon from "@assets/vk.svg";
+
+const MobileFooter = () => (
+	<footer
+		style={{
+			padding: 16,
+			display: "flex",
+			flexShrink: 0,
+			flexDirection: "column",
+			gap: 40,
+			backgroundColor: "surface.primary",
+		}}
+	>
+		<div className="gap-1 h-100 d-f fd-c jc-fs">
+				<Typography variant={"h5"}>admin@simplegeek.ru</Typography>
+				<Typography variant="body1">Если у вас остались вопросы</Typography>
+			</div>
+
+			<div className="gap-2 h-100 d-f fd-c jc-fs">
+				{/* <div style={{ width: 103.75, height: 56 }}>
+					<img src={logo} height={56} alt="logo" />
+				</div> */}
+				<Typography variant={"h6"}>Мы в социальных сетях</Typography>
+				<div style={{ display: "flex", justifyContent: "flex-start" }}>
+					<img style={{ width: 32, height: 32, cursor: "pointer" }} src={vkIcon} alt="vk" onClick={() => window.open("https://vk.com/simplegeeek")} />
+				</div>
+			</div>
+
+			<div className="gap-1 h-100 d-f fd-c jc-fs">
+				<Typography variant="body1">
+					ИП "ФАДЕЕВА МАРИЯ"
+					<br />
+					ИНН 770172924866"
+					<br />
+					Москва, Новая Басманная 12с2
+				</Typography>
+				<Typography variant="body1">© 2024 Simple Geek. Все права защищены</Typography>
+			</div>
+	</footer>
+);
+
+export default MobileFooter;

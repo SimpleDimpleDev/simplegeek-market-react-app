@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 
 const CatalogSectionMenuItem = ({ onClick, title, imgUrl }: { onClick: () => void; title: string; imgUrl: string }) => (
 	<MenuItem sx={{ width: "100%", padding: "12px 0" }} onClick={onClick}>
-		<div className="d-f fd-r ai-c gap-12px">
-			<div className="ps-r w-7 h-7 br-1 d-f jc-c of-h">
+		<div className="gap-12px ai-c d-f fd-r">
+			<div className="w-7 h-7 br-1 d-f jc-c of-h ps-r">
 				<img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={imgUrl}></img>
 			</div>
 			<Typography variant="body1">{title}</Typography>
@@ -41,8 +41,8 @@ export const MobileMenu = ({
 		<Modal open={isOpened} onClose={() => onMenuClose} closeAfterTransition>
 			<Slide mountOnEnter unmountOnExit direction="right" in={isOpened}>
 				<div>
-					<div className="ps-f top-0 left-0 w-100v h-100v d-f fd-c jc-fs ai-c of-a bg-secondary">
-						<div className="w-100 h-9 fs-0 d-f fd-r jc-sb ai-c px-2">
+					<div className="top-0 left-0 bg-secondary w-100v h-100v ai-c d-f fd-c jc-fs of-a ps-f">
+						<div className="px-2 w-100 h-9 ai-c d-f fd-r fs-0 jc-sb">
 							<IconButton
 								onClick={() => {
 									onMenuClose();
@@ -59,7 +59,7 @@ export const MobileMenu = ({
 							</IconButton>
 						</div>
 
-						<div className="w-100 d-f fd-c gap-1 py-1">
+						<div className="gap-1 py-1 w-100 d-f fd-c">
 							<ListItem disablePadding>
 								<ListItemButton
 									sx={{ padding: "8px 16px" }}
@@ -72,7 +72,7 @@ export const MobileMenu = ({
 											: () => {}
 									}
 								>
-									<div className="d-f fd-r ai-c gap-1">
+									<div className="gap-1 ai-c d-f fd-r">
 										<Person />
 										<div className="py-05">
 											{user ? (
@@ -86,9 +86,9 @@ export const MobileMenu = ({
 							</ListItem>
 
 							{user && (
-								<div className="d-f fd-c gap-12px px-2">
+								<div className="gap-12px px-2 d-f fd-c">
 									<div
-										className="d-f fd-r jc-fs ai-c br-12px px-2 py-12px bg-primary"
+										className="bg-primary px-2 py-12px ai-c br-12px d-f fd-r jc-fs"
 										onClick={() => {
 											navigate("/profile/orders");
 											onMenuClose();
@@ -97,7 +97,7 @@ export const MobileMenu = ({
 										<Typography variant="body1">Заказы</Typography>
 									</div>
 									<div
-										className="d-f fd-r jc-fs ai-c br-12px px-2 py-12px bg-primary"
+										className="bg-primary px-2 py-12px ai-c br-12px d-f fd-r jc-fs"
 										onClick={() => {
 											navigate("/profile/settings");
 											onMenuClose();
@@ -106,7 +106,7 @@ export const MobileMenu = ({
 										<Typography variant="body1">Мои данные</Typography>
 									</div>
 									<div
-										className="d-f fd-r jc-fs ai-c br-12px px-2 py-12px bg-primary"
+										className="bg-primary px-2 py-12px ai-c br-12px d-f fd-r jc-fs"
 										onClick={() => {
 											onLogoutClick();
 											onMenuClose();
@@ -127,7 +127,7 @@ export const MobileMenu = ({
 										onMenuClose();
 									}}
 								>
-									<div className="d-f fd-r ai-c gap-1">
+									<div className="gap-1 ai-c d-f fd-r">
 										<Info />
 										<div className="py-05">
 											<Typography variant="subtitle1">FAQ</Typography>
@@ -137,7 +137,7 @@ export const MobileMenu = ({
 							</ListItem>
 						</div>
 
-						<div className="w-100 h-100 d-f fd-c gap-1 p-2 pb-1 bg-primary">
+						<div className="gap-1 bg-primary p-2 pb-1 w-100 h-100 d-f fd-c">
 							<Typography variant="h5">Каталог</Typography>
 							<div>
 								{categories.map((category) => (
