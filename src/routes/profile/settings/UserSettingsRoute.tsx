@@ -4,7 +4,6 @@ import { gridStyle, NodeMessages, UserSettingsCard, UserSettingsFlowType } from 
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { SdkError, oryClient } from "@api/auth/client";
-import "@ory/elements/style.css"
 
 export default function UserSettingsRoute() {
 	const [flow, setFlow] = useState<SettingsFlow | null>(null);

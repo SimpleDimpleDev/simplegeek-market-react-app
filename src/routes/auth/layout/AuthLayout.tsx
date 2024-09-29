@@ -1,7 +1,6 @@
 import { oryTheme, IntlProvider, CustomTranslations, ThemeProvider as OryThemeProvider } from "@ory/elements";
 import { Outlet } from "react-router-dom";
 import customTranslations from "src/oryLocale";
-import "@ory/elements/style.css"
 
 export default function AuthLayout() {
 	return (
