@@ -1,5 +1,4 @@
 import "./App.css";
-import "@ory/elements/style.css";
 import { bootstrapStore } from "@state/bootstrap";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
