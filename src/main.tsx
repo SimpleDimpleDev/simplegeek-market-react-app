@@ -13,8 +13,8 @@ import "@ory/elements/style.css";
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		<ReduxProvider store={store}>
-			<ThemeProvider theme={theme}>
-				<OryThemeProvider themeOverrides={oryTheme}>
+			<OryThemeProvider themeOverrides={oryTheme}>
+				<ThemeProvider theme={theme}>
 					<IntlProvider<CustomTranslations>
 						locale="ru"
 						defaultLocale="ru"
@@ -23,8 +23,8 @@ createRoot(document.getElementById("root")!).render(
 						<CssBaseline />
 						<App />
 					</IntlProvider>
-				</OryThemeProvider>
-			</ThemeProvider>
+				</ThemeProvider>
+			</OryThemeProvider>
 		</ReduxProvider>
 	</StrictMode>
 );
