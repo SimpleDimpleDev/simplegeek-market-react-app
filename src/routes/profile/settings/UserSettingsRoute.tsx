@@ -5,7 +5,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { SdkError, oryClient } from "@api/auth/client";
 
-export default function Me() {
+export default function UserSettingsRoute() {
 	const [flow, setFlow] = useState<SettingsFlow | null>(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -67,12 +67,12 @@ export default function Me() {
 	}, [createFlow, getFlow, searchParams]);
 
 	return (
-		<div className="w-100 d-f fd-c gap-3 ">
+		<div className="gap-3 w-100 d-f fd-c">
 			<div className="py-2">
 				<Typography variant="h3">Мои данные</Typography>
 			</div>
 
-			<div className="d-f fd-c gap-5 p-3 pt-2 bg-primary br-3">
+			<div className="gap-5 bg-primary p-3 pt-2 br-3 d-f fd-c">
 				{flow ? (
 					<div className={gridStyle({ gap: 16 })}>
 						<NodeMessages uiMessages={flow.ui.messages} />

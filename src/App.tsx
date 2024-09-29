@@ -3,10 +3,10 @@ import "@ory/elements/style.css";
 import { bootstrapStore } from "@state/bootstrap";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Outlet } from "react-router-dom";
 import { AppDispatch } from "./state/store";
 import { useDebouncedResizeHandler } from "./hooks/useDebouncedResizeHandler";
 import { fetchCatalogItemsAvailability } from "@state/shop/thunks";
+import { AppRouter } from "./router";
 
 function App() {
 	const dispatch = useDispatch<AppDispatch>();
@@ -20,7 +20,7 @@ function App() {
 		return () => clearInterval(revalidateAvailabilityInterval);
 	}, [dispatch]);
 
-	return <Outlet />;
+	return <AppRouter />;
 }
 
 export default App;

@@ -1,4 +1,4 @@
-import { Close, FilterList, Search } from "@mui/icons-material";
+import { Close, FilterList, Search as SearchIcon } from "@mui/icons-material";
 import {
 	Badge,
 	Button,
@@ -12,7 +12,7 @@ import {
 	Select,
 	Typography,
 } from "@mui/material";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
@@ -21,11 +21,12 @@ import { useEffect, useMemo, useState } from "react";
 import { CatalogFilters } from "@components/Filters";
 import { CatalogItem } from "@appTypes/CatalogItem";
 import { Empty } from "@components/Empty";
+import { isCatalogItemMatchQuery } from "@utils/search";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
-import { ScrollTop } from "@components/ScrollToTopButton";
 
 type Sorting = "expensive" | "cheap";
+
 const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] => {
 	switch (sorting) {
 		case "expensive": {
@@ -40,80 +41,35 @@ const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] =
 	}
 };
 
-export default function Catalog() {
+export default function SearchRoute() {
 	const navigate = useNavigate();
-
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
-
+	const searchParams = useSearchParams();
+	const query = Object.fromEntries(searchParams[0].entries()).q;
 	const availableItemsIds = useSelector((state: RootState) => state.availability.items);
 	const catalogItems = useSelector((state: RootState) => state.catalog.items);
 	const catalogLoading = useSelector((state: RootState) => state.catalog.loading);
+	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 	const userCartItems = useSelector((state: RootState) => state.userCart.items);
 	const userFavoriteItems = useSelector((state: RootState) => state.userFavorites.items);
 
-	const params = useParams();
-	const searchParams = useSearchParams();
-	const preFilter = useMemo(() => {
-		const preFilterString = searchParams[0].get("f");
-		if (!preFilterString) return undefined;
-		const preFilter = preFilterString.split(":");
-		const preFilterGroupTitle = preFilter.at(0);
-		const preFilterValue = preFilter.at(1);
-		if (!preFilterGroupTitle || !preFilterValue) return undefined;
-		return { title: preFilterGroupTitle, value: preFilterValue };
-	}, [searchParams]);
-
-	const categoryItems = useMemo(
-		() => catalogItems.filter((item) => item.product.category.link === params.categoryLink),
-		[catalogItems, params]
-	);
+	const [searchedItems, setSearchedItems] = useState<CatalogItem[]>([]);
 
 	const [filtersOpen, setFiltersOpen] = useState(false);
-	const [filtersReset, setFiltersReset] = useState(false);
-	const [itemsFiltering, setItemsFiltering] = useState<boolean>(false);
-	const [filteredItems, setFilteredItems] = useState<CatalogItem[]>(categoryItems);
 
 	const [sorting, setSorting] = useState<Sorting>("expensive");
-	const sortedItems = useMemo(() => getSortedItems(filteredItems, sorting), [filteredItems, sorting]);
+	const [filteredItems, setFilteredItems] = useState<CatalogItem[]>(searchedItems);
+	const [filtersReset, setFiltersReset] = useState(false);
+	const [itemsFiltering, setItemsFiltering] = useState<boolean>(true);
+	const sortedItems = getSortedItems(filteredItems, sorting);
 
 	const favoriteItemsIds = useMemo(() => userFavoriteItems.map((item) => item.id), [userFavoriteItems]);
 	const cartItemsIds = useMemo(() => userCartItems.map((item) => item.id), [userCartItems]);
 
-	const [showNothing, setShowNothing] = useState(false);
-
 	useEffect(() => {
-		const recordCategoryVisited = () => {
-			const categoryLink = params.categoryLink;
-			if (!categoryLink) return;
-			const categoryVisitsString = localStorage.getItem("categoryVisits");
-			if (!categoryVisitsString) return;
-			const categoryVisits: { categoryLink: string; categoryVisits: number }[] = JSON.parse(categoryVisitsString);
-			if (!categoryVisits) return;
-			const categoryVisitsCopy = { ...categoryVisits };
-			const currentCategoryVisit = categoryVisitsCopy.find(
-				(categoryVisit) => categoryVisit.categoryLink === categoryLink
-			);
-			if (currentCategoryVisit) {
-				currentCategoryVisit.categoryVisits++;
-			} else {
-				categoryVisitsCopy.push({ categoryLink, categoryVisits: 1 });
-			}
-			localStorage.setItem("categoryVisits", JSON.stringify(categoryVisitsCopy));
-		};
-
-		recordCategoryVisited();
-	}, [params.categoryLink]);
-
-	useEffect(() => {
-		setShowNothing(true);
-		setTimeout(() => {
-			setShowNothing(false);
-		}, 0);
-	}, [categoryItems]);
-
-	useEffect(() => {
-		setFilteredItems(categoryItems);
-	}, [categoryItems]);
+		const searchedItems = catalogItems.filter((item) => isCatalogItemMatchQuery(item, query));
+		setSearchedItems(searchedItems);
+		setFilteredItems(searchedItems);
+	}, [catalogItems, query]);
 
 	const onApplyFilters = (filteredItems: CatalogItem[]) => {
 		setFilteredItems([]);
@@ -126,16 +82,15 @@ export default function Catalog() {
 
 	return (
 		<>
-			<ScrollTop />
 			{catalogLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
-			) : categoryItems.length === 0 ? (
+			) : searchedItems.length === 0 ? (
 				<Empty
-					title={`В категории ${params.categoryLink} пока нет товаров`}
-					description="Вернитесь позже"
-					icon={<Search sx={{ height: 96, width: 96 }} />}
+					title={`По запросу "${query}" ничего не найдено.`}
+					description="Попробуйте изменить параметры поиска."
+					icon={<SearchIcon sx={{ height: 96, width: 96 }} />}
 					button={<Button onClick={() => navigate("/")}>На главную</Button>}
 				/>
 			) : (
@@ -155,9 +110,9 @@ export default function Catalog() {
 							</div>
 
 							<CatalogFilters
-								items={categoryItems}
+								items={searchedItems}
 								isMobile={isMobile}
-								preFilter={preFilter}
+								preFilter={undefined}
 								onFilter={onApplyFilters}
 								filtersReset={filtersReset}
 								setFiltersReset={setFiltersReset}
@@ -167,15 +122,15 @@ export default function Catalog() {
 					<BreadcrumbsPageHeader
 						isMobile={isMobile}
 						path={[{ title: "Главная", link: "/" }]}
-						current={categoryItems[0].product.category.title}
+						current={`Поиск по запросу "${query}"`}
 					/>
 
 					<div className="gap-2 d-f fd-r">
 						{!isMobile && (
 							<CatalogFilters
-								items={categoryItems}
+								items={searchedItems}
 								isMobile={isMobile}
-								preFilter={preFilter}
+								preFilter={undefined}
 								onFilter={onApplyFilters}
 								filtersReset={filtersReset}
 								setFiltersReset={setFiltersReset}
@@ -226,7 +181,7 @@ export default function Catalog() {
 								<Empty
 									title={"Ничего не найдено"}
 									description="Попробуйте изменить фильтры"
-									icon={<Search sx={{ height: 96, width: 96 }} />}
+									icon={<SearchIcon sx={{ height: 96, width: 96 }} />}
 									button={
 										<Button variant="contained" onClick={() => setFiltersReset(true)}>
 											Сбросить фильтры
@@ -235,31 +190,30 @@ export default function Catalog() {
 								/>
 							) : (
 								<Grid2 container justifyContent="flex-start" spacing={2}>
-									{!showNothing &&
-										sortedItems.map((data, index) => (
-											<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
-												<LazyLoad
-													key={index}
-													width={"100%"}
-													height={420}
-													observerOptions={{
-														rootMargin: "100px",
-													}}
-													once
-												>
-													<Grow key={index} in={true} timeout={200}>
-														<div>
-															<ItemCard
-																data={data}
-																isAvailable={availableItemsIds.includes(data.id)}
-																isInCart={cartItemsIds.includes(data.id)}
-																isFavorite={favoriteItemsIds.includes(data.id)}
-															/>
-														</div>
-													</Grow>
-												</LazyLoad>
-											</Grid2>
-										))}
+									{sortedItems.map((data, index) => (
+										<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
+											<LazyLoad
+												key={index}
+												width={"100%"}
+												height={420}
+												observerOptions={{
+													rootMargin: "100px",
+												}}
+												once
+											>
+												<Grow key={index} in={true} timeout={200}>
+													<div>
+														<ItemCard
+															data={data}
+															isAvailable={availableItemsIds.includes(data.id)}
+															isInCart={cartItemsIds.includes(data.id)}
+															isFavorite={favoriteItemsIds.includes(data.id)}
+														/>
+													</div>
+												</Grow>
+											</LazyLoad>
+										</Grid2>
+									))}
 								</Grid2>
 							)}
 						</div>

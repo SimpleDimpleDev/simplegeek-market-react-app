@@ -207,4 +207,4 @@ const customTranslations: CustomLanguageFormats = {
 	ru: ruLocale,
 };
 
-export { customTranslations };
+export default customTranslations

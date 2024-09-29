@@ -3,11 +3,12 @@ import { Box, CircularProgress, Divider, Stack, Typography } from "@mui/material
 import { useMemo } from "react";
 import { CountPageHeader } from "@components/CountPageHeader";
 import { Empty } from "@components/Empty";
-import { FavoritesSection } from "./section";
+import { FavoritesSection } from "./FavoritesSection";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
 
-export default function Favorites() {
+
+export default function FavoritesRoute() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
 	const catalogItems = useSelector((state: RootState) => state.catalog.items);

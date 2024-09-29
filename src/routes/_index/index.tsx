@@ -38,10 +38,9 @@ const SectionTypographyWrapper = styled("div")({
 	transform: "translateX(-50%)",
 });
 
-export default function Home() {
-	// TODO: resolve isMobile
+export default function HomeRoute() {
+	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 	const categories = useSelector((state: RootState) => state.catalog.categories);
-	const isMobile = false;
 	const navigate = useNavigate();
 
 	return (

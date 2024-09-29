@@ -20,7 +20,7 @@ const deliveryServiceMapping: Record<DeliveryService, string> = {
 	SELF_PICKUP: "Самовывоз",
 };
 
-export default function UserOrder() {
+export default function UserOrderRoute() {
 	const params = useParams();
 	const navigate = useNavigate();
 
@@ -69,14 +69,14 @@ export default function UserOrder() {
 
 	return (
 		<>
-			<div className="d-f fd-c ai-fs gap-2">
+			<div className="gap-2 ai-fs d-f fd-c">
 				<Button variant="text" sx={{ color: "warning.main" }} onClick={() => navigate(-1)}>
 					<ChevronLeft />
 					<Typography color="inherit">Все заказы</Typography>
 				</Button>
 			</div>
 			{order === undefined ? (
-				<div className="w-100 h-100 d-f jc-c ai-c">
+				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
 			) : (
@@ -85,9 +85,9 @@ export default function UserOrder() {
 						<Typography variant="h3">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
 						<Typography variant="subtitle0">ID: {order.id}</Typography>
 					</div>
-					<div className="d-f fd-r gap-1 pb-4">{orderStatusBadges[order.status]}</div>
-					<div className="w-100 d-f gap-2" style={{ flexDirection: isMobile ? "column" : "row" }}>
-						<div className="w-100 d-f fd-c gap-2">
+					<div className="gap-1 pb-4 d-f fd-r">{orderStatusBadges[order.status]}</div>
+					<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
+						<div className="gap-2 w-100 d-f fd-c">
 							<div className="section">
 								{order.delivery ? (
 									<Stack
@@ -95,10 +95,10 @@ export default function UserOrder() {
 										direction={"column"}
 										divider={<Divider orientation="horizontal" flexItem />}
 									>
-										<div className="d-f fd-c gap-2">
+										<div className="gap-2 d-f fd-c">
 											<Typography variant={"h5"}>Доставка</Typography>
 											<div className={`d-f gap-1${isMobile ? " fd-c" : " fd-r"}`}>
-												<div className="d-f fd-c gap-05">
+												<div className="gap-05 d-f fd-c">
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
 														Способ получения
 													</Typography>
@@ -106,7 +106,7 @@ export default function UserOrder() {
 														{deliveryServiceMapping[order.delivery.service]}
 													</Typography>
 												</div>
-												<div className="d-f fd-c gap-05">
+												<div className="gap-05 d-f fd-c">
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
 														Пункт выдачи
 													</Typography>
@@ -119,10 +119,10 @@ export default function UserOrder() {
 												<Typography variant="body1">{order.delivery.point?.address}</Typography>
 											</div>
 										</div>
-										<div className="d-f fd-c gap-2">
+										<div className="gap-2 d-f fd-c">
 											<Typography variant="h5">Получатель</Typography>
 											<div className={`d-f gap-1${isMobile ? " fd-c" : " fd-r"}`}>
-												<div className="d-f fd-c gap-05">
+												<div className="gap-05 d-f fd-c">
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
 														ФИО
 													</Typography>
@@ -130,7 +130,7 @@ export default function UserOrder() {
 														{order.delivery.recipient.fullName}
 													</Typography>
 												</div>
-												<div className="d-f fd-c gap-05">
+												<div className="gap-05 d-f fd-c">
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
 														Номер телефона
 													</Typography>
@@ -146,7 +146,7 @@ export default function UserOrder() {
 										<Typography variant="subtitle1">
 											Доставка к вам оформляется после полной оплаты товара и приезда его на склад
 										</Typography>
-										<div className="d-f fd-r gap-1">
+										<div className="gap-1 d-f fd-r">
 											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
 												На складе ожидается:
 											</Typography>
@@ -168,9 +168,9 @@ export default function UserOrder() {
 								</Typography>
 								<Stack divider={<Divider />}>
 									{order.items.map((item) => (
-										<div className="d-f fd-c gap-1 pt-1" key={item.id}>
+										<div className="gap-1 pt-1 d-f fd-c" key={item.id}>
 											<div className="w-100 d-f fd-r jc-sb">
-												<div className="w-100 d-f fd-r gap-1">
+												<div className="gap-1 w-100 d-f fd-r">
 													<div className="br-2" style={{ width: 96, height: 96 }}>
 														<img
 															className="contain"
@@ -228,7 +228,7 @@ export default function UserOrder() {
 							</div>
 						</div>
 						<div
-							className="ps-s top-0 d-f fd-c fs-0 h-mc gap-2 p-2 bg-primary br-3"
+							className="top-0 gap-2 bg-primary p-2 h-mc br-3 d-f fd-c fs-0 ps-s"
 							style={{ width: isMobile ? "100%" : 360 }}
 						>
 							<Stack direction="column" divider={<Divider />}>
@@ -239,7 +239,7 @@ export default function UserOrder() {
 												<Typography variant="subtitle0">
 													Доставка на зарубежный склад
 												</Typography>
-												<div className="d-f fd-r gap-1">
+												<div className="gap-1 d-f fd-r">
 													<Typography
 														variant="subtitle1"
 														sx={{ color: "typography.secondary" }}
@@ -270,7 +270,7 @@ export default function UserOrder() {
 										{order.preorder.localShippingInvoice && (
 											<div className="gap-1">
 												<Typography variant="subtitle0">Доставка в Россию</Typography>
-												<div className="d-f fd-r gap-1">
+												<div className="gap-1 d-f fd-r">
 													<Typography
 														variant="subtitle1"
 														sx={{ color: "typography.secondary" }}

@@ -6,7 +6,7 @@ import { Empty } from "@components/Empty";
 import { UserCartItem } from "@appTypes/UserItems";
 import { useMemo, useState } from "react";
 
-import { CartSection } from "./section";
+import { CartSection } from "./CartSection";
 
 import type { CatalogItemCart, FormedCart, FormedCartSection } from "@appTypes/Cart";
 import { CatalogItem } from "@appTypes/CatalogItem";
@@ -77,7 +77,8 @@ function formCart({ catalogItems, userCart, availableItemsIds }: FormCartArgs): 
 	};
 }
 
-export default function Cart() {
+
+export default function CartRoute() {
 	const navigate = useNavigate();
 
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
@@ -119,7 +120,7 @@ export default function Cart() {
 		<>
 			<CountPageHeader isMobile={isMobile} title="Корзина" count={userCartItems.length} />
 			{!orderIsOk && (
-				<div className="w-100 br-3 bg-primary p-3">
+				<div className="bg-primary p-3 w-100 br-3">
 					<Typography variant="body2">
 						В вашем заказе содержались товары, указанное количество которых отсутствует на складе.
 						Количество товаров в корзине было скорректировано

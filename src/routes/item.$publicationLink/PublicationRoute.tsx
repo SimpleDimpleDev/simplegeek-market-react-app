@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@state/store";
 import { addCartItem, addFavoriteItem, removeFavoriteItem } from "@state/user/thunks";
 
-export default function ItemPage() {
+export default function PublicationRoute() {
 	const params = useParams();
 	const searchParams = useSearchParams();
 	const navigate = useNavigate();

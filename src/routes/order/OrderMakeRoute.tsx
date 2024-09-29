@@ -68,7 +68,7 @@ const CardRadio = ({ isChecked, onChange, mainText, subText, imgUrl }: CardRadio
 // 	];
 // };
 
-export default function Order() {
+export default function OrderMakeRoute() {
 	const navigate = useNavigate();
 	const recipientFormRef = useRef<{ submit: () => void }>(null);
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
@@ -267,7 +267,7 @@ export default function Order() {
 								{items.length} {getRuGoodsWord(items.length)}
 							</Typography>
 							{itemsCreditAvailable.length > 0 && (
-								<div className="d-f fd-c gap-1">
+								<div className="gap-1 d-f fd-c">
 									<Typography variant="h4">Доступна рассрочка</Typography>
 									<Stack divider={<Divider />} direction={"column"}>
 										{itemsCreditAvailable.map((item) => (
@@ -294,7 +294,7 @@ export default function Order() {
 								</div>
 							)}
 							{itemsCreditUnavailable.length > 0 && (
-								<div className="d-f fd-c gap-1">
+								<div className="gap-1 d-f fd-c">
 									<Stack divider={<Divider />} direction={"column"}>
 										{itemsCreditUnavailable.map((item) => (
 											<ShopOrderItemCard

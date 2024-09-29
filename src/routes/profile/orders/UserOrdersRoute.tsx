@@ -4,7 +4,7 @@ import { Box, CircularProgress, Divider, Tab, Tabs, Typography } from "@mui/mate
 import { ShoppingBag } from "@mui/icons-material";
 
 import { Empty } from "@components/Empty";
-import { OrderCard } from "./card";
+import { OrderCard } from "./OrderCard";
 
 import type { OrderShop } from "@appTypes/Order";
 import { useSelector } from "react-redux";
@@ -31,7 +31,7 @@ const getOrdersByTab = ({ currentTab, orders }: { currentTab: number; orders: Or
 	}
 };
 
-export default function UserOrders() {
+export default function UserOrdersRoute() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
 	const [orders, setOrders] = useState<OrderShop[] | undefined>(undefined);
@@ -76,7 +76,7 @@ export default function UserOrders() {
 				</Box>
 			</Box>
 			{orders === undefined ? (
-				<div className="w-100 h-100 d-f jc-c ai-c">
+				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
 			) : ordersToRender.length > 0 ? (

@@ -18,7 +18,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
  * https://www.ory.sh/docs/oauth2-oidc/custom-login-consent/flow
  *
  */
-export default function Login() {
+export default function LoginRoute() {
 	const [flow, setFlow] = useState<LoginFlow | null>(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 

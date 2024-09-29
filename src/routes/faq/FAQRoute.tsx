@@ -1,7 +1,7 @@
 import { ExpandMore } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
 
-export default function FAQ() {
+export default function FAQRoute() {
     return (
         <>
             <div className="py-2">
@@ -15,7 +15,7 @@ export default function FAQ() {
                         <Typography variant="subtitle0">Вопрос 1</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <div className="d-f fg-c gap-1 pb-2">
+                        <div className="gap-1 pb-2 d-f fg-c">
                             <Typography variant="subtitle2">Заголовок 1</Typography>
                             <Typography variant="body2">Овтет 1</Typography>
                         </div>
