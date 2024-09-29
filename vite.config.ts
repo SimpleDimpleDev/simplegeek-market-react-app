@@ -13,6 +13,9 @@ export default defineConfig({
 			filename: "stats.html",
 		}) as PluginOption,
 	],
+	optimizeDeps: {
+		include: ["@emotion/styled"],
+	},
 	define: {
 		"import.meta.env.SHOP_API_URL": JSON.stringify(process.env.SHOP_API_URL || "http://127.0.0.1/api"),
 		"import.meta.env.AUTH_API_URL": JSON.stringify(process.env.AUTH_API_URL || "http://127.0.0.1/auth"),
