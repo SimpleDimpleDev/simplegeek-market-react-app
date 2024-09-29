@@ -5,8 +5,9 @@ import { createRoot } from "react-dom/client";
 import { Provider as ReduxProvider } from "react-redux";
 import { store } from "./state/store";
 import App from "./App.tsx";
-import { oryTheme, IntlProvider, CustomTranslations, ThemeProvider as OryThemeProvider } from "@ory/elements";
+import {  IntlProvider, CustomTranslations, ThemeProvider as OryThemeProvider } from "@ory/elements";
 import customTranslations from "src/oryLocale";
+import oryTheme from "./oryTheme.ts";
 
 import "@ory/elements/style.css";
 
