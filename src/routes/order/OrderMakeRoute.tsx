@@ -85,12 +85,12 @@ export default function OrderMakeRoute() {
 						{preorder === null ? (
 							<>
 								<DeliveryForm
-									defaultDelivery={delivery}
+									delivery={delivery}
 									packages={items
 										.map((item) => item.product.physicalProperties)
 										.filter((pkg) => !!pkg)}
 									isMobile={isMobile}
-									onSave={setDelivery}
+									onChange={setDelivery}
 								/>
 							</>
 						) : (

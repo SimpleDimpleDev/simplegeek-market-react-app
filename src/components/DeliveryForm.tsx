@@ -11,6 +11,7 @@ import mainLogoSmall from "@assets/MainLogoSmall.png";
 import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DeliverySchema } from "@schemas/Delivery";
 
 type DeliveryFormData = {
 	recipient: Recipient;
@@ -52,13 +53,13 @@ const DeliveryFormResolver = z
 	);
 
 interface DeliveryFormProps {
+	delivery?: Delivery;
+	onChange: (data: z.infer<typeof DeliverySchema>) => void;
 	packages: DeliveryPackage[];
-	onSave: (data: z.infer<typeof DeliveryFormResolver>) => void;
-	defaultDelivery?: Delivery;
 	isMobile?: boolean;
 }
 
-const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onSave, defaultDelivery, isMobile }) => {
+const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onChange, delivery, isMobile }) => {
 	const {
 		control,
 		watch,
@@ -68,11 +69,11 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onSave, defaultDe
 		formState: { isDirty, errors },
 	} = useForm<DeliveryFormData>({
 		resolver: zodResolver(DeliveryFormResolver),
-		defaultValues: defaultDelivery
+		defaultValues: delivery
 			? {
-					recipient: defaultDelivery.recipient,
-					service: defaultDelivery.service,
-					point: defaultDelivery.point,
+					recipient: delivery.recipient,
+					service: delivery.service,
+					point: delivery.point,
 					cdekDeliveryData: null,
 			  }
 			: {
@@ -89,13 +90,13 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onSave, defaultDe
 	const service = watch("service");
 	const cdekDeliveryData = watch("cdekDeliveryData");
 
-	const [isEditing, setIsEditing] = useState(!defaultDelivery);
+	const [isEditing, setIsEditing] = useState(!delivery);
 	const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
 
 	const handleSave = (data: DeliveryFormData) => {
-		onSave(DeliveryFormResolver.parse(data));
+		onChange(DeliverySchema.parse(data));
 		setIsEditing(false);
-		reset()
+		reset(DeliverySchema.parse(data))
 	};
 
 	const handleStopEditing = () => {
@@ -266,9 +267,9 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onSave, defaultDe
 							variant="contained"
 							color="success"
 						>
-							{!defaultDelivery ? "Подтвердить" : "Сохранить"}
+							{!delivery ? "Подтвердить" : "Сохранить"}
 						</Button>
-						{defaultDelivery && (
+						{delivery && (
 							<Button
 								sx={{ width: "max-content" }}
 								onClick={handleStopEditing}
