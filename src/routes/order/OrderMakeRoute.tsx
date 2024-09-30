@@ -90,7 +90,7 @@ export default function OrderMakeRoute() {
 									isMobile={isMobile}
 									onSave={setDelivery}
 								/>
-								{deliveryError && <Typography color="error">{deliveryError}</Typography>}
+								
 							</>
 						) : (
 							<div className="section">
@@ -187,6 +187,7 @@ export default function OrderMakeRoute() {
 							<Button variant="contained" onClick={handleCreateOrder}>
 								Оплатить
 							</Button>
+							{deliveryError && <Typography variant="subtitle0" color="error">{deliveryError}</Typography>}
 						</Box>
 					</Box>
 				</Box>

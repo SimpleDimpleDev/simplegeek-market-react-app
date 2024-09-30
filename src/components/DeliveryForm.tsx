@@ -59,12 +59,19 @@ const DeliveryFormResolver = z
 
 interface DeliveryFormProps {
 	packages: DeliveryPackage[];
-	defaultDelivery?: DefaultDelivery;
 	onSave: (data: z.infer<typeof DeliveryFormResolver>) => void;
+	defaultEditing?: boolean;
+	defaultDelivery?: DefaultDelivery;
 	isMobile?: boolean;
 }
 
-const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, isMobile, defaultDelivery, onSave }) => {
+const DeliveryForm: React.FC<DeliveryFormProps> = ({
+	packages,
+	onSave,
+	defaultDelivery,
+	isMobile,
+	defaultEditing = false,
+}) => {
 	const {
 		control,
 		watch,
@@ -95,7 +102,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, isMobile, default
 	const service = watch("service");
 	const cdekDeliveryData = watch("cdekDeliveryData");
 
-	const [isEditing, setIsEditing] = useState(false);
+	const [isEditing, setIsEditing] = useState(defaultEditing);
 	const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
 
 	const handleSave = (data: DeliveryFormData) => {
