@@ -265,7 +265,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onSave, defaultDe
 							variant="contained"
 							color="success"
 						>
-							Сохранить
+							{!defaultDelivery ? "Подтвердить" : "Сохранить"}
 						</Button>
 						{isValid && (
 							<Button
