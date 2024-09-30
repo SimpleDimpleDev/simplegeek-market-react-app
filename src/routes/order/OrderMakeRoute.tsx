@@ -6,7 +6,7 @@ import { DateFormatter, getRuGoodsWord } from "@utils/format";
 import { useEffect, useMemo, useState } from "react";
 import { getImageUrl } from "@utils/image";
 import { CreditInfo } from "@appTypes/Credit";
-import { DeliverySelect } from "@appTypes/Delivery";
+import { Delivery } from "@appTypes/Delivery";
 import { ShopOrderItemCard, ShopOrderItemCardCredit } from "@components/ItemCard";
 import { UserCartItem } from "@appTypes/UserItems";
 import { useSelector } from "react-redux";
@@ -20,12 +20,14 @@ export default function OrderMakeRoute() {
 
 	const catalogItems = useSelector((state: RootState) => state.catalog.items);
 	const [checkoutItems, setCheckoutItems] = useState<UserCartItem[]>([]);
+	const [defaultDelivery] = useState<Delivery | undefined>(undefined);
 
 	useEffect(() => {
 		const setup = async () => {
 			const result = await ShopApiClient.getCheckoutItems();
 			if (!result) {
 				navigate("/cart");
+
 			} else {
 				setCheckoutItems(result.items);
 			}
@@ -48,7 +50,7 @@ export default function OrderMakeRoute() {
 
 	const preorder = useMemo(() => items.at(0)?.preorder || null, [items]);
 
-	const [delivery, setDelivery] = useState<DeliverySelect | null>(null);
+	const [delivery, setDelivery] = useState<Delivery | null>(null);
 	const [itemsCredit, setItemsCredit] = useState<{ id: string; isCredit: boolean }[]>(
 		items.map((item) => ({ id: item.id, isCredit: false }))
 	);
@@ -84,13 +86,14 @@ export default function OrderMakeRoute() {
 						{preorder === null ? (
 							<>
 								<DeliveryForm
+									defaultDelivery={defaultDelivery}
+									defaultEditing={!defaultDelivery}
 									packages={items
 										.map((item) => item.product.physicalProperties)
 										.filter((pkg) => !!pkg)}
 									isMobile={isMobile}
 									onSave={setDelivery}
 								/>
-								
 							</>
 						) : (
 							<div className="section">

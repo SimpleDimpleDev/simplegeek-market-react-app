@@ -5,14 +5,14 @@ import {
 	InvoiceShopSchema,
 } from "./Payment";
 import { IdSchema, ISOToDateSchema } from "./Primitives";
-import { DeliverySelectSchema, DeliveryOrderSchema } from "./Delivery";
+import { DeliverySchema, DeliveryOrderSchema } from "./Delivery";
 import { PreorderOrderShopSchema } from "./Preorder";
 
 export const OrderStatusSchema = z.enum(["CANCELLED", "UNPAID", "ACCEPTED", "DELIVERY", "READY_FOR_PICKUP", "FINISHED"]);
 
 export const OrderCreateSchema = z.object({
 	creditIds: IdSchema.array(),
-	delivery: DeliverySelectSchema.nullable(),
+	delivery: DeliverySchema.nullable(),
 });
 
 export const OrderItemShopSchema = z.object({

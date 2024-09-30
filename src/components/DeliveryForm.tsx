@@ -1,7 +1,7 @@
 import { Box, Button, Grid2, IconButton, Modal, TextField, Typography } from "@mui/material";
 import { CDEKDeliveryInfo, CDEKWidget } from "./widgets/cdek";
 import { Controller, useForm } from "react-hook-form";
-import { DeliveryPackage, DeliveryPoint, DeliveryService, Recipient } from "@appTypes/Delivery";
+import { Delivery, DeliveryPackage, DeliveryPoint, DeliveryService, Recipient } from "@appTypes/Delivery";
 
 import { CDEKDeliveryData } from "@appTypes/CDEK";
 import { CardRadio } from "./CardRadio";
@@ -11,12 +11,6 @@ import mainLogoSmall from "@assets/MainLogoSmall.png";
 import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-type DefaultDelivery = {
-	recipient: Recipient;
-	service: DeliveryService;
-	point: DeliveryPoint | null;
-};
 
 type DeliveryFormData = {
 	recipient: Recipient;
@@ -61,7 +55,7 @@ interface DeliveryFormProps {
 	packages: DeliveryPackage[];
 	onSave: (data: z.infer<typeof DeliveryFormResolver>) => void;
 	defaultEditing?: boolean;
-	defaultDelivery?: DefaultDelivery;
+	defaultDelivery?: Delivery;
 	isMobile?: boolean;
 }
 

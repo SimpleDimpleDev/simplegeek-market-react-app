@@ -15,13 +15,13 @@ export const RecipientSchema = z.object({
 
 export const DeliveryPackageSchema = PhysicalPropertiesSchema;
 
-export const DeliverySelectSchema = z.object({
+export const DeliverySchema = z.object({
 	recipient: RecipientSchema,
 	service: DeliveryServiceSchema,
 	point: DeliveryPointSchema.nullable(),
 });
 
-export const DeliveryOrderSchema = DeliverySelectSchema.extend({
+export const DeliveryOrderSchema = DeliverySchema.extend({
 	tracking: z
 		.object({
 			code: z.string(),
