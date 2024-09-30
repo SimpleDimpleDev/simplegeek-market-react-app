@@ -1,5 +1,5 @@
-import { ChevronLeft, Favorite, FavoriteBorder } from "@mui/icons-material";
-import { Button, CircularProgress, Divider, IconButton, Stack, Typography } from "@mui/material";
+import { ChevronLeft } from "@mui/icons-material";
+import { Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { orderStatusBadges } from "@components/Badges";
@@ -13,7 +13,6 @@ import { RootState } from "@state/store";
 import { OrderShop } from "@appTypes/Order";
 import { useParams } from "react-router-dom";
 import ShopApiClient from "@api/shop/client";
-import { addFavoriteItem, removeFavoriteItem } from "@state/user/thunks";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЕК",
@@ -25,8 +24,6 @@ export default function UserOrderRoute() {
 	const navigate = useNavigate();
 
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
-
-	const userFavorites = useSelector((state: RootState) => state.userFavorites.items);
 
 	const [order, setOrder] = useState<OrderShop | undefined>(undefined);
 
@@ -59,14 +56,6 @@ export default function UserOrderRoute() {
 		window.location.href = paymentUrl;
 	};
 
-	const handleToggleFavorite = (id: string) => {
-		if (userFavorites.find((favorite) => favorite.id === id)) {
-			removeFavoriteItem({ itemId: id });
-		} else {
-			addFavoriteItem({ itemId: id });
-		}
-	};
-
 	return (
 		<>
 			<div className="gap-2 ai-fs d-f fd-c">
@@ -97,8 +86,8 @@ export default function UserOrderRoute() {
 									>
 										<div className="gap-2 d-f fd-c">
 											<Typography variant={"h5"}>Доставка</Typography>
-											<div className={`d-f gap-1${isMobile ? " fd-c" : " fd-r"}`}>
-												<div className="gap-05 d-f fd-c">
+											<div className={`d-f ${isMobile ? " fd-c gap-1" : " fd-r jc-sb"}`}>
+												<div className="gap-05 w-100 d-f fd-c">
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
 														Способ получения
 													</Typography>
@@ -106,7 +95,7 @@ export default function UserOrderRoute() {
 														{deliveryServiceMapping[order.delivery.service]}
 													</Typography>
 												</div>
-												<div className="gap-05 d-f fd-c">
+												<div className="gap-05 w-100 d-f fd-c">
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
 														Пункт выдачи
 													</Typography>
@@ -115,14 +104,17 @@ export default function UserOrderRoute() {
 													</Typography>
 												</div>
 											</div>
-											<div>
+											<div className="gap-05 d-f fd-c">
+												<Typography variant="body1" sx={{ color: "typography.secondary" }}>
+													Адрес
+												</Typography>
 												<Typography variant="body1">{order.delivery.point?.address}</Typography>
 											</div>
 										</div>
 										<div className="gap-2 d-f fd-c">
 											<Typography variant="h5">Получатель</Typography>
-											<div className={`d-f gap-1${isMobile ? " fd-c" : " fd-r"}`}>
-												<div className="gap-05 d-f fd-c">
+											<div className={`d-f ${isMobile ? " fd-c gap-1" : " fd-r jc-sb"}`}>
+												<div className="gap-05 w-100 d-f fd-c">
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
 														ФИО
 													</Typography>
@@ -130,7 +122,7 @@ export default function UserOrderRoute() {
 														{order.delivery.recipient.fullName}
 													</Typography>
 												</div>
-												<div className="gap-05 d-f fd-c">
+												<div className="gap-05 w-100 d-f fd-c">
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
 														Номер телефона
 													</Typography>
@@ -177,30 +169,10 @@ export default function UserOrderRoute() {
 															src={getImageUrl(item.image, "small")}
 														/>
 													</div>
-													<div className="d-f fd-c jc-sb">
-														<div className="gap-1">
-															<Typography variant="h6">{item.title}</Typography>
-															<Typography variant="body1">{item.quantity} шт.</Typography>
-														</div>
-														<IconButton
-															onClick={(event) => {
-																handleToggleFavorite(item.id);
-																event.stopPropagation();
-															}}
-															style={{
-																width: 48,
-																height: 48,
-																borderRadius: 8,
-															}}
-														>
-															{userFavorites.find(
-																(favorite) => favorite.id === item.id
-															) ? (
-																<Favorite sx={{ color: "icon.attention" }} />
-															) : (
-																<FavoriteBorder color="secondary" />
-															)}
-														</IconButton>
+
+													<div className="gap-1">
+														<Typography variant="h6">{item.title}</Typography>
+														<Typography variant="body1">{item.quantity} шт.</Typography>
 													</div>
 												</div>
 												<div className="d-f fd-r fs-0">
