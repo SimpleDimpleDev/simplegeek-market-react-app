@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PhysicalPropertiesSchema } from "./PhysicalProperties";
 
 export const DeliveryServiceSchema = z.enum(["SELF_PICKUP", "CDEK"]);
 
@@ -12,13 +13,15 @@ export const RecipientSchema = z.object({
 	phone: z.string(),
 });
 
-export const DeliverySchema = z.object({
+export const DeliveryPackageSchema = PhysicalPropertiesSchema;
+
+export const DeliverySelectSchema = z.object({
 	recipient: RecipientSchema,
 	service: DeliveryServiceSchema,
 	point: DeliveryPointSchema.nullable(),
 });
 
-export const DeliveryOrderSchema = DeliverySchema.extend({
+export const DeliveryOrderSchema = DeliverySelectSchema.extend({
 	tracking: z
 		.object({
 			code: z.string(),

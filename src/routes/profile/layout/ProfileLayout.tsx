@@ -5,6 +5,10 @@ import NavButton from "@components/NavButton";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
 
+import { IntlProvider, CustomTranslations, ThemeProvider as OryThemeProvider } from "@ory/elements";
+import customTranslations from "src/oryLocale";
+import oryTheme from "src/oryTheme.ts";
+
 export default function ProfileLayout() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
@@ -33,8 +37,15 @@ export default function ProfileLayout() {
 						<NavButton to="/profile/orders" text={"Заказы"} icon={<ShoppingBag />} />
 						<NavButton to="/profile/settings" text={"Мои данные"} icon={<AccountCircle />} />
 					</Box>
-
-					<Outlet />
+					<OryThemeProvider themeOverrides={oryTheme}>
+						<IntlProvider<CustomTranslations>
+							locale="ru"
+							defaultLocale="ru"
+							customTranslations={customTranslations}
+						>
+							<Outlet />
+						</IntlProvider>
+					</OryThemeProvider>
 				</Box>
 			)}
 		</>
