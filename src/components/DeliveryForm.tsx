@@ -54,25 +54,18 @@ const DeliveryFormResolver = z
 interface DeliveryFormProps {
 	packages: DeliveryPackage[];
 	onSave: (data: z.infer<typeof DeliveryFormResolver>) => void;
-	defaultEditing?: boolean;
 	defaultDelivery?: Delivery;
 	isMobile?: boolean;
 }
 
-const DeliveryForm: React.FC<DeliveryFormProps> = ({
-	packages,
-	onSave,
-	defaultDelivery,
-	isMobile,
-	defaultEditing = false,
-}) => {
+const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onSave, defaultDelivery, isMobile }) => {
 	const {
 		control,
 		watch,
 		setValue,
 		handleSubmit,
 		reset,
-		formState: { isDirty, errors },
+		formState: { isDirty, errors, isValid },
 	} = useForm<DeliveryFormData>({
 		resolver: zodResolver(DeliveryFormResolver),
 		defaultValues: defaultDelivery
@@ -96,7 +89,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
 	const service = watch("service");
 	const cdekDeliveryData = watch("cdekDeliveryData");
 
-	const [isEditing, setIsEditing] = useState(defaultEditing);
+	const [isEditing, setIsEditing] = useState(!defaultDelivery);
 	const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
 
 	const handleSave = (data: DeliveryFormData) => {
@@ -274,14 +267,16 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
 						>
 							Сохранить
 						</Button>
-						<Button
-							sx={{ width: "max-content" }}
-							onClick={handleStopEditing}
-							variant="contained"
-							color="error"
-						>
-							Отменить
-						</Button>
+						{isValid && (
+							<Button
+								sx={{ width: "max-content" }}
+								onClick={handleStopEditing}
+								variant="contained"
+								color="error"
+							>
+								Отменить
+							</Button>
+						)}
 					</div>
 				) : (
 					<>

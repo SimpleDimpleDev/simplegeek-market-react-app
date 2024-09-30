@@ -87,7 +87,6 @@ export default function OrderMakeRoute() {
 							<>
 								<DeliveryForm
 									defaultDelivery={defaultDelivery}
-									defaultEditing={!defaultDelivery}
 									packages={items
 										.map((item) => item.product.physicalProperties)
 										.filter((pkg) => !!pkg)}
