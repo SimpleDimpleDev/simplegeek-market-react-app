@@ -65,7 +65,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onSave, defaultDe
 		setValue,
 		handleSubmit,
 		reset,
-		formState: { isDirty, errors, isValid },
+		formState: { isDirty, errors },
 	} = useForm<DeliveryFormData>({
 		resolver: zodResolver(DeliveryFormResolver),
 		defaultValues: defaultDelivery
@@ -95,6 +95,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onSave, defaultDe
 	const handleSave = (data: DeliveryFormData) => {
 		onSave(DeliveryFormResolver.parse(data));
 		setIsEditing(false);
+		reset()
 	};
 
 	const handleStopEditing = () => {
@@ -267,7 +268,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onSave, defaultDe
 						>
 							{!defaultDelivery ? "Подтвердить" : "Сохранить"}
 						</Button>
-						{isValid && (
+						{defaultDelivery && (
 							<Button
 								sx={{ width: "max-content" }}
 								onClick={handleStopEditing}

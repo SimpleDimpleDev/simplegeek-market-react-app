@@ -20,14 +20,13 @@ export default function OrderMakeRoute() {
 
 	const catalogItems = useSelector((state: RootState) => state.catalog.items);
 	const [checkoutItems, setCheckoutItems] = useState<UserCartItem[]>([]);
-	const [defaultDelivery] = useState<Delivery | undefined>(undefined);
+	const [delivery, setDelivery] = useState<Delivery | undefined>(undefined);
 
 	useEffect(() => {
 		const setup = async () => {
 			const result = await ShopApiClient.getCheckoutItems();
 			if (!result) {
 				navigate("/cart");
-
 			} else {
 				setCheckoutItems(result.items);
 			}
@@ -50,7 +49,7 @@ export default function OrderMakeRoute() {
 
 	const preorder = useMemo(() => items.at(0)?.preorder || null, [items]);
 
-	const [delivery, setDelivery] = useState<Delivery | null>(null);
+	
 	const [itemsCredit, setItemsCredit] = useState<{ id: string; isCredit: boolean }[]>(
 		items.map((item) => ({ id: item.id, isCredit: false }))
 	);
@@ -86,7 +85,7 @@ export default function OrderMakeRoute() {
 						{preorder === null ? (
 							<>
 								<DeliveryForm
-									defaultDelivery={defaultDelivery}
+									defaultDelivery={delivery}
 									packages={items
 										.map((item) => item.product.physicalProperties)
 										.filter((pkg) => !!pkg)}
