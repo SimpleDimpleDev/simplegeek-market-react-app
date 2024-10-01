@@ -44,7 +44,9 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 	return (
 		<Link
 			className="gap-2 p-1 pb-2 w-mc h-mc br-2 d-f fd-c hov-item tr-a-2"
+			style={{ textDecoration: "none" }}
 			to={`/item/${data.publicationLink}${data.variationIndex !== null ? `?v=${data.variationIndex}` : ""}`}
+			title={data.product.title}
 		>
 			<div className="bg-primary w-mc h-mc br-2 d-f jc-c of-h">
 				<img

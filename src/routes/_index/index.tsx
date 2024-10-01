@@ -1,42 +1,9 @@
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
-import React, { PropsWithChildren } from "react";
-import { styled } from "@mui/material";
 import { Typography } from "@mui/material";
 import { RootState } from "@state/store";
 import { getImageUrl } from "@utils/image";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-
-const CatalogSectionWrapper: React.FC<PropsWithChildren<{ isMobile: boolean; url: string }>> = ({
-	children,
-	isMobile,
-	url
-}) => (
-	<Link
-		to={url}
-		style={{
-			width: isMobile ? "100%" : 696,
-			height: 300,
-			borderRadius: 16,
-			position: "relative",
-			cursor: "pointer",
-			transition: "transform .2s",
-			display: "flex",
-			flexDirection: "row",
-			justifyContent: "center",
-			overflowX: "hidden",
-		}}
-	>
-		{children}
-	</Link>
-);
-
-const SectionTypographyWrapper = styled("div")({
-	position: "absolute",
-	top: 237,
-	left: "50%",
-	transform: "translateX(-50%)",
-});
 
 export default function HomeRoute() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
@@ -67,17 +34,40 @@ export default function HomeRoute() {
 					}}
 				>
 					{categories.map((category) => (
-						<CatalogSectionWrapper
-							isMobile={isMobile}
-							url={`/catalog/${category.link}`}
+						<Link
+							to={`/catalog/${category.link}`}
+							title={category.title}
+							style={{
+								width: isMobile ? "100%" : 696,
+								height: 300,
+								borderRadius: 16,
+								position: "relative",
+								cursor: "pointer",
+								transition: "transform .2s",
+								display: "flex",
+								flexDirection: "row",
+								justifyContent: "center",
+								overflowX: "hidden",
+							}}
 						>
-							<img style={{ height: 300, width: 696 }} src={getImageUrl(category.banner.url, "large")} alt={category.title} />
-							<SectionTypographyWrapper>
+							<img
+								style={{ height: 300, width: 696 }}
+								src={getImageUrl(category.banner.url, "large")}
+								alt={category.title}
+							/>
+							<div
+								style={{
+									position: "absolute",
+									top: 237,
+									left: "50%",
+									transform: "translateX(-50%)",
+								}}
+							>
 								<Typography variant="h4" color="white">
 									{category.title}
 								</Typography>
-							</SectionTypographyWrapper>
-						</CatalogSectionWrapper>
+							</div>
+						</Link>
 					))}
 				</div>
 			</div>
