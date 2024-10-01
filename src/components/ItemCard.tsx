@@ -9,6 +9,7 @@ import { CreditInfo } from "@appTypes/Credit";
 import { useDispatch } from "react-redux";
 import { addCartItem, addFavoriteItem, removeFavoriteItem } from "@state/user/thunks";
 import { AppDispatch } from "@state/store";
+import { useMemo } from "react";
 
 interface ItemCardProps {
 	data: CatalogItem;
@@ -21,6 +22,8 @@ interface ItemCardProps {
 export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: ItemCardProps) {
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
+
+	const link = useMemo(() => `/item/${data.publicationLink}${data.variationIndex !== null ? `?v=${data.variationIndex}` : ""}`, [data]);
 
 	function handleToggleFavorite() {
 		if (isFavorite) {
@@ -41,20 +44,19 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 		event.stopPropagation();
 	};
 
-	const handleClick = () => {
-		const variationParam = data.variationIndex !== null ? `?v=${data.variationIndex}` : "";
-		navigate(`/item/${data.publicationLink}${variationParam}`);
-	};
-
 	return (
-		<div className="w-mc h-mc d-f fd-c gap-2 p-1 pb-2 br-2 tr-a-2 hov-item" onClick={handleClick}>
-			<div className="w-mc h-mc d-f jc-c of-h br-2 bg-primary">
+		<a
+			className="gap-2 p-1 pb-2 w-mc h-mc br-2 d-f fd-c hov-item tr-a-2"
+			href={link}
+			onClick={() => navigate(link)}
+		>
+			<div className="bg-primary w-mc h-mc br-2 d-f jc-c of-h">
 				<img
 					style={{ width: "300px", height: "300px" }}
 					src={getImageUrl(data.product.images.at(0)?.url ?? "", "medium")}
 				/>
 			</div>
-			<div className="d-f fd-c gap-1 px-2">
+			<div className="gap-1 px-2 d-f fd-c">
 				{isAvailable ? (
 					<>
 						{data.preorder ? (
@@ -89,7 +91,7 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 							</Typography>
 						</div>
 					</div>
-					<div className="d-f fd-r gap-1 w-mc" style={{ zIndex: 1 }}>
+					<div className="gap-1 w-mc d-f fd-r" style={{ zIndex: 1 }}>
 						<IconButton
 							onClick={(event) => {
 								handleToggleFavorite();
@@ -135,7 +137,7 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 					</div>
 				</div>
 			</div>
-		</div>
+		</a>
 	);
 }
 
@@ -176,11 +178,11 @@ export type ShopOrderItemCardProps = {
 export const ShopOrderItemCard: React.FC<ShopOrderItemCardProps> = ({ imgUrl, title, quantity, price }) => {
 	return (
 		<div className="w-100 d-f fd-r jc-sb">
-			<div className="d-f fd-r gap-1">
-				<div className="d-f jc-c ai-c br-2 fs-0 of-h" style={{ width: 96, height: 96 }}>
+			<div className="gap-1 d-f fd-r">
+				<div className="ai-c br-2 d-f fs-0 jc-c of-h" style={{ width: 96, height: 96 }}>
 					<img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
 				</div>
-				<div className="d-f fd-c gap-1 pt-2">
+				<div className="gap-1 pt-2 d-f fd-c">
 					<Typography variant="body1">{title}</Typography>
 					<Typography variant="body2" sx={{ color: "typography.secondary" }}>
 						{quantity} шт.
@@ -210,21 +212,21 @@ export const ShopOrderItemCardCredit: React.FC<ShopOrderItemCardCreditProps> = (
 	onCreditChange,
 }) => {
 	return (
-		<div className="w-100 d-f fd-c gap-1">
+		<div className="gap-1 w-100 d-f fd-c">
 			<ShopOrderItemCard imgUrl={imgUrl} title={title} quantity={quantity} price={price} />
-			<div className="d-f fd-r gap-1">
-				<div className="d-f fd-r gap-05">
+			<div className="gap-1 d-f fd-r">
+				<div className="gap-05 d-f fd-r">
 					<Radio checked={isCredit} onChange={() => onCreditChange(true)} color="warning" />
-					<div className="d-f fd-c gap-05">
+					<div className="gap-05 d-f fd-c">
 						<Typography variant="body1">Оплатить всю суму сразу</Typography>
 						<Typography variant="body2" sx={{ color: "typography.secondary" }}>
 							{price} ₽
 						</Typography>
 					</div>
 				</div>
-				<div className="d-f fd-r gap-05">
+				<div className="gap-05 d-f fd-r">
 					<Radio checked={!isCredit} onChange={() => onCreditChange(false)} color="warning" />
-					<div className="d-f fd-c gap-05">
+					<div className="gap-05 d-f fd-c">
 						<Typography variant="body1">В рассрочку</Typography>
 						<Typography variant="body2" sx={{ color: "typography.secondary" }}>
 							{creditInfo.payments.length} платежа от {creditInfo.payments[0].sum} ₽
