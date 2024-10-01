@@ -1,7 +1,7 @@
 import { AddShoppingCart, Favorite, FavoriteBorder, NotificationAdd, ShoppingCart } from "@mui/icons-material";
 import { IconButton, Radio, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { getImageUrl } from "@utils/image";
 import { CatalogItem } from "@appTypes/CatalogItem";
@@ -45,10 +45,9 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 	};
 
 	return (
-		<a
+		<Link
 			className="gap-2 p-1 pb-2 w-mc h-mc br-2 d-f fd-c hov-item tr-a-2"
-			href={link}
-			onClick={() => navigate(link)}
+			to={link}
 		>
 			<div className="bg-primary w-mc h-mc br-2 d-f jc-c of-h">
 				<img
@@ -137,7 +136,7 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 					</div>
 				</div>
 			</div>
-		</a>
+		</Link>
 	);
 }
 
