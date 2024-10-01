@@ -9,7 +9,6 @@ import { CreditInfo } from "@appTypes/Credit";
 import { useDispatch } from "react-redux";
 import { addCartItem, addFavoriteItem, removeFavoriteItem } from "@state/user/thunks";
 import { AppDispatch } from "@state/store";
-import { useMemo } from "react";
 
 interface ItemCardProps {
 	data: CatalogItem;
@@ -22,8 +21,6 @@ interface ItemCardProps {
 export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: ItemCardProps) {
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
-
-	const link = useMemo(() => `/item/${data.publicationLink}${data.variationIndex !== null ? `?v=${data.variationIndex}` : ""}`, [data]);
 
 	function handleToggleFavorite() {
 		if (isFavorite) {
@@ -47,7 +44,7 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 	return (
 		<Link
 			className="gap-2 p-1 pb-2 w-mc h-mc br-2 d-f fd-c hov-item tr-a-2"
-			to={link}
+			to={`/item/${data.publicationLink}${data.variationIndex !== null ? `?v=${data.variationIndex}` : ""}`}
 		>
 			<div className="bg-primary w-mc h-mc br-2 d-f jc-c of-h">
 				<img

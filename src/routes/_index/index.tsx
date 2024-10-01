@@ -5,15 +5,15 @@ import { Typography } from "@mui/material";
 import { RootState } from "@state/store";
 import { getImageUrl } from "@utils/image";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const CatalogSectionWrapper: React.FC<PropsWithChildren<{ isMobile: boolean; onClick: () => void }>> = ({
+const CatalogSectionWrapper: React.FC<PropsWithChildren<{ isMobile: boolean; url: string }>> = ({
 	children,
 	isMobile,
-	onClick,
+	url
 }) => (
-	<div
-		onClick={onClick}
+	<Link
+		to={url}
 		style={{
 			width: isMobile ? "100%" : 696,
 			height: 300,
@@ -28,7 +28,7 @@ const CatalogSectionWrapper: React.FC<PropsWithChildren<{ isMobile: boolean; onC
 		}}
 	>
 		{children}
-	</div>
+	</Link>
 );
 
 const SectionTypographyWrapper = styled("div")({
@@ -41,7 +41,6 @@ const SectionTypographyWrapper = styled("div")({
 export default function HomeRoute() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 	const categories = useSelector((state: RootState) => state.catalog.categories);
-	const navigate = useNavigate();
 
 	return (
 		<>
@@ -70,9 +69,9 @@ export default function HomeRoute() {
 					{categories.map((category) => (
 						<CatalogSectionWrapper
 							isMobile={isMobile}
-							onClick={() => navigate(`/catalog/${category.link}`)}
+							url={`/catalog/${category.link}`}
 						>
-							<img style={{ height: 300, width: 696 }} src={getImageUrl(category.banner.url, "large")} />
+							<img style={{ height: 300, width: 696 }} src={getImageUrl(category.banner.url, "large")} alt={category.title} />
 							<SectionTypographyWrapper>
 								<Typography variant="h4" color="white">
 									{category.title}
