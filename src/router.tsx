@@ -25,15 +25,7 @@ const AppRouter: React.FC = () => (
 	<SuspenseRouter>
 		<Suspense
 			fallback={
-				<div
-					style={{
-						width: "100%",
-						height: "100%",
-						display: "flex",
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-				>
+				<div className="w-100v h-100v ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
 			}

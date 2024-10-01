@@ -14,40 +14,41 @@ export default function ProfileLayout() {
 
 	return (
 		<>
-			{isMobile ? (
-				<Outlet />
-			) : (
-				<Box display={"flex"} flexDirection={"row"} gap={3} width={"100%"} height={"100%"}>
-					<Box
-						position={"sticky"}
-						top={24}
-						display={"flex"}
-						flexDirection={"column"}
-						flexShrink={0}
-						gap={3}
-						p={2}
-						width={360}
-						height={"fit-content"}
-						borderRadius={4}
-						sx={{
-							bgcolor: "surface.primary",
-						}}
-					>
-						<Typography variant={"h5"}>Профиль</Typography>
-						<NavButton to="/profile/orders" text={"Заказы"} icon={<ShoppingBag />} />
-						<NavButton to="/profile/settings" text={"Мои данные"} icon={<AccountCircle />} />
-					</Box>
-					<OryThemeProvider themeOverrides={oryTheme}>
-						<IntlProvider<CustomTranslations>
-							locale="ru"
-							defaultLocale="ru"
-							customTranslations={customTranslations}
-						>
+			<OryThemeProvider themeOverrides={oryTheme}>
+				<IntlProvider<CustomTranslations>
+					locale="ru"
+					defaultLocale="ru"
+					customTranslations={customTranslations}
+				>
+					{isMobile ? (
+						<Outlet />
+					) : (
+						<Box display={"flex"} flexDirection={"row"} gap={3} width={"100%"} height={"100%"}>
+							<Box
+								position={"sticky"}
+								top={24}
+								display={"flex"}
+								flexDirection={"column"}
+								flexShrink={0}
+								gap={3}
+								p={2}
+								width={360}
+								height={"fit-content"}
+								borderRadius={4}
+								sx={{
+									bgcolor: "surface.primary",
+								}}
+							>
+								<Typography variant={"h5"}>Профиль</Typography>
+								<NavButton to="/profile/orders" text={"Заказы"} icon={<ShoppingBag />} />
+								<NavButton to="/profile/settings" text={"Мои данные"} icon={<AccountCircle />} />
+							</Box>
+
 							<Outlet />
-						</IntlProvider>
-					</OryThemeProvider>
-				</Box>
-			)}
+						</Box>
+					)}
+				</IntlProvider>
+			</OryThemeProvider>
 		</>
 	);
 }
