@@ -46,8 +46,7 @@ const AppRouter: React.FC = () => (
 					<Route path="item/:publicationLink" element={<PublicationRouteLazy />} />
 					<Route path="order" element={<OrderMakeRouteLazy />} />
 					<Route path="orders/:orderId" element={<UserOrderRouteLazy />} />
-					<Route path="profile">
-						<Route index element={<ProfileLayoutLazy />} />
+					<Route path="profile" element={<ProfileLayoutLazy />}>
 						<Route path="orders" element={<UserOrdersRouteLazy />} />
 						<Route path="settings" element={<UserSettingsRouteLazy />} />
 					</Route>
