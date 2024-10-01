@@ -22,7 +22,8 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 
-	function handleToggleFavorite() {
+	function handleToggleFavorite(event: React.MouseEvent<HTMLElement, MouseEvent>) {
+		event.stopPropagation();
 		if (isFavorite) {
 			dispatch(removeFavoriteItem({ itemId: data.id }));
 		} else {
@@ -31,6 +32,7 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 	}
 
 	const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		event.stopPropagation();
 		if (isInCart) {
 			navigate("/cart");
 		} else if (isAvailable) {
@@ -38,7 +40,6 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 		} else {
 			alert("Товар отсутствует в наличии");
 		}
-		event.stopPropagation();
 	};
 
 	return (
@@ -92,8 +93,7 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 					<div className="gap-1 w-mc d-f fd-r" style={{ zIndex: 1 }}>
 						<IconButton
 							onClick={(event) => {
-								handleToggleFavorite();
-								event.stopPropagation();
+								handleToggleFavorite(event);
 							}}
 							style={{
 								width: 48,
