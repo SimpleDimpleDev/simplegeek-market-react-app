@@ -66,18 +66,17 @@ export default function ItemCard({ data }: ItemCardProps) {
 	};
 
 	return (
-		<Link
-			className="gap-2 p-1 pb-2 w-mc h-mc br-2 d-f fd-c hov-item tr-a-2"
-			style={{ textDecoration: "none" }}
-			to={`/item/${data.publicationLink}${data.variationIndex !== null ? `?v=${data.variationIndex}` : ""}`}
-			title={data.product.title}
-		>
-			<div className="bg-primary w-mc h-mc br-2 d-f jc-c of-h">
+		<div className="gap-2 p-1 pb-2 w-mc h-mc br-2 d-f fd-c hov-item tr-a-2" style={{ textDecoration: "none" }}>
+			<Link
+				to={`/item/${data.publicationLink}${data.variationIndex !== null ? `?v=${data.variationIndex}` : ""}`}
+				title={data.product.title}
+				className="bg-primary w-mc h-mc br-2 d-f jc-c of-h"
+			>
 				<img
 					style={{ width: "300px", height: "300px" }}
 					src={getImageUrl(data.product.images.at(0)?.url ?? "", "medium")}
 				/>
-			</div>
+			</Link>
 			<div className="gap-1 px-2 d-f fd-c">
 				{availableItemIdsIsLoading ? (
 					<Typography variant="body2">Загрузка...</Typography>
@@ -162,7 +161,7 @@ export default function ItemCard({ data }: ItemCardProps) {
 					</div>
 				</div>
 			</div>
-		</Link>
+		</div>
 	);
 }
 
