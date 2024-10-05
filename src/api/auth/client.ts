@@ -2,7 +2,7 @@ import { Configuration, FrontendApi } from "@ory/client";
 import { AxiosError, isAxiosError } from "axios";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserAuthority } from "../../types/User";
+import { UserAuthority } from "@appTypes/User";
 
 export const oryClient = new FrontendApi(
 	new Configuration({

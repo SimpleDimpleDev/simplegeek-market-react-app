@@ -23,15 +23,19 @@ import { AppDispatch, RootState } from "@state/store";
 
 import logo from "@assets/MainLogoBig.png";
 import { useState } from "react";
+import { useGetCartItemListQuery } from "@api/shop/cart";
+import { useGetCatalogQuery } from "@api/shop/catalog";
+import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 
 const DesktopHeader: React.FC = () => {
 	const navigate = useNavigate();
-	const categories = useSelector((state: RootState) => state.catalog.categories);
-	const catalogItems = useSelector((state: RootState) => state.catalog.items);
+
 	const userAuthority = useSelector((state: RootState) => state.userAuthority.authority);
 	const userAuthorityLoading = useSelector((state: RootState) => state.userAuthority.loading);
-	const userCartItems = useSelector((state: RootState) => state.userCart.items);
-	const userFavoritesItems = useSelector((state: RootState) => state.userFavorites.items);
+
+	const { data: catalog } = useGetCatalogQuery();
+	const { data: cartItemList } = useGetCartItemListQuery();
+	const { data: favoriteItemList } = useGetFavoriteItemListQuery();
 
 	const dispatch = useDispatch<AppDispatch>();
 
@@ -95,7 +99,7 @@ const DesktopHeader: React.FC = () => {
 								"aria-labelledby": "catalog-button",
 							}}
 						>
-							{categories.map((category) => (
+							{catalog?.categories.map((category) => (
 								<MenuItem
 									onClick={() => {
 										handleCloseCatalogMenu();
@@ -112,7 +116,7 @@ const DesktopHeader: React.FC = () => {
 								</MenuItem>
 							))}
 						</Menu>
-						<CatalogSearch catalogItems={catalogItems} />
+						<CatalogSearch catalogItems={catalog?.items || []} />
 					</div>
 				</div>
 				<HeaderButtons
@@ -123,7 +127,7 @@ const DesktopHeader: React.FC = () => {
 							text: "Избранное",
 							icon: <Favorite />,
 							onClick: () => navigate("/favorites"),
-							badgeCount: userFavoritesItems.length,
+							badgeCount: favoriteItemList?.items.length,
 						},
 						{
 							text: userAuthorityLoading ? "" : userAuthority ? "Профиль" : "Войти",
@@ -136,7 +140,7 @@ const DesktopHeader: React.FC = () => {
 							text: "Корзина",
 							icon: <ShoppingCart />,
 							onClick: () => navigate("/cart"),
-							badgeCount: userCartItems.length,
+							badgeCount: cartItemList?.items.length,
 						},
 					]}
 				/>

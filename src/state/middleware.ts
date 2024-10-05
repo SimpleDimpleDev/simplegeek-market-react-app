@@ -1,6 +1,7 @@
 import { Middleware, ThunkMiddleware } from "@reduxjs/toolkit";
-import { fetchUserAuthority, fetchUserItems } from "./user/thunks";
-import { fetchCatalog, fetchCatalogItemsAvailability } from "./shop/thunks";
+import { fetchUserAuthority } from "./user/thunks";
+import { cartApi } from "@api/shop/cart";
+import { favoritesApi } from "@api/shop/favorites";
 
 /**
  * Logs all actions and next state to the console.
@@ -30,21 +31,10 @@ const crashReporterMiddleware: Middleware = () => (next) => (action) => {
  */
 const updateUserItemsMiddleware: ThunkMiddleware = (store) => (next) => (action) => {
 	if (fetchUserAuthority.fulfilled.match(action)) {
-		store.dispatch(fetchUserItems());
+		store.dispatch(cartApi.endpoints.getCartItemList.initiate());
+		store.dispatch(favoritesApi.endpoints.getFavoriteItemList.initiate());
 	}
 	return next(action);
 };
 
-/**
- * This middleware listens for the `fetchCatalog.fulfilled` action and dispatches
- * `fetchCatalogItemsAvailability` when it is received. This is useful for keeping
- * the catalog items availability up to date when the catalog is fetched.
- */
-const updateItemsAvailabilityMiddleware: ThunkMiddleware = (store) => (next) => (action) => {
-	if (fetchCatalog.fulfilled.match(action)) {
-		store.dispatch(fetchCatalogItemsAvailability());
-	}
-	return next(action);
-};
-
-export { loggingMiddleware, crashReporterMiddleware, updateUserItemsMiddleware, updateItemsAvailabilityMiddleware };
+export { loggingMiddleware, crashReporterMiddleware, updateUserItemsMiddleware };

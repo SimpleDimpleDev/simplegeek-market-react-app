@@ -16,7 +16,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { CatalogFilters } from "@components/Filters";
 import { CatalogItem } from "@appTypes/CatalogItem";
@@ -24,6 +24,7 @@ import { Empty } from "@components/Empty";
 import { isCatalogItemMatchQuery } from "@utils/search";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
+import { useGetCatalogQuery } from "@api/shop/catalog";
 
 type Sorting = "expensive" | "cheap";
 
@@ -45,12 +46,10 @@ export default function SearchRoute() {
 	const navigate = useNavigate();
 	const searchParams = useSearchParams();
 	const query = Object.fromEntries(searchParams[0].entries()).q;
-	const availableItemsIds = useSelector((state: RootState) => state.availability.items);
-	const catalogItems = useSelector((state: RootState) => state.catalog.items);
-	const catalogLoading = useSelector((state: RootState) => state.catalog.loading);
+
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
-	const userCartItems = useSelector((state: RootState) => state.userCart.items);
-	const userFavoriteItems = useSelector((state: RootState) => state.userFavorites.items);
+
+	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 
 	const [searchedItems, setSearchedItems] = useState<CatalogItem[]>([]);
 
@@ -62,14 +61,11 @@ export default function SearchRoute() {
 	const [itemsFiltering, setItemsFiltering] = useState<boolean>(true);
 	const sortedItems = getSortedItems(filteredItems, sorting);
 
-	const favoriteItemsIds = useMemo(() => userFavoriteItems.map((item) => item.id), [userFavoriteItems]);
-	const cartItemsIds = useMemo(() => userCartItems.map((item) => item.id), [userCartItems]);
-
 	useEffect(() => {
-		const searchedItems = catalogItems.filter((item) => isCatalogItemMatchQuery(item, query));
+		const searchedItems = catalog?.items.filter((item) => isCatalogItemMatchQuery(item, query)) || [];
 		setSearchedItems(searchedItems);
 		setFilteredItems(searchedItems);
-	}, [catalogItems, query]);
+	}, [catalog, query]);
 
 	const onApplyFilters = (filteredItems: CatalogItem[]) => {
 		setFilteredItems([]);
@@ -82,7 +78,7 @@ export default function SearchRoute() {
 
 	return (
 		<>
-			{catalogLoading ? (
+			{catalogIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
@@ -203,12 +199,7 @@ export default function SearchRoute() {
 											>
 												<Grow key={index} in={true} timeout={200}>
 													<div>
-														<ItemCard
-															data={data}
-															isAvailable={availableItemsIds.includes(data.id)}
-															isInCart={cartItemsIds.includes(data.id)}
-															isFavorite={favoriteItemsIds.includes(data.id)}
-														/>
+														<ItemCard data={data} />
 													</div>
 												</Grow>
 											</LazyLoad>

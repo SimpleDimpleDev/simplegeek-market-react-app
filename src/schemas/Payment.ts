@@ -2,6 +2,10 @@ import { z } from "zod";
 
 import { IdSchema, ISOToDateSchema } from "./Primitives";
 
+export const PaymentUrlSchema = z.object({
+	paymentUrl: z.string().url(),
+});
+
 export const BaseCreditPaymentInfo = z.object({
 	sum: z.number(),
 	deadline: ISOToDateSchema,

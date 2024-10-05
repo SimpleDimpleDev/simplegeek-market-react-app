@@ -1,43 +1,66 @@
 import { AddShoppingCart, Favorite, FavoriteBorder, NotificationAdd, ShoppingCart } from "@mui/icons-material";
-import { IconButton, Radio, Typography } from "@mui/material";
+import { CircularProgress, IconButton, Radio, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Link, useNavigate } from "react-router-dom";
 
 import { getImageUrl } from "@utils/image";
 import { CatalogItem } from "@appTypes/CatalogItem";
 import { CreditInfo } from "@appTypes/Credit";
-import { useDispatch } from "react-redux";
-import { addCartItem, addFavoriteItem, removeFavoriteItem } from "@state/user/thunks";
-import { AppDispatch } from "@state/store";
+import { useAddCartItemMutation, useGetCartItemListQuery } from "@api/shop/cart";
+import {
+	useAddFavoriteItemMutation,
+	useGetFavoriteItemListQuery,
+	useRemoveFavoriteItemMutation,
+} from "@api/shop/favorites";
+import { useGetItemsAvailabilityQuery } from "@api/shop/catalog";
+import { useMemo } from "react";
 
 interface ItemCardProps {
 	data: CatalogItem;
-	isAvailable: boolean;
-	isInCart: boolean;
-	isFavorite: boolean;
-	isTracked?: boolean;
 }
 
-export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: ItemCardProps) {
+export default function ItemCard({ data }: ItemCardProps) {
 	const navigate = useNavigate();
-	const dispatch = useDispatch<AppDispatch>();
+
+	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
+	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
+	const { data: availableItemIds, isLoading: availableItemIdsIsLoading } = useGetItemsAvailabilityQuery();
+
+	const [addCartItem] = useAddCartItemMutation();
+	const [addFavoriteItem] = useAddFavoriteItemMutation();
+	const [removeFavoriteItem] = useRemoveFavoriteItemMutation();
+
+	const isAvailable = useMemo(() => {
+		return availableItemIds?.includes(data.id) || false;
+	}, [availableItemIds, data.id]);
+
+	const isInCart = useMemo(() => {
+		return cartItemList?.items.some((item) => item.id === data.id);
+	}, [cartItemList, data.id]);
+
+	const isFavorite = useMemo(() => {
+		return favoriteItemList?.items.some((item) => item.id === data.id);
+	}, [favoriteItemList, data.id]);
 
 	function handleToggleFavorite(event: React.MouseEvent<HTMLElement, MouseEvent>) {
 		event.stopPropagation();
+		if (isFavorite === undefined) return;
 		if (isFavorite) {
-			dispatch(removeFavoriteItem({ itemId: data.id }));
+			removeFavoriteItem({ itemId: data.id });
 		} else {
-			dispatch(addFavoriteItem({ itemId: data.id }));
+			addFavoriteItem({ itemId: data.id });
 		}
 	}
 
 	const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		event.stopPropagation();
+		if (isAvailable === undefined || isInCart === undefined) return;
 		if (isInCart) {
 			navigate("/cart");
 		} else if (isAvailable) {
-			dispatch(addCartItem({ itemId: data.id }));
+			addCartItem({ itemId: data.id });
 		} else {
+			// TODO: implement tracked items
 			alert("Товар отсутствует в наличии");
 		}
 	};
@@ -56,18 +79,18 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 				/>
 			</div>
 			<div className="gap-1 px-2 d-f fd-c">
-				{isAvailable ? (
-					<>
-						{data.preorder ? (
-							<Typography variant="body2" color="typography.success">
-								Доступно для предзаказа
-							</Typography>
-						) : (
-							<Typography variant="body2" color="typography.success">
-								В наличии
-							</Typography>
-						)}
-					</>
+				{availableItemIdsIsLoading ? (
+					<Typography variant="body2">Загрузка...</Typography>
+				) : isAvailable === undefined ? null : isAvailable ? (
+					data.preorder ? (
+						<Typography variant="body2" color="typography.success">
+							Доступно для предзаказа
+						</Typography>
+					) : (
+						<Typography variant="body2" color="typography.success">
+							В наличии
+						</Typography>
+					)
 				) : (
 					<Typography variant="body2" color="typography.attention">
 						Нет в наличии
@@ -92,23 +115,25 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 					</div>
 					<div className="gap-1 w-mc d-f fd-r" style={{ zIndex: 1 }}>
 						<IconButton
-							onClick={(event) => {
-								handleToggleFavorite(event);
-							}}
+							onClick={handleToggleFavorite}
+							disabled={favoriteItemListIsLoading}
 							style={{
 								width: 48,
 								height: 48,
 								borderRadius: 8,
 							}}
 						>
-							{isFavorite ? (
+							{favoriteItemListIsLoading ? (
+								<CircularProgress sx={{ color: "icon.primary" }} />
+							) : isFavorite ? (
 								<Favorite sx={{ color: "icon.attention" }} />
 							) : (
 								<FavoriteBorder color="secondary" />
 							)}
 						</IconButton>
 						<IconButton
-							onClick={(event) => handleAddToCart(event)}
+							disabled={availableItemIdsIsLoading || cartItemListIsLoading}
+							onClick={handleAddToCart}
 							style={{
 								width: 48,
 								height: 48,
@@ -122,7 +147,9 @@ export default function ItemCard({ data, isAvailable, isInCart, isFavorite }: It
 								},
 							}}
 						>
-							{isAvailable ? (
+							{availableItemIdsIsLoading || cartItemListIsLoading ? (
+								<CircularProgress sx={{ color: "icon.primary" }} />
+							) : isAvailable ? (
 								isInCart ? (
 									<ShoppingCart sx={{ color: "icon.primary" }} />
 								) : (

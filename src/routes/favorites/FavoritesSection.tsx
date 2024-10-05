@@ -1,22 +1,15 @@
 import { Grid2, Grow } from "@mui/material";
 
 import { CatalogItem } from "@appTypes/CatalogItem";
-import { UserCartItem, UserFavoriteItem } from "@appTypes/UserItems";
 
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
 
 interface FavoritesSectionProps {
 	items: CatalogItem[];
-	isAvailable: boolean;
-	cartItems: UserCartItem[];
-	favoriteItems: UserFavoriteItem[];
 }
 
-export const FavoritesSection = ({ items, isAvailable, cartItems, favoriteItems }: FavoritesSectionProps) => {
-	const favoriteItemsIds = favoriteItems.map((item) => item.id);
-	const cartItemsIds = cartItems.map((item) => item.id);
-
+export const FavoritesSection = ({ items }: FavoritesSectionProps) => {
 	return (
 		<Grid2 container justifyContent="flex-start" spacing={2}>
 			{items.map((data, index) => (
@@ -32,12 +25,7 @@ export const FavoritesSection = ({ items, isAvailable, cartItems, favoriteItems 
 					>
 						<Grow key={index} in={true} timeout={200}>
 							<div>
-								<ItemCard
-									data={data}
-									isAvailable={isAvailable}
-									isFavorite={favoriteItemsIds.includes(data.id)}
-									isInCart={cartItemsIds.includes(data.id)}
-								/>
+								<ItemCard data={data} />
 							</div>
 						</Grow>
 					</LazyLoad>

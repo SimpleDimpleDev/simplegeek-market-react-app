@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "./state/store";
 import { useDebouncedResizeHandler } from "./hooks/useDebouncedResizeHandler";
-import { fetchCatalogItemsAvailability } from "@state/shop/thunks";
 import { AppRouter } from "./router";
 
 function App() {
@@ -13,10 +12,6 @@ function App() {
 
 	useEffect(() => {
 		bootstrapStore(dispatch);
-		const revalidateAvailabilityInterval = setInterval(() => {
-			dispatch(fetchCatalogItemsAvailability());
-		}, 60000);
-		return () => clearInterval(revalidateAvailabilityInterval);
 	}, [dispatch]);
 
 	return <AppRouter />;

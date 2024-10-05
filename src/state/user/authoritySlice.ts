@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { UserAuthority } from "../../types/User";
+import { UserAuthority } from "@appTypes/User";
 import { fetchUserAuthority } from "./thunks";
 
 interface UserAuthorityState {

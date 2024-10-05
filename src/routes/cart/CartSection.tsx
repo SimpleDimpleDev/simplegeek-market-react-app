@@ -1,4 +1,3 @@
-import { Add, Delete, Favorite, FavoriteBorder, Remove } from "@mui/icons-material";
 import {
 	Box,
 	Button,
@@ -9,19 +8,16 @@ import {
 	DialogTitle,
 	Divider,
 	Grow,
-	IconButton,
 	Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { baseFadeTime } from "@config/animation";
 import { DateFormatter } from "@utils/format";
-import { useEffect, useMemo, useState } from "react";
-import { getImageUrl } from "@utils/image";
-import { CatalogItemCart, FormedCartSection } from "@appTypes/Cart";
-import { UserCartItem, UserFavoriteItem } from "@appTypes/UserItems";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@state/store";
-import { addFavoriteItem, patchCartItem, removeCartItems, removeFavoriteItem } from "@state/user/thunks";
+import { useEffect, useState } from "react";
+import { FormedCartSection } from "@appTypes/Cart";
+import { UserCartItem } from "@appTypes/UserItems";
+import { useDeleteCartItemsMutation } from "@api/shop/cart";
+import { CartItem } from "./CartItem";
 
 interface CartSectionHeaderProps {
 	allChecked: boolean;
@@ -70,226 +66,19 @@ const CartSectionItemsWrapper = ({ isMobile, children }: { isMobile: boolean; ch
 	</Box>
 );
 
-const ControlButtons = ({
-	isFavorite,
-	onDelete,
-	onFavoriteClick,
-}: {
-	isFavorite: boolean;
-	onDelete: () => void;
-	onFavoriteClick: () => void;
-}) => (
-	<Box display={"flex"} flexDirection={"row"} gap={1}>
-		<IconButton onClick={onFavoriteClick}>
-			{isFavorite ? <Favorite sx={{ color: "icon.attention" }} /> : <FavoriteBorder color="secondary" />}
-		</IconButton>
-		<IconButton onClick={onDelete}>
-			<Delete />
-		</IconButton>
-	</Box>
-);
-
-const QuantityButtons = ({
-	quantity,
-	onIncrement,
-	onDecrement,
-	incrementLocked,
-}: {
-	quantity: number;
-	onIncrement: () => void;
-	onDecrement: () => void;
-	incrementLocked?: boolean;
-}) => (
-	<Box
-		display={"flex"}
-		flexDirection={"row"}
-		justifyContent={"space-between"}
-		gap={"8px"}
-		width={"136px"}
-		borderRadius={"8px"}
-		sx={{
-			backgroundColor: "surface.secondary",
-		}}
-	>
-		<IconButton disabled={quantity === 1} onClick={onDecrement}>
-			<Remove />
-		</IconButton>
-		<Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-			<Typography
-				variant="subtitle2"
-				sx={{ userSelect: "none", msUserSelect: "none", MozUserSelect: "none", WebkitUserSelect: "none" }}
-			>
-				{quantity}
-			</Typography>
-		</Box>
-
-		<IconButton disabled={incrementLocked} onClick={onIncrement}>
-			<Add />
-		</IconButton>
-	</Box>
-);
-
-interface CartItemProps {
-	isMobile: boolean;
-
-	item: CatalogItemCart;
-	isAvailable: boolean;
-
-	onClick: () => void;
-
-	checked: boolean;
-	onCheck: () => void;
-
-	isFavorite: boolean;
-}
-
-const CartItem = ({
-	isMobile,
-
-	item,
-	isAvailable,
-
-	checked,
-	onCheck,
-
-	isFavorite,
-}: CartItemProps) => {
-	const dispatch = useDispatch<AppDispatch>();
-
-	const handleToggleFavorite = () => {
-		if (isFavorite) {
-			dispatch(removeFavoriteItem({ itemId: item.id }));
-		} else {
-			dispatch(addFavoriteItem({ itemId: item.id }));
-		}
-	};
-
-	const handleDelete = () => {
-		dispatch(removeCartItems({ itemIds: [item.id] }));
-	};
-
-	const handleIncrement = () => {
-		dispatch(patchCartItem({ itemId: item.id, action: "INCREMENT" }));
-	};
-
-	const handleDecrement = () => {
-		dispatch(patchCartItem({ itemId: item.id, action: "DECREMENT" }));
-	};
-
-	return (
-		<Box width="100%" display="flex" flexDirection="row" gap={1}>
-			{isMobile && <Checkbox checked={checked} onChange={onCheck} />}
-
-			<Box width="100%" display="flex" flexDirection="column" gap={1}>
-				<Box display="flex" flexDirection="row" justifyContent="space-between">
-					<Box display="flex" flexDirection="row" gap={1}>
-						{!isMobile && <Checkbox checked={checked} onChange={onCheck} />}
-
-						<Box
-							width={96}
-							height={96}
-							borderRadius={2}
-							display="flex"
-							flexShrink={0}
-							justifyContent="center"
-							alignItems="center"
-							overflow="hidden"
-						>
-							<img
-								src={getImageUrl(item.product.images.at(0)?.url ?? "", "medium")}
-								style={{ width: "100%", height: "100%", objectFit: "cover" }}
-							/>
-						</Box>
-
-						<Box display="flex" flexDirection="column" justifyContent="space-between">
-							<Box display="flex" flexDirection="column" gap={"4px"} paddingLeft={1}>
-								{isMobile && <Typography variant="subtitle1">{item.price} ₽</Typography>}
-
-								<Typography variant="body2">{item.product.title}</Typography>
-
-								{isAvailable ? (
-									item.preorder !== null ? (
-										<Typography color="typography.secondary" variant="body2">
-											Доступно для предзаказа
-										</Typography>
-									) : (
-										<Typography color="typography.success" variant="body2">
-											В наличии
-										</Typography>
-									)
-								) : (
-									<Typography color="typography.attention" variant="body2">
-										Нет в наличии
-									</Typography>
-								)}
-							</Box>
-
-							{!isMobile && (
-								<ControlButtons
-									isFavorite={isFavorite}
-									onDelete={handleDelete}
-									onFavoriteClick={handleToggleFavorite}
-								/>
-							)}
-						</Box>
-					</Box>
-
-					{!isMobile && (
-						<Box display="flex" flexDirection="column" justifyContent="space-between" alignItems="end">
-							<Typography variant="subtitle1">{item.price} ₽</Typography>
-
-							<QuantityButtons
-								quantity={item.quantity}
-								onIncrement={handleIncrement}
-								onDecrement={handleDecrement}
-							/>
-						</Box>
-					)}
-				</Box>
-				{isMobile && (
-					<Box display="flex" flexDirection="row" justifyContent="space-between">
-						<ControlButtons
-							isFavorite={isFavorite}
-							onDelete={handleDelete}
-							onFavoriteClick={handleToggleFavorite}
-						/>
-						<QuantityButtons
-							quantity={item.quantity}
-							onIncrement={handleIncrement}
-							onDecrement={handleDecrement}
-						/>
-					</Box>
-				)}
-			</Box>
-		</Box>
-	);
-};
-
 interface CartSectionProps {
 	isMobile: boolean;
-
 	data: FormedCartSection;
-
-	userCart: UserCartItem[];
-	userFavorites: UserFavoriteItem[];
-
 	onMakeOrder: (items: UserCartItem[]) => void;
 }
 
-export const CartSection = ({
-	isMobile,
-
-	data,
-
-	userFavorites,
-
-	onMakeOrder,
-}: CartSectionProps) => {
+export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) => {
 	const navigate = useNavigate();
-	const dispatch = useDispatch<AppDispatch>();
 
 	const [checkedIds, setCheckedIds] = useState<string[]>(data.unavailable ? [] : data.items.map((item) => item.id));
 	const [deleteModalIsOpened, setDeleteModalIsOpened] = useState(false);
+
+	const [removeCartItems] = useDeleteCartItemsMutation();
 
 	useEffect(() => {
 		setCheckedIds((prev) => prev.filter((id) => data.items.some((item) => item.id === id)));
@@ -298,15 +87,13 @@ export const CartSection = ({
 	const checkedItemsCount = checkedIds.length;
 	const allChecked = checkedItemsCount === data.items.length;
 
-	const userFavoriteIds = useMemo(() => userFavorites.map((item) => item.id), [userFavorites]);
-
 	const totalPrice = data.items
 		.filter((cartItem) => checkedIds.includes(cartItem.id))
 		.map((cartItem) => cartItem.price * cartItem.quantity)
 		.reduce((a, b) => a + b, 0);
 
 	const handleDeleteSelected = () => {
-		dispatch(removeCartItems({ itemIds: checkedIds }));
+		removeCartItems({ itemIds: checkedIds });
 		setCheckedIds([]);
 		setDeleteModalIsOpened(false);
 	};
@@ -380,8 +167,6 @@ export const CartSection = ({
 										isMobile={isMobile}
 										key={cartItem.id}
 										item={cartItem}
-										isAvailable={!data.unavailable}
-										isFavorite={userFavoriteIds.includes(cartItem.id)}
 										checked={checkedIds.includes(cartItem.id)}
 										onClick={() => {
 											const variationParam =

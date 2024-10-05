@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Box, CircularProgress, Divider, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Divider, Tab, Tabs, Typography } from "@mui/material";
 import { ShoppingBag } from "@mui/icons-material";
 
 import { Empty } from "@components/Empty";
@@ -9,7 +9,9 @@ import { OrderCard } from "./OrderCard";
 import type { OrderShop } from "@appTypes/Order";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
-import ShopApiClient from "@api/shop/client";
+import { useGetOrderListQuery } from "@api/shop/profile";
+import { Loading } from "@components/Loading";
+import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
 
 function tabsProps(index: number) {
 	return {
@@ -34,20 +36,14 @@ const getOrdersByTab = ({ currentTab, orders }: { currentTab: number; orders: Or
 export default function UserOrdersRoute() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
-	const [orders, setOrders] = useState<OrderShop[] | undefined>(undefined);
+	const { data: orderList, isLoading: orderListIsLoading } = useGetOrderListQuery();
 	const [currentTab, setCurrentTab] = useState<number>(1);
 
-	useEffect(() => {
-		const fetchOrders = async () => {
-			const { items } = await ShopApiClient.getOrderList();
-			setOrders(items);
-		};
-		fetchOrders();
-	}, []);
+	const [fetchPaymentUrl, { data: paymentUrlData, isSuccess: paymentUrlIsSuccess }] = useLazyGetPaymentUrlQuery();
 
-	const ordersToRender = !orders
+	const ordersToRender = !orderList
 		? []
-		: getOrdersByTab({ currentTab, orders }).sort((a, b) => {
+		: getOrdersByTab({ currentTab, orders: orderList.items }).sort((a, b) => {
 				return b.createdAt.getTime() - a.createdAt.getTime();
 		  });
 
@@ -55,9 +51,14 @@ export default function UserOrdersRoute() {
 		setCurrentTab(newValue);
 	};
 
+	useEffect(() => {
+		if (paymentUrlIsSuccess) {
+			window.location.href = paymentUrlData.paymentUrl;
+		}
+	}, [paymentUrlIsSuccess, paymentUrlData]);
+
 	const handlePay = async (invoiceId: string) => {
-		const { paymentUrl } = await ShopApiClient.getPaymentUrl(invoiceId);
-		window.location.href = paymentUrl;
+		fetchPaymentUrl({ invoiceId });
 	};
 
 	return (
@@ -75,28 +76,26 @@ export default function UserOrdersRoute() {
 					<Divider />
 				</Box>
 			</Box>
-			{orders === undefined ? (
-				<div className="w-100 h-100 ai-c d-f jc-c">
-					<CircularProgress />
-				</div>
-			) : ordersToRender.length > 0 ? (
-				ordersToRender.map((order, index) => (
-					<OrderCard isMobile={isMobile} key={index} order={order} onPay={handlePay} />
-				))
-			) : (
-				<Empty
-					icon={
-						<ShoppingBag
-							sx={{
-								width: 91,
-								height: 91,
-								color: "icon.tetriary",
-							}}
-						/>
-					}
-					title={"Заказы не найдены"}
-				/>
-			)}
+			<Loading isLoading={orderListIsLoading} necessaryDataIsPersisted={!!orderList}>
+				{ordersToRender.length > 0 ? (
+					ordersToRender.map((order, index) => (
+						<OrderCard isMobile={isMobile} key={index} order={order} onPay={handlePay} />
+					))
+				) : (
+					<Empty
+						icon={
+							<ShoppingBag
+								sx={{
+									width: 91,
+									height: 91,
+									color: "icon.tertiary",
+								}}
+							/>
+						}
+						title={"Заказы не найдены"}
+					/>
+				)}
+			</Loading>
 		</Box>
 	);
 }

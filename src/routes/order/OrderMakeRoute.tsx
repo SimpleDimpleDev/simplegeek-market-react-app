@@ -8,48 +8,69 @@ import { getImageUrl } from "@utils/image";
 import { CreditInfo } from "@appTypes/Credit";
 import { Delivery } from "@appTypes/Delivery";
 import { ShopOrderItemCard, ShopOrderItemCardCredit } from "@components/ItemCard";
-import { UserCartItem } from "@appTypes/UserItems";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
-import ShopApiClient from "@api/shop/client";
 import { DeliveryForm } from "@components/DeliveryForm";
+import { useGetCatalogQuery } from "@api/shop/catalog";
+import { Loading } from "@components/Loading";
+import { useCreateOrderMutation, useGetCheckoutItemsQuery } from "@api/shop/order";
 
 export default function OrderMakeRoute() {
 	const navigate = useNavigate();
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
-	const catalogItems = useSelector((state: RootState) => state.catalog.items);
-	const [checkoutItems, setCheckoutItems] = useState<UserCartItem[]>([]);
+	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
+	const { data: checkoutItemList, isLoading: checkoutItemListIsLoading } = useGetCheckoutItemsQuery();
+	const [
+		createOrder,
+		{
+			isLoading: orderMakeIsLoading,
+			isSuccess: orderMakeIsSuccess,
+			data: orderMakeSuccessData,
+			isError: orderMakeIsError,
+			error: orderMakeError,
+		},
+	] = useCreateOrderMutation();
+
 	const [delivery, setDelivery] = useState<Delivery | undefined>(undefined);
 
 	useEffect(() => {
-		const setup = async () => {
-			const result = await ShopApiClient.getCheckoutItems();
-			if (!result) {
-				navigate("/cart");
-			} else {
-				setCheckoutItems(result.items);
-			}
-		};
-		setup();
-	}, [navigate]);
+		if (!checkoutItemListIsLoading && (!checkoutItemList || checkoutItemList.items.length === 0)) {
+			navigate("/cart");
+		}
+	}, [checkoutItemList, checkoutItemListIsLoading, navigate]);
+
+	useEffect(() => {
+		if (orderMakeIsSuccess) {
+			const paymentUrl = orderMakeSuccessData.paymentUrl;
+			window.location.href = paymentUrl;
+		}
+	}, [orderMakeIsSuccess, orderMakeSuccessData]);
+
+	useEffect(() => {
+		if (orderMakeIsError) {
+			console.error(orderMakeError);
+		}
+	}, [orderMakeIsError, orderMakeError]);
 
 	const items = useMemo(() => {
-		return checkoutItems.map((item) => {
-			const catalogItem = catalogItems.find((catalogItem) => catalogItem.id === item.id);
-			if (!catalogItem) {
-				throw new Response("Catalog item not found", { status: 404 });
-			}
-			return { ...catalogItem, quantity: item.quantity };
-		});
-	}, [catalogItems, checkoutItems]);
+		if (!catalog) return [];
+		return (
+			checkoutItemList?.items.map((item) => {
+				const catalogItem = catalog.items.find((catalogItem) => catalogItem.id === item.id);
+				if (!catalogItem) {
+					throw new Response("Catalog item not found", { status: 404 });
+				}
+				return { ...catalogItem, quantity: item.quantity };
+			}) || []
+		);
+	}, [catalog, checkoutItemList]);
 
 	const itemsCreditAvailable = useMemo(() => items.filter((item) => item.creditInfo !== null), [items]);
 	const itemsCreditUnavailable = useMemo(() => items.filter((item) => item.creditInfo === null), [items]);
 
 	const preorder = useMemo(() => items.at(0)?.preorder || null, [items]);
 
-	
 	const [itemsCredit, setItemsCredit] = useState<{ id: string; isCredit: boolean }[]>(
 		items.map((item) => ({ id: item.id, isCredit: false }))
 	);
@@ -61,15 +82,14 @@ export default function OrderMakeRoute() {
 			setDeliveryError("Укажите данные доставки");
 			return;
 		}
-		const { paymentUrl } = await ShopApiClient.createOrder({
+		createOrder({
 			creditIds: itemsCredit.filter((item) => item.isCredit).map((item) => item.id),
 			delivery,
 		});
-		window.location.href = paymentUrl;
 	};
 
 	return (
-		<>
+		<Loading isLoading={catalogIsLoading} necessaryDataIsPersisted={!!catalog}>
 			<Box display={"flex"} flexDirection={"column"} alignItems={"flex-start"} gap={2}>
 				<Button variant="text" sx={{ color: "warning.main" }} onClick={() => navigate(-1)}>
 					<ChevronLeft />
@@ -185,14 +205,18 @@ export default function OrderMakeRoute() {
 									/ {items.length} {getRuGoodsWord(items.length)}
 								</Typography>
 							</Box>
-							<Button variant="contained" onClick={handleCreateOrder}>
+							<Button variant="contained" disabled={orderMakeIsLoading} onClick={handleCreateOrder}>
 								Оплатить
 							</Button>
-							{deliveryError && <Typography variant="subtitle0" color="error">{deliveryError}</Typography>}
+							{deliveryError && (
+								<Typography variant="subtitle0" color="error">
+									{deliveryError}
+								</Typography>
+							)}
 						</Box>
 					</Box>
 				</Box>
 			</Box>
-		</>
+		</Loading>
 	);
 }

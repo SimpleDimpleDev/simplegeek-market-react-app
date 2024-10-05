@@ -9,3 +9,7 @@ export const PublicationShopSchema = z.object({
 	items: CatalogItemShopSchema.array().nonempty(),
 	shippingCostIncluded: ShippingCostIncludedSchema.nullable(),
 });
+
+export const PublicationListSchema = z.object({
+	items: PublicationShopSchema.array(),
+});

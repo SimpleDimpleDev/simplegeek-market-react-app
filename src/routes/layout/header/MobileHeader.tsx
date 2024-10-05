@@ -11,18 +11,21 @@ import { fetchUserAuthority } from "@state/user/thunks";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@state/store";
 import { useState } from "react";
+import { useGetCatalogQuery } from "@api/shop/catalog";
+import { useGetCartItemListQuery } from "@api/shop/cart";
+import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 
 const MobileHeader: React.FC = () => {
 	const navigate = useNavigate();
 	const [mobileMenuIsOpened, setMobileMenuIsOpened] = useState(false);
 	const trigger = useScrollTrigger();
 
-	const categories = useSelector((state: RootState) => state.catalog.categories);
-	const catalogItems = useSelector((state: RootState) => state.catalog.items);
 	const userAuthority = useSelector((state: RootState) => state.userAuthority.authority);
+
+	const { data: catalog } = useGetCatalogQuery();
+	const { data: cartItemList } = useGetCartItemListQuery();
+	const { data: favoriteItemList } = useGetFavoriteItemListQuery();
 	// const userAuthorityLoading = useSelector((state: RootState) => state.userAuthority.loading);
-	const userCartItems = useSelector((state: RootState) => state.userCart.items);
-	const userFavoritesItems = useSelector((state: RootState) => state.userFavorites.items);
 
 	const dispatch = useDispatch<AppDispatch>();
 
@@ -46,7 +49,7 @@ const MobileHeader: React.FC = () => {
 				user={userAuthority}
 				onLoginClick={onLoginClick}
 				onLogoutClick={onLogoutClick}
-				categories={categories}
+				categories={catalog?.categories || []}
 				isOpened={mobileMenuIsOpened}
 				onMenuClose={() => setMobileMenuIsOpened(false)}
 			/>
@@ -69,20 +72,20 @@ const MobileHeader: React.FC = () => {
 							text: "Избранное",
 							icon: <Favorite />,
 							onClick: () => navigate("/favorites"),
-							badgeCount: userFavoritesItems.length,
+							badgeCount: favoriteItemList?.items.length,
 						},
 						{
 							text: "Корзина",
 							icon: <ShoppingCart />,
 							onClick: () => navigate("/cart"),
-							badgeCount: userCartItems.length,
+							badgeCount: cartItemList?.items.length,
 						},
 					]}
 				/>
 			</div>
 			<Slide in={!trigger} direction="down">
 				<div className="top-8 bg-primary p-2 w-100 h-11 ps-f" style={{ zIndex: 4 }}>
-					<CatalogSearch catalogItems={catalogItems} isMobile />
+					<CatalogSearch catalogItems={catalog?.items || []} isMobile />
 				</div>
 			</Slide>
 		</div>

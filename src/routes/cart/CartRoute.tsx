@@ -1,155 +1,98 @@
 import { ShoppingCart } from "@mui/icons-material";
-import { CircularProgress, Divider, Stack, Typography } from "@mui/material";
+import { Divider, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { CountPageHeader } from "@components/CountPageHeader";
 import { Empty } from "@components/Empty";
 import { UserCartItem } from "@appTypes/UserItems";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { CartSection } from "./CartSection";
 
-import type { CatalogItemCart, FormedCart, FormedCartSection } from "@appTypes/Cart";
-import { CatalogItem } from "@appTypes/CatalogItem";
 import SuggestedItems from "@components/SuggestedItems";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
-import ShopApiClient from "@api/shop/client";
-
-interface FormCartArgs {
-	catalogItems: CatalogItem[];
-	userCart: UserCartItem[];
-	availableItemsIds: string[];
-}
-
-function formCart({ catalogItems, userCart, availableItemsIds }: FormCartArgs): FormedCart {
-	const stockSection: FormedCartSection = {
-		title: "В наличии",
-		unavailable: false,
-		preorder: null,
-		creditAvailable: false,
-		items: [],
-	};
-	const unavailableSection: FormedCartSection = {
-		title: "Нет в наличии",
-		unavailable: true,
-		preorder: null,
-		creditAvailable: false,
-		items: [],
-	};
-	const preorderSections: FormedCartSection[] = [];
-
-	for (const userCartItem of userCart) {
-		const catalogItem = catalogItems.find((item) => item.id === userCartItem.id);
-		if (catalogItem === undefined) {
-			continue;
-		}
-		const item: CatalogItemCart = { ...catalogItem, quantity: userCartItem.quantity };
-		const isAvailable = availableItemsIds.includes(item.id);
-		if (!isAvailable) {
-			unavailableSection.items.push(item);
-		} else {
-			const itemPreorder = item.preorder;
-			if (itemPreorder !== null) {
-				const preorderSection = preorderSections.find((section) => section.title === itemPreorder.title);
-				const itemCreditAvailable = item.creditInfo !== null;
-				if (preorderSection === undefined) {
-					preorderSections.push({
-						title: itemPreorder.title,
-						unavailable: false,
-						preorder: itemPreorder,
-						creditAvailable: itemCreditAvailable,
-						items: [item],
-					});
-				} else {
-					preorderSection.items.push(item);
-					if (itemCreditAvailable) {
-						preorderSection.creditAvailable = true;
-					}
-				}
-			} else {
-				stockSection.items.push(item);
-			}
-		}
-	}
-
-	return {
-		sections: [stockSection, ...preorderSections, unavailableSection],
-	};
-}
-
+import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/catalog";
+import { useGetCartItemListQuery } from "@api/shop/cart";
+import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
+import { useCheckoutMutation } from "@api/shop/order";
+import { Loading } from "@components/Loading";
+import { formCart } from "./utils";
 
 export default function CartRoute() {
 	const navigate = useNavigate();
 
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
-
-	const catalogItems = useSelector((state: RootState) => state.catalog.items);
-	const availableItemsIds = useSelector((state: RootState) => state.availability.items);
-
 	const userAuthority = useSelector((state: RootState) => state.userAuthority.authority);
-	const userCartItems = useSelector((state: RootState) => state.userCart.items);
-	const userFavoriteItems = useSelector((state: RootState) => state.userFavorites.items);
 
-	const userCartLoading = useSelector((state: RootState) => state.userCart.loading);
+	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
+	const { data: availableItemsIds, isLoading: availableItemsIdsIsLoading } = useGetItemsAvailabilityQuery();
 
-	console.log("availableItemsIds", availableItemsIds);
-	console.log("userCartItems", userCartItems);
-	console.log("catalogItems", catalogItems);
+	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
+	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
 
-	const formedCart = useMemo(
-		() => formCart({ catalogItems, userCart: userCartItems, availableItemsIds }),
-		[userCartItems, catalogItems, availableItemsIds]
-	);
-
-	console.log("formedCart", formedCart);
+	const [checkout, { isSuccess: checkoutIsSuccess, isError: checkoutIsError }] = useCheckoutMutation();
 
 	const [orderIsOk, setOrderIsOk] = useState(true);
 
-	const createOrder = async (items: UserCartItem[]) => {
-		if (!userAuthority) navigate("/auth/login");
-		const checkoutResult = await ShopApiClient.checkout(items);
+	const showLoading =
+		catalogIsLoading || availableItemsIdsIsLoading || cartItemListIsLoading || favoriteItemListIsLoading;
 
-		if (checkoutResult.ok) {
+	useEffect(() => {
+		if (checkoutIsSuccess) {
 			navigate("/order");
-		} else {
+		}
+		if (checkoutIsError) {
 			setOrderIsOk(false);
 		}
+	}, [checkoutIsSuccess, navigate, checkoutIsError]);
+
+	const formedCart = useMemo(
+		() =>
+			catalog && availableItemsIds && cartItemList
+				? formCart({ catalogItems: catalog.items, userCart: cartItemList.items, availableItemsIds })
+				: { sections: [] },
+		[catalog, availableItemsIds, cartItemList]
+	);
+
+	const createOrder = async (items: UserCartItem[]) => {
+		if (!userAuthority) navigate("/auth/login");
+		checkout({ items });
 	};
 
 	return (
-		<>
-			<CountPageHeader isMobile={isMobile} title="Корзина" count={userCartItems.length} />
-			{!orderIsOk && (
-				<div className="bg-primary p-3 w-100 br-3">
-					<Typography variant="body2">
-						В вашем заказе содержались товары, указанное количество которых отсутствует на складе.
-						Количество товаров в корзине было скорректировано
-					</Typography>
-				</div>
-			)}
-			<Stack direction={"column"} gap={4} divider={<Divider />} p={"24px 0"}>
-				{formedCart.sections.map((section) => {
-					const userSectionItems = userCartItems.filter((item) =>
-						section.items.some((sectionItem) => sectionItem.id === item.id)
-					);
-					return (
-						userSectionItems.length > 0 && (
-							<CartSection
-								isMobile={isMobile}
-								key={section.title}
-								data={section}
-								userCart={userSectionItems}
-								userFavorites={userFavoriteItems}
-								onMakeOrder={createOrder}
-							/>
-						)
-					);
-				})}
-			</Stack>
-			{userCartItems.length === 0 &&
-				(userCartLoading ? (
-					<CircularProgress />
-				) : (
+		<Loading
+			isLoading={showLoading}
+			necessaryDataIsPersisted={!!catalog && !!availableItemsIds && !!cartItemList && !!favoriteItemList}
+		>
+			<>
+				<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
+				{!orderIsOk && (
+					<div className="bg-primary p-3 w-100 br-3">
+						<Typography variant="body2">
+							В вашем заказе содержались товары, указанное количество которых отсутствует на складе.
+							Количество товаров в корзине было скорректировано
+						</Typography>
+					</div>
+				)}
+				<Stack direction={"column"} gap={4} divider={<Divider />} p={"24px 0"}>
+					{formedCart.sections.map((section) => {
+						const userSectionItems =
+							cartItemList?.items.filter((item) =>
+								section.items.some((sectionItem) => sectionItem.id === item.id)
+							) || [];
+						return (
+							userSectionItems.length > 0 && (
+								<CartSection
+									isMobile={isMobile}
+									key={section.title}
+									data={section}
+									onMakeOrder={createOrder}
+								/>
+							)
+						);
+					})}
+				</Stack>
+				{cartItemList?.items.length === 0 && (
 					<Empty
 						title="В корзине ничего нет"
 						description="Добавьте в корзину что-нибудь"
@@ -158,13 +101,14 @@ export default function CartRoute() {
 								sx={{
 									width: 91,
 									height: 91,
-									color: "icon.tetriary",
+									color: "icon.tertiary",
 								}}
 							/>
 						}
 					/>
-				))}
-			<SuggestedItems />
-		</>
+				)}
+				<SuggestedItems />
+			</>
+		</Loading>
 	);
 }
