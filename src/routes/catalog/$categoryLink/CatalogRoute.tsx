@@ -41,7 +41,7 @@ const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] =
 	}
 };
 
-export default function CatalogRoute() {
+export function Component() {
 	const navigate = useNavigate();
 
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);

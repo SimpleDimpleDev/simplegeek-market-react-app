@@ -18,7 +18,7 @@ import { useCheckoutMutation } from "@api/shop/order";
 import { Loading } from "@components/Loading";
 import { formCart } from "./utils";
 
-export default function CartRoute() {
+export function Component() {
 	const navigate = useNavigate();
 
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
@@ -60,55 +60,57 @@ export default function CartRoute() {
 	};
 
 	return (
-		<Loading
-			isLoading={showLoading}
-			necessaryDataIsPersisted={!!catalog && !!availableItemsIds && !!cartItemList && !!favoriteItemList}
-		>
-			<>
-				<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
-				{!orderIsOk && (
-					<div className="bg-primary p-3 w-100 br-3">
-						<Typography variant="body2">
-							В вашем заказе содержались товары, указанное количество которых отсутствует на складе.
-							Количество товаров в корзине было скорректировано
-						</Typography>
-					</div>
-				)}
-				<Stack direction={"column"} gap={4} divider={<Divider />} p={"24px 0"}>
-					{formedCart.sections.map((section) => {
-						const userSectionItems =
-							cartItemList?.items.filter((item) =>
-								section.items.some((sectionItem) => sectionItem.id === item.id)
-							) || [];
-						return (
-							userSectionItems.length > 0 && (
-								<CartSection
-									isMobile={isMobile}
-									key={section.title}
-									data={section}
-									onMakeOrder={createOrder}
+		<>
+			<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
+			<Loading
+				isLoading={showLoading}
+				necessaryDataIsPersisted={!!catalog && !!availableItemsIds && !!cartItemList && !!favoriteItemList}
+			>
+				<>
+					{!orderIsOk && (
+						<div className="bg-primary p-3 w-100 br-3">
+							<Typography variant="body2">
+								В вашем заказе содержались товары, указанное количество которых отсутствует на складе.
+								Количество товаров в корзине было скорректировано
+							</Typography>
+						</div>
+					)}
+					<Stack direction={"column"} gap={4} divider={<Divider />} p={"24px 0"}>
+						{formedCart.sections.map((section) => {
+							const userSectionItems =
+								cartItemList?.items.filter((item) =>
+									section.items.some((sectionItem) => sectionItem.id === item.id)
+								) || [];
+							return (
+								userSectionItems.length > 0 && (
+									<CartSection
+										isMobile={isMobile}
+										key={section.title}
+										data={section}
+										onMakeOrder={createOrder}
+									/>
+								)
+							);
+						})}
+					</Stack>
+					{cartItemList?.items.length === 0 && (
+						<Empty
+							title="В корзине ничего нет"
+							description="Добавьте в корзину что-нибудь"
+							icon={
+								<ShoppingCart
+									sx={{
+										width: 91,
+										height: 91,
+										color: "icon.tertiary",
+									}}
 								/>
-							)
-						);
-					})}
-				</Stack>
-				{cartItemList?.items.length === 0 && (
-					<Empty
-						title="В корзине ничего нет"
-						description="Добавьте в корзину что-нибудь"
-						icon={
-							<ShoppingCart
-								sx={{
-									width: 91,
-									height: 91,
-									color: "icon.tertiary",
-								}}
-							/>
-						}
-					/>
-				)}
-				<SuggestedItems />
-			</>
-		</Loading>
+							}
+						/>
+					)}
+					<SuggestedItems />
+				</>
+			</Loading>
+		</>
 	);
 }

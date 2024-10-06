@@ -9,7 +9,8 @@
 			"@api/*": ["src/api/*"],
 			"@assets/*": ["src/assets/*"],
 			"@state/*": ["src/state/*"],
-			"@config/*": ["src/config/*"]
+			"@config/*": ["src/config/*"],
+			"@routes/*": ["src/routes/*"]
 		},
 		"target": "ES2022",
 		"lib": ["ES2023"],

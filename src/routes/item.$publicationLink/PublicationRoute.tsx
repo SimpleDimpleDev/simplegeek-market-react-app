@@ -120,7 +120,7 @@ const Availability: React.FC<VariationAvailabilityProps> = ({
 	);
 };
 
-export default function PublicationRoute() {
+export function Component() {
 	const params = useParams();
 	const searchParams = useSearchParams();
 	const navigate = useNavigate();

@@ -3,7 +3,8 @@ import { IntlProvider, CustomTranslations, ThemeProvider as OryThemeProvider } f
 import customTranslations from "src/oryLocale";
 import oryTheme from "src/oryTheme.ts";
 
-export default function AuthLayout() {
+
+export function Component() {
 	return (
 		<OryThemeProvider themeOverrides={oryTheme}>
 			<IntlProvider<CustomTranslations> locale="ru" defaultLocale="ru" customTranslations={customTranslations}>

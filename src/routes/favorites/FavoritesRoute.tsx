@@ -10,7 +10,7 @@ import { useGetItemsAvailabilityQuery, useGetCatalogQuery } from "@api/shop/cata
 import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { Loading } from "@components/Loading";
 
-export default function FavoritesRoute() {
+export function Component() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
 	const { data: availableItemsIds, isLoading: availableItemsIdsIsLoading } = useGetItemsAvailabilityQuery();

@@ -33,7 +33,7 @@ const getOrdersByTab = ({ currentTab, orders }: { currentTab: number; orders: Or
 	}
 };
 
-export default function UserOrdersRoute() {
+export function Component() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
 	const { data: orderList, isLoading: orderListIsLoading } = useGetOrderListQuery();

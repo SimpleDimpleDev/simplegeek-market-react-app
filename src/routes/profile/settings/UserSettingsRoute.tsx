@@ -5,7 +5,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { SdkError, oryClient } from "@api/auth/client";
 
-export default function UserSettingsRoute() {
+export function Component() {
 	const [flow, setFlow] = useState<SettingsFlow | null>(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 

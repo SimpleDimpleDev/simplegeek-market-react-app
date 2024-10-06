@@ -15,7 +15,7 @@ import { useGetCatalogQuery } from "@api/shop/catalog";
 import { Loading } from "@components/Loading";
 import { useCreateOrderMutation, useGetCheckoutItemsQuery } from "@api/shop/order";
 
-export default function OrderMakeRoute() {
+export function Component() {
 	const navigate = useNavigate();
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 

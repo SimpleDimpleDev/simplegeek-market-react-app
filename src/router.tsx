@@ -1,60 +1,32 @@
-import { Routes, Route } from "react-router-dom";
-import { HomeRouteLazy } from "./routes/_index/_lazy";
-import { AuthLayoutLazy } from "./routes/auth/layout/_lazy";
-import { LoginRouteLazy } from "./routes/auth/login/_lazy";
-import { RecoveryRouteLazy } from "./routes/auth/recovery/_lazy";
-import { RegistrationRouteLazy } from "./routes/auth/registration/_lazy";
-import { VerificationRouteLazy } from "./routes/auth/verification/_lazy";
-import { CartRouteLazy } from "./routes/cart/_lazy";
-import { CatalogRouteLazy } from "./routes/catalog/$categoryLink/_lazy";
-import { FAQRouteLazy } from "./routes/faq/_lazy";
-import { FavoritesRouteLazy } from "./routes/favorites/_lazy";
-import { PublicationRouteLazy } from "./routes/item.$publicationLink/_lazy";
-import { ShopLayoutLazy } from "./routes/layout/_lazy";
-import { OrderMakeRouteLazy } from "./routes/order/_lazy";
-import { UserOrderRouteLazy } from "./routes/orders.$orderId/_lazy";
-import { ProfileLayoutLazy } from "./routes/profile/layout/_lazy";
-import { UserOrdersRouteLazy } from "./routes/profile/orders/_lazy";
-import { UserSettingsRouteLazy } from "./routes/profile/settings/_lazy";
-import { SearchRouteLazy } from "./routes/search/_lazy";
-import React, { Suspense } from "react";
-import SuspenseRouter from "@utils/SuspenseRouter";
-import { CircularProgress } from "@mui/material";
+import { Route, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
+import ShopLayout from "@routes/layout/ShopLayout";
+import NotFound from "@components/NotFound";
 
-const AppRouter: React.FC = () => (
-	<SuspenseRouter>
-		<Suspense
-			fallback={
-				<div className="w-100v h-100v ai-c d-f jc-c">
-					<CircularProgress />
-				</div>
-			}
-		>
-			<Routes>
-				<Route path="/" element={<ShopLayoutLazy />}>
-					<Route index element={<HomeRouteLazy />} />
-					<Route path="auth" element={<AuthLayoutLazy />}>
-						<Route path="login" element={<LoginRouteLazy />} />
-						<Route path="registration" element={<RegistrationRouteLazy />} />
-						<Route path="verification" element={<VerificationRouteLazy />} />
-						<Route path="recovery" element={<RecoveryRouteLazy />} />
-					</Route>
-					<Route path="cart" element={<CartRouteLazy />} />
-					<Route path="catalog/:categoryLink" element={<CatalogRouteLazy />} />
-					<Route path="faq" element={<FAQRouteLazy />} />
-					<Route path="favorites" element={<FavoritesRouteLazy />} />
-					<Route path="item/:publicationLink" element={<PublicationRouteLazy />} />
-					<Route path="order" element={<OrderMakeRouteLazy />} />
-					<Route path="orders/:orderId" element={<UserOrderRouteLazy />} />
-					<Route path="profile" element={<ProfileLayoutLazy />}>
-						<Route path="orders" element={<UserOrdersRouteLazy />} />
-						<Route path="settings" element={<UserSettingsRouteLazy />} />
-					</Route>
-					<Route path="search" element={<SearchRouteLazy />} />
-				</Route>
-			</Routes>
-		</Suspense>
-	</SuspenseRouter>
+const router = createBrowserRouter(
+	createRoutesFromElements(
+		<Route path="/" element={<ShopLayout />}>
+			<Route index lazy={() => import("@routes/_index/index")} />
+			<Route path="auth" lazy={() => import("@routes/auth/layout/AuthLayout")}>
+				<Route path="login" lazy={() => import("@routes/auth/login/LoginRoute")} />
+				<Route path="registration" lazy={() => import("@routes/auth/registration/RegistrationRoute")} />
+				<Route path="verification" lazy={() => import("@routes/auth/verification/VerificationRoute")} />
+				<Route path="recovery" lazy={() => import("@routes/auth/recovery/RecoveryRoute")} />
+			</Route>
+			<Route path="cart" lazy={() => import("@routes/cart/CartRoute")} />
+			<Route path="catalog/:categoryLink" lazy={() => import("@routes/catalog/$categoryLink/CatalogRoute")} />
+			<Route path="faq" lazy={() => import("@routes/faq/FAQRoute")} />
+			<Route path="favorites" lazy={() => import("@routes/favorites/FavoritesRoute")} />
+			<Route path="item/:publicationLink" lazy={() => import("@routes/item.$publicationLink/PublicationRoute")} />
+			<Route path="order" lazy={() => import("@routes/order/OrderMakeRoute")} />
+			<Route path="orders/:orderId" lazy={() => import("@routes/orders.$orderId/UserOrderRoute")} />
+			<Route path="profile" lazy={() => import("@routes/profile/layout/ProfileLayout")}>
+				<Route path="orders" lazy={() => import("@routes/profile/orders/UserOrdersRoute")} />
+				<Route path="settings" lazy={() => import("@routes/profile/settings/UserSettingsRoute")} />
+			</Route>
+			<Route path="search" lazy={() => import("@routes/search/SearchRoute")} />
+			<Route path="*" element={<NotFound />} />
+		</Route>
+	)
 );
 
-export { AppRouter };
+export { router };

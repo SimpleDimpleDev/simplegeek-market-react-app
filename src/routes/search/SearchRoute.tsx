@@ -42,7 +42,7 @@ const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] =
 	}
 };
 
-export default function SearchRoute() {
+export function Component() {
 	const navigate = useNavigate();
 	const searchParams = useSearchParams();
 	const query = Object.fromEntries(searchParams[0].entries()).q;

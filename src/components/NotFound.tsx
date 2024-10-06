@@ -1,10 +1,10 @@
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-export default function SomethingWentWrong() {
+export default function NotFound() {
 
     const navigate = useNavigate();
-
+    
     return (
         <div style={{
             display: "flex",
@@ -20,7 +20,7 @@ export default function SomethingWentWrong() {
                 gap: 16
             }}>
                 <Typography variant="h1">
-                    Что-то пошло не так
+                    404
                 </Typography>
                 <div style={{
                     display: "flex",
@@ -28,7 +28,10 @@ export default function SomethingWentWrong() {
                     alignItems: "center",
                 }}>
                     <Typography variant="h6">
-                        Повторите попытку позже
+                        Что-то пошло не так
+                    </Typography>
+                    <Typography variant="body1">
+                        Похоже данной страницы не существует
                     </Typography>
                 </div>
 

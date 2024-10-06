@@ -14,14 +14,14 @@ import { useParams } from "react-router-dom";
 import { useGetOrderQuery } from "@api/shop/profile";
 import { Loading } from "@components/Loading";
 import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
-import SomethingWentWrong from "@components/Errors/SomethingWentWrong";
+import SomethingWentWrong from "@components/SomethingWentWrong";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЕК",
 	SELF_PICKUP: "Самовывоз",
 };
 
-export default function UserOrderRoute() {
+export function Component() {
 	const params = useParams();
 	const orderId = params.orderId;
 	if (orderId === undefined) {

@@ -9,7 +9,7 @@ import { IntlProvider, CustomTranslations, ThemeProvider as OryThemeProvider } f
 import customTranslations from "src/oryLocale";
 import oryTheme from "src/oryTheme.ts";
 
-export default function ProfileLayout() {
+export function Component() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
 	return (

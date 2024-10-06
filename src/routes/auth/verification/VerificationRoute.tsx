@@ -4,7 +4,7 @@ import { UserAuthCard } from "@ory/elements";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-export default function VerificationRoute() {
+export function Component() {
 	const [flow, setFlow] = useState<VerificationFlow | null>(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 

@@ -7,7 +7,7 @@ import { getImageUrl } from "@utils/image";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-export default function HomeRoute() {
+export function Component() {
 	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 
@@ -25,13 +25,14 @@ export default function HomeRoute() {
 			>
 				<BreadcrumbsPageHeader isMobile={isMobile} current="Главная" />
 			</div>
-			<div>
+			<div className="h-100">
 				<div
 					style={{
 						display: "flex",
 						flexDirection: isMobile ? "column" : "row",
 						justifyContent: "space-between",
 						width: "100%",
+						height: "100%",
 						gap: 16,
 					}}
 				>
