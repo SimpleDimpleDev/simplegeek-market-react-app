@@ -8,13 +8,12 @@ import { OrderItemCredit } from "@components/CreditTimeline";
 import { DeliveryService } from "@appTypes/Delivery";
 import { DateFormatter, getRuGoodsWord } from "@utils/format";
 import { getImageUrl } from "@utils/image";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 import { useParams } from "react-router-dom";
 import { useGetOrderQuery } from "@api/shop/profile";
 import { Loading } from "@components/Loading";
 import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
 import SomethingWentWrong from "@components/SomethingWentWrong";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЕК",
@@ -22,6 +21,8 @@ const deliveryServiceMapping: Record<DeliveryService, string> = {
 };
 
 export function Component() {
+	const isMobile = useIsMobile();
+
 	const params = useParams();
 	const orderId = params.orderId;
 	if (orderId === undefined) {
@@ -31,8 +32,6 @@ export function Component() {
 	const [fetchPaymentUrl, { data: paymentUrlData, isSuccess: paymentUrlIsSuccess }] = useLazyGetPaymentUrlQuery();
 
 	const navigate = useNavigate();
-
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
 	const goodsTotal = useMemo(() => (!order ? 0 : order.items.reduce((acc, item) => acc + item.sum, 0)), [order]);
 	const shippingTotal = useMemo(

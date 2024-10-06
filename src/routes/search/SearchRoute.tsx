@@ -22,9 +22,8 @@ import { CatalogFilters } from "@components/Filters";
 import { CatalogItem } from "@appTypes/CatalogItem";
 import { Empty } from "@components/Empty";
 import { isCatalogItemMatchQuery } from "@utils/search";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 import { useGetCatalogQuery } from "@api/shop/catalog";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 type Sorting = "expensive" | "cheap";
 
@@ -43,11 +42,11 @@ const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] =
 };
 
 export function Component() {
+	const isMobile = useIsMobile();
+
 	const navigate = useNavigate();
 	const searchParams = useSearchParams();
 	const query = Object.fromEntries(searchParams[0].entries()).q;
-
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 

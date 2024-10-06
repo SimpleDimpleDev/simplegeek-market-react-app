@@ -1,8 +1,9 @@
 import { ExpandMore } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
-	const isMobile = false;
+	const isMobile = useIsMobile();
 	return (
 		<>
 			<div className="py-2">
@@ -18,7 +19,7 @@ export function Component() {
 					<AccordionDetails>
 						<div className="gap-1 pb-2 d-f fg-c">
 							<Typography variant="subtitle2">Заголовок 1</Typography>
-							<Typography variant="body2">Овтет 1</Typography>
+							<Typography variant="body2">Ответ 1</Typography>
 						</div>
 					</AccordionDetails>
 				</Accordion>

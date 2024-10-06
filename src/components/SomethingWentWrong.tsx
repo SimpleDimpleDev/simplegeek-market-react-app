@@ -17,9 +17,10 @@ export default function SomethingWentWrong() {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: 16
+                textAlign: "center",
+                gap: 8
             }}>
-                <Typography variant="h4">
+                <Typography variant="h5">
                     Что-то пошло не так
                 </Typography>
                 <div style={{

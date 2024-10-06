@@ -3,10 +3,9 @@ import { Box, IconButton, Typography, styled } from "@mui/material";
 import { createRef } from "react";
 
 import ItemCard from "./ItemCard";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 import { Loading } from "./Loading";
 import { useGetCatalogQuery } from "@api/shop/catalog";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 const ItemBar = styled(Box)({
 	display: "flex",
@@ -36,7 +35,7 @@ const ScrollButton = styled(IconButton)({
 export default function SuggestedItems() {
 	const scrollRef = createRef<HTMLDivElement>();
 
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
+	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 

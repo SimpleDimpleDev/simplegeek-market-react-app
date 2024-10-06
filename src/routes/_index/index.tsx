@@ -2,13 +2,12 @@ import { useGetCatalogQuery } from "@api/shop/catalog";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import { Loading } from "@components/Loading";
 import { Typography } from "@mui/material";
-import { RootState } from "@state/store";
 import { getImageUrl } from "@utils/image";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
+	const isMobile = useIsMobile();
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 
 	return (
@@ -16,7 +15,7 @@ export function Component() {
 			<div
 				style={{
 					paddingTop: 0,
-					paddingBottom: 32,
+					paddingBottom: 0,
 					display: "flex",
 					flexDirection: "column",
 					gap: 8,

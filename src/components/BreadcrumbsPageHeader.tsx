@@ -22,7 +22,7 @@ interface BreadcrumbsHeaderProps {
 };
 
 const BreadcrumbsPageHeader = ({ isMobile, isBig = true, path, current }: BreadcrumbsHeaderProps) => (
-    <div className="w-100 d-f fd-c gap-2 py-2 ai-bl">
+    <div className="gap-2 py-2 w-100 ai-bl d-f fd-c">
         {!isMobile && path && (
             <Breadcrumbs>
                 {path.map((element, index) => (

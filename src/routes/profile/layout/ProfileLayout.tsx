@@ -2,15 +2,14 @@ import { AccountCircle, ShoppingBag } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import NavButton from "@components/NavButton";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 
 import { IntlProvider, CustomTranslations, ThemeProvider as OryThemeProvider } from "@ory/elements";
 import customTranslations from "src/oryLocale";
 import oryTheme from "src/oryTheme.ts";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
+	const isMobile = useIsMobile();
 
 	return (
 		<>

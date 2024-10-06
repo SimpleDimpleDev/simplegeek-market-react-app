@@ -7,11 +7,10 @@ import { Empty } from "@components/Empty";
 import { OrderCard } from "./OrderCard";
 
 import type { OrderShop } from "@appTypes/Order";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 import { useGetOrderListQuery } from "@api/shop/profile";
 import { Loading } from "@components/Loading";
 import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 function tabsProps(index: number) {
 	return {
@@ -34,7 +33,7 @@ const getOrdersByTab = ({ currentTab, orders }: { currentTab: number; orders: Or
 };
 
 export function Component() {
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
+	const isMobile = useIsMobile();
 
 	const { data: orderList, isLoading: orderListIsLoading } = useGetOrderListQuery();
 	const [currentTab, setCurrentTab] = useState<number>(1);

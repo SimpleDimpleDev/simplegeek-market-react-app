@@ -9,8 +9,6 @@ import React, { useMemo, useState } from "react";
 
 import ImageCarousel from "./ImageCarousel";
 import { getImageUrl } from "@utils/image";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 import { useAddCartItemMutation, useGetCartItemListQuery } from "@api/shop/cart";
 import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/catalog";
 import {
@@ -20,6 +18,7 @@ import {
 } from "@api/shop/favorites";
 import { Loading } from "@components/Loading";
 import { PreorderShop } from "@appTypes/Preorder";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 interface ActionButtonsProps {
 	isFavorite: boolean | undefined;
@@ -121,6 +120,8 @@ const Availability: React.FC<VariationAvailabilityProps> = ({
 };
 
 export function Component() {
+	const isMobile = useIsMobile();
+
 	const params = useParams();
 	const searchParams = useSearchParams();
 	const navigate = useNavigate();
@@ -132,8 +133,6 @@ export function Component() {
 
 	const itemVariationIndexString = searchParams[0].get("v");
 	const itemVariationIndex = itemVariationIndexString === null ? 0 : parseInt(itemVariationIndexString) - 1;
-
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 

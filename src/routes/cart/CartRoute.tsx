@@ -17,11 +17,12 @@ import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { useCheckoutMutation } from "@api/shop/order";
 import { Loading } from "@components/Loading";
 import { formCart } from "./utils";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
 	const navigate = useNavigate();
 
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
+	const isMobile = useIsMobile();
 	const userAuthority = useSelector((state: RootState) => state.userAuthority.authority);
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();

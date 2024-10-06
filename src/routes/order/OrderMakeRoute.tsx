@@ -8,16 +8,15 @@ import { getImageUrl } from "@utils/image";
 import { CreditInfo } from "@appTypes/Credit";
 import { Delivery } from "@appTypes/Delivery";
 import { ShopOrderItemCard, ShopOrderItemCardCredit } from "@components/ItemCard";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 import { DeliveryForm } from "@components/DeliveryForm";
 import { useGetCatalogQuery } from "@api/shop/catalog";
 import { Loading } from "@components/Loading";
 import { useCreateOrderMutation, useGetCheckoutItemsQuery } from "@api/shop/order";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
+	const isMobile = useIsMobile();
 	const navigate = useNavigate();
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: checkoutItemList, isLoading: checkoutItemListIsLoading } = useGetCheckoutItemsQuery();

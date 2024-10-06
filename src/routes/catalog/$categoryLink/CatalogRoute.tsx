@@ -20,11 +20,10 @@ import { useEffect, useMemo, useState } from "react";
 import { CatalogFilters } from "@components/Filters";
 import { CatalogItem } from "@appTypes/CatalogItem";
 import { Empty } from "@components/Empty";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 import { ScrollTop } from "@components/ScrollToTopButton";
 import { useGetCatalogQuery } from "@api/shop/catalog";
 import { Loading } from "@components/Loading";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 type Sorting = "expensive" | "cheap";
 const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] => {
@@ -44,7 +43,7 @@ const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] =
 export function Component() {
 	const navigate = useNavigate();
 
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
+	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 

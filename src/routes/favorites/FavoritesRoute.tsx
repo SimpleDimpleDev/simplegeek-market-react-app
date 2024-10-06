@@ -4,14 +4,13 @@ import { useMemo } from "react";
 import { CountPageHeader } from "@components/CountPageHeader";
 import { Empty } from "@components/Empty";
 import { FavoritesSection } from "./FavoritesSection";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 import { useGetItemsAvailabilityQuery, useGetCatalogQuery } from "@api/shop/catalog";
 import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { Loading } from "@components/Loading";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
+	const isMobile = useIsMobile();
 
 	const { data: availableItemsIds, isLoading: availableItemsIdsIsLoading } = useGetItemsAvailabilityQuery();
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();

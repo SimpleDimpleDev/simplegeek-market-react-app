@@ -1,7 +1,6 @@
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 import { lazy, Suspense } from "react";
 import { ScrollRestoration } from "react-router-dom";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 const MobileHeader = lazy(() => import("./header/MobileHeader"));
 const DesktopHeader = lazy(() => import("./header/DesktopHeader"));
@@ -11,7 +10,7 @@ const MobileFooter = lazy(() => import("./footer/MobileFooter"));
 const DesktopFooter = lazy(() => import("./footer/DesktopFooter"));
 
 export default function ShopLayout() {
-	const isMobile = useSelector((state: RootState) => state.responsive.isMobile);
+	const isMobile = useIsMobile();
 	return (
 		<div className="d-f fd-c" style={{ height: "100vh" }}>
 			<div className="d-f fd-c" style={{ minHeight: "100vh" }}>
