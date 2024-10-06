@@ -44,7 +44,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 }) => {
 	return (
 		<Box display="flex" flexDirection="row" gap={1}>
-			<Button variant="contained" size="large" fullWidth onClick={onCartClick}>
+			<Button variant="contained" size="large" fullWidth onClick={onCartClick} disabled={isInCart === undefined}>
 				{availabilityIsLoading || cartIsLoading ? (
 					<CircularProgress />
 				) : isAvailable ? (
@@ -58,7 +58,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 				)}
 				<Typography>{isInCart ? "Перейти" : "Добавить"} в корзину</Typography>
 			</Button>
-			<IconButton onClick={onFavoriteClick}>
+			<IconButton onClick={onFavoriteClick} disabled={isFavorite === undefined}>
 				{favoritesIsLoading ? (
 					<CircularProgress />
 				) : isFavorite ? (
