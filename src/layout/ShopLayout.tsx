@@ -1,3 +1,4 @@
+import { CircularProgress } from "@mui/material";
 import { lazy, Suspense } from "react";
 import { ScrollRestoration } from "react-router-dom";
 import { useIsMobile } from "src/hooks/useIsMobile";
@@ -14,7 +15,13 @@ export default function ShopLayout() {
 	return (
 		<div className="d-f fd-c" style={{ height: "100vh" }}>
 			<div className="d-f fd-c" style={{ minHeight: "100vh" }}>
-				<Suspense fallback={null}>
+				<Suspense
+					fallback={
+						<div className="w-100 h-100 ai-c d-f jc-c">
+							<CircularProgress />
+						</div>
+					}
+				>
 					{isMobile ? (
 						<>
 							<MobileHeader />
