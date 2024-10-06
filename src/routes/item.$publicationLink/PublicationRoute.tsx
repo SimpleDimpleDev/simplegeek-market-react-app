@@ -151,35 +151,33 @@ export function Component() {
 		() => catalog?.publications.find((publication) => publication.link === publicationLink),
 		[catalog, publicationLink]
 	);
-
-	if (publication === undefined) {
-		throw new Response("No publication found", { status: 404 });
-	}
-	const singleVariation = publication.items.length === 1;
-	const selectedVariation = publication.items.at(selectedVariationIndex);
-	if (selectedVariation === undefined) {
-		throw new Response("No variation found", { status: 404 });
-	}
+	const selectedVariation = publication?.items.at(selectedVariationIndex);
 
 	const selectedVariationIsAvailable = useMemo(
-		() => availableItemIds?.includes(selectedVariation.id),
+		() => (selectedVariation === undefined ? undefined : availableItemIds?.includes(selectedVariation.id)),
 		[availableItemIds, selectedVariation]
 	);
 	const selectedVariationIsInCart = useMemo(
-		() => cartItemList?.items.some((cartItem) => cartItem.id === selectedVariation.id),
+		() =>
+			selectedVariation === undefined
+				? undefined
+				: cartItemList?.items.some((cartItem) => cartItem.id === selectedVariation.id),
 		[cartItemList, selectedVariation]
 	);
 	const selectedVariationIsFavorite = useMemo(
-		() => favoriteItemList?.items.some((favoriteItem) => favoriteItem.id === selectedVariation.id),
+		() =>
+			selectedVariation === undefined
+				? undefined
+				: favoriteItemList?.items.some((favoriteItem) => favoriteItem.id === selectedVariation.id),
 		[favoriteItemList, selectedVariation]
 	);
 	const preparedImageUrls = useMemo(
-		() => selectedVariation.product.images.map((image) => getImageUrl(image.url, "large")),
+		() => selectedVariation?.product.images.map((image) => getImageUrl(image.url, "large")) || [],
 		[selectedVariation]
 	);
 
 	const handleToggleFavorite = () => {
-		if (selectedVariationIsFavorite === undefined) return;
+		if (selectedVariationIsFavorite === undefined || selectedVariation === undefined) return;
 		if (selectedVariationIsFavorite) {
 			removeFavoriteItem({ itemId: selectedVariation.id });
 		} else {
@@ -188,7 +186,12 @@ export function Component() {
 	};
 
 	const handleCartClick = () => {
-		if (selectedVariationIsAvailable === undefined || selectedVariationIsInCart === undefined) return;
+		if (
+			selectedVariationIsAvailable === undefined ||
+			selectedVariationIsInCart === undefined ||
+			selectedVariation === undefined
+		)
+			return;
 		if (selectedVariationIsInCart) {
 			navigate("/cart");
 		} else if (selectedVariationIsAvailable) {
@@ -200,8 +203,11 @@ export function Component() {
 	};
 
 	return (
-		<Loading isLoading={catalogIsLoading} necessaryDataIsPersisted={!!catalog}>
-			{isMobile ? (
+		<Loading
+			isLoading={catalogIsLoading}
+			necessaryDataIsPersisted={!!catalog && !!publication && !!selectedVariation}
+		>
+			{!publication || !selectedVariation ? null : isMobile ? (
 				<>
 					<Box display="flex" flexDirection="column" width="100%" gap={2}>
 						<ImageCarousel isMobile={true} imageUrls={preparedImageUrls} />
@@ -210,7 +216,7 @@ export function Component() {
 						<Typography variant="h5">{selectedVariation.product.title}</Typography>
 					</Box>
 					<Box display="flex" flexDirection="column" gap={2}>
-						{!singleVariation && (
+						{publication.items.length !== 1 && (
 							<Box display="flex" flexDirection="column" gap={2}>
 								<Typography variant="h6">Вариация</Typography>
 								<Select
@@ -348,7 +354,7 @@ export function Component() {
 						</Box>
 
 						<Box display="flex" flexDirection="column" gap={3}>
-							{!singleVariation && (
+							{publication.items.length !== 1 && (
 								<Box display="flex" flexDirection="column" gap={2}>
 									<Typography variant="h5">Вариация</Typography>
 									<Select
