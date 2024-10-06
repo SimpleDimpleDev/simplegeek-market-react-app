@@ -23,10 +23,12 @@ const finishedOrderStatuses: OrderShop["status"][] = ["CANCELLED", "FINISHED"];
 
 const getOrdersByTab = ({ currentTab, orders }: { currentTab: number; orders: OrderShop[] }) => {
 	switch (currentTab) {
-		case 1:
+		case 0:
 			return orders.filter((order) => !finishedOrderStatuses.includes(order.status));
-		case 2:
+		case 1:
 			return orders.filter((order) => finishedOrderStatuses.includes(order.status));
+		case 2:
+			return orders
 		default:
 			return orders;
 	}
@@ -36,7 +38,7 @@ export function Component() {
 	const isMobile = useIsMobile();
 
 	const { data: orderList, isLoading: orderListIsLoading } = useGetOrderListQuery();
-	const [currentTab, setCurrentTab] = useState<number>(1);
+	const [currentTab, setCurrentTab] = useState<number>(0);
 
 	const [fetchPaymentUrl, { data: paymentUrlData, isSuccess: paymentUrlIsSuccess }] = useLazyGetPaymentUrlQuery();
 
@@ -68,9 +70,9 @@ export function Component() {
 				</Box>
 				<Box display={"flex"} flexDirection={"column"}>
 					<Tabs value={currentTab} onChange={handleChangeTab} aria-label="basic tabs example">
-						<Tab label="Активные" {...tabsProps(1)} />
-						<Tab label="Завершенные" {...tabsProps(2)} />
-						<Tab label="Все" {...tabsProps(0)} />
+						<Tab label="Активные" {...tabsProps(0)} />
+						<Tab label="Завершенные" {...tabsProps(1)} />
+						<Tab label="Все" {...tabsProps(2)} />
 					</Tabs>
 					<Divider />
 				</Box>
