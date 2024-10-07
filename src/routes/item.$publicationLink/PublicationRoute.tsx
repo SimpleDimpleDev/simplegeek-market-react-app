@@ -4,7 +4,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import { ItemCreditInfo } from "@components/CreditTimeline";
 import SuggestedItems from "@components/SuggestedItems";
-import { DateFormatter } from "@utils/format";
+
 import React, { useMemo, useState } from "react";
 
 import ImageCarousel from "./ImageCarousel";
@@ -98,11 +98,7 @@ const Availability: React.FC<VariationAvailabilityProps> = ({
 							<Typography variant="body2" color={"typography.secondary"}>
 								На складе ожидается:
 							</Typography>
-							<Typography variant="body2">
-								{preorder.expectedArrival
-									? DateFormatter.CyrillicMonthNameYYYY(preorder.expectedArrival)
-									: "Неизвестно"}
-							</Typography>
+							<Typography variant="body2">{preorder.expectedArrival ?? "Неизвестно"}</Typography>
 						</Box>
 					</>
 				) : (

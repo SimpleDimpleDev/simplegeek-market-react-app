@@ -157,11 +157,7 @@ export function Component() {
 													На складе ожидается:
 												</Typography>
 												<Typography variant="body1">
-													{order.preorder?.expectedArrival
-														? DateFormatter.CyrillicMonthNameYYYY(
-																order.preorder.expectedArrival
-														  )
-														: "Неизвестно"}
+													{order.preorder?.expectedArrival ?? "Неизвестно"}
 												</Typography>
 											</div>
 										</div>

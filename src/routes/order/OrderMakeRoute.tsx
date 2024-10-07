@@ -2,7 +2,7 @@ import { ChevronLeft } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import { DateFormatter, getRuGoodsWord } from "@utils/format";
+import { getRuGoodsWord } from "@utils/format";
 import { useEffect, useMemo, useState } from "react";
 import { getImageUrl } from "@utils/image";
 import { CreditInfo } from "@appTypes/Credit";
@@ -124,9 +124,7 @@ export function Component() {
 											На складе ожидается:
 										</Typography>
 										<Typography variant="subtitle1">
-											{preorder.expectedArrival
-												? DateFormatter.DDMMYYYY(preorder.expectedArrival)
-												: "Неизвестно"}
+											{preorder.expectedArrival ?? "Неизвестно"}
 										</Typography>
 									</Box>
 								</Box>
