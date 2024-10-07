@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { baseFadeTime } from "@config/animation";
-import { DateFormatter } from "@utils/format";
 import { useEffect, useState } from "react";
 import { FormedCartSection } from "@appTypes/Cart";
 import { UserCartItem } from "@appTypes/UserItems";
@@ -145,9 +144,7 @@ export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) =
 					<Typography color="typography.secondary" variant="subtitle1">
 						На складе ожидается:
 					</Typography>
-					<Typography variant="subtitle1">
-						{DateFormatter.CyrillicMonthNameYYYY(data.preorder.expectedArrival)}
-					</Typography>
+					<Typography variant="subtitle1">{data.preorder.expectedArrival ?? "Неизвестно"}</Typography>
 				</Box>
 			)}
 			<CartSectionWrapper isMobile={isMobile}>
