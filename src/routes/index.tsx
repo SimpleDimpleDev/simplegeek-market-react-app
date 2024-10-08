@@ -11,7 +11,8 @@ const routes = createRoutesFromElements(
 			<Route path="recovery" lazy={() => import("@routes/auth/recovery/RecoveryRoute")} />
 		</Route>
 		<Route path="cart" lazy={() => import("@routes/cart/CartRoute")} />
-		<Route path="catalog/:categoryLink" lazy={() => import("@routes/catalog/$categoryLink/CatalogRoute")} />
+		<Route path="category" lazy={() => import("@routes/category/index")} />
+		<Route path="category/:categoryLink" lazy={() => import("@routes/category/$categoryLink/CatalogRoute")} />
 		<Route path="faq" lazy={() => import("@routes/faq/FAQRoute")} />
 		<Route path="favorites" lazy={() => import("@routes/favorites/FavoritesRoute")} />
 		<Route path="item/:publicationLink" lazy={() => import("@routes/item.$publicationLink/PublicationRoute")} />

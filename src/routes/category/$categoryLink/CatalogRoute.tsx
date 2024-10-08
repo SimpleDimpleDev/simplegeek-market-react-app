@@ -24,21 +24,8 @@ import { ScrollTop } from "@components/ScrollToTopButton";
 import { useGetCatalogQuery } from "@api/shop/catalog";
 import { Loading } from "@components/Loading";
 import { useIsMobile } from "src/hooks/useIsMobile";
-
-type Sorting = "expensive" | "cheap";
-const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] => {
-	switch (sorting) {
-		case "expensive": {
-			return [...items].sort((a, b) => b.price - a.price);
-		}
-		case "cheap": {
-			return [...items].sort((a, b) => a.price - b.price);
-		}
-		default: {
-			throw new Error(`Unknown sorting: ${sorting}`);
-		}
-	}
-};
+import { Sorting } from "@appTypes/Sorting";
+import { getSortedItems } from "@utils/sorting";
 
 export function Component() {
 	const navigate = useNavigate();
@@ -69,7 +56,7 @@ export function Component() {
 	const [itemsFiltering, setItemsFiltering] = useState<boolean>(false);
 	const [filteredItems, setFilteredItems] = useState<CatalogItem[]>(categoryItems);
 
-	const [sorting, setSorting] = useState<Sorting>("expensive");
+	const [sorting, setSorting] = useState<Sorting>("popular");
 	const sortedItems = useMemo(() => getSortedItems(filteredItems, sorting), [filteredItems, sorting]);
 
 	const [showNothing, setShowNothing] = useState(false);
@@ -140,7 +127,7 @@ export function Component() {
 						</Modal>
 						<BreadcrumbsPageHeader
 							isMobile={isMobile}
-							path={[{ title: "Главная", link: "/" }]}
+							path={[{ title: "Каталог", link: "/" }, { title: "Категории", link: "/category" }]}
 							current={categoryItems[0].product.category.title}
 						/>
 

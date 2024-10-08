@@ -144,7 +144,7 @@ export const MobileMenu = ({
 									<CatalogSectionMenuItem
 										key={category.id}
 										onClick={() => {
-											navigate(`/catalog/${category.link}`);
+											navigate(`/category/${category.link}`);
 											onMenuClose();
 										}}
 										title={category.title}
