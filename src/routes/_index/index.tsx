@@ -160,8 +160,11 @@ export function Component() {
 													backgroundColor: "surface.primary",
 												}}
 											>
+												<MenuItem value={"popular"}>Сначала популярные</MenuItem>
+												<MenuItem value={"new"}>Сначала новые</MenuItem>
+												<MenuItem value={"old"}>Сначала старые</MenuItem>
 												<MenuItem value={"expensive"}>Сначала дорогие</MenuItem>
-												<MenuItem value={"cheap"}>Сначала дешевые</MenuItem>
+												<MenuItem value={"cheap"}>Сначала недорогие</MenuItem>
 											</Select>
 										</FormControl>
 									</div>
