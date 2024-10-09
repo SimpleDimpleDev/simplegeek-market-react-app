@@ -14,7 +14,7 @@ export default function ShopLayout() {
 	const isMobile = useIsMobile();
 	return (
 		<div className="d-f fd-c" style={{ height: "100vh" }}>
-			<div className="d-f fd-c" style={{ minHeight: "100vh" }}>
+			<div className="d-f fd-c" style={{ minHeight: "101vh" }}>
 				<Suspense
 					fallback={
 						<div className="w-100 h-100 ai-c d-f jc-c">
