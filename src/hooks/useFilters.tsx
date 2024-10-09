@@ -5,12 +5,18 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 const setPreorderFilterParam = (searchParams: URLSearchParams, preorderFilter: PreorderFilter): void => {
-	if (!preorderFilter) return;
+	if (!preorderFilter) {
+		searchParams.delete("p");
+		return;
+	}
 	searchParams.set("p", preorderFilter);
 };
 
 const setFiltersParam = (searchParams: URLSearchParams, checkedFilters: CheckedFilter[]): void => {
-	if (!checkedFilters.length) return;
+	if (!checkedFilters.length) {
+		searchParams.delete("f[]");
+		return;
+	}
 	for (const filter of checkedFilters) {
 		searchParams.set("f[]", `${filter.filterGroupId}:${filter.id}`);
 	}
@@ -63,13 +69,10 @@ interface useFiltersReturn {
 	handleToggleFilter: (filterGroupId: string, id: string) => void;
 
 	priceRangeFilter: PriceRangeFilter;
-	handleChangePriceRangeFilter: (
-		price: "min" | "max",
-        value: number
-	) => void;
+	handleChangePriceRangeFilter: (price: "min" | "max", value: number) => void;
 
 	filterFunction: (item: CatalogItem) => boolean;
-    resetFilters: () => void;
+	resetFilters: () => void;
 }
 
 function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersReturn {
@@ -121,15 +124,17 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 
 	useEffect(() => {
 		setSearchParams((prev) => {
-			setFiltersParam(prev, checkedFilters);
-			return prev;
+			const newParams = new URLSearchParams(prev);
+			setFiltersParam(newParams, checkedFilters);
+			return newParams;
 		});
 	}, [setSearchParams, checkedFilters]);
 
 	useEffect(() => {
 		setSearchParams((prev) => {
-			setPreorderFilterParam(prev, preorderIdFilter);
-			return prev;
+			const newParams = new URLSearchParams(prev);
+			setPreorderFilterParam(newParams, preorderIdFilter);
+			return newParams;
 		});
 	}, [setSearchParams, preorderIdFilter]);
 
@@ -156,21 +161,18 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		setPreorderIdFilter(preorderId);
 	}, []);
 
-	const handleChangePriceRangeFilter = useCallback(
-		(price: "min" | "max", value: number) => {
-			switch (price) {
-				case "min": {
-					setPriceRangeFilter((range) => [value, range[1]]);
-					break;
-				}
-				case "max": {
-					setPriceRangeFilter((range) => [range[0], value]);
-					break;
-				}
+	const handleChangePriceRangeFilter = useCallback((price: "min" | "max", value: number) => {
+		switch (price) {
+			case "min": {
+				setPriceRangeFilter((range) => [value, range[1]]);
+				break;
 			}
-		},
-		[]
-	);
+			case "max": {
+				setPriceRangeFilter((range) => [range[0], value]);
+				break;
+			}
+		}
+	}, []);
 
 	const filterFunction = useCallback(
 		(item: CatalogItem) => {
@@ -204,12 +206,12 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		[availableItemIds, availabilityFilter, preorderIdFilter, checkedFilters, priceRangeFilter]
 	);
 
-    const resetFilters = useCallback(() => {
-        setCheckedFilters([]);
-        setPreorderIdFilter(null);
-        setAvailabilityFilter(true);
-        setPriceRangeFilter([0, items.map((item) => item.price).reduce((a, b) => Math.max(a, b), 0)]);
-    }, [items]);
+	const resetFilters = useCallback(() => {
+		setCheckedFilters([]);
+		setPreorderIdFilter(null);
+		setAvailabilityFilter(true);
+		setPriceRangeFilter([0, items.map((item) => item.price).reduce((a, b) => Math.max(a, b), 0)]);
+	}, [items]);
 
 	return {
 		filterGroupList,
@@ -228,7 +230,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		handleChangePriceRangeFilter,
 
 		filterFunction,
-        resetFilters,
+		resetFilters,
 	};
 }
 
