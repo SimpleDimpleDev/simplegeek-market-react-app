@@ -8,6 +8,7 @@ import {
 	IconButton,
 	MenuItem,
 	Modal,
+	NativeSelect,
 	Select,
 	Typography,
 } from "@mui/material";
@@ -132,27 +133,40 @@ export function Component() {
 								<div className="gap-1 ai-c d-f fd-r">
 									<div className="w-100">
 										<FormControl fullWidth>
-											<Select
-												labelId="demo-simple-select-label"
-												id="demo-simple-select"
-												value={sorting}
-												onChange={(e) => {
-													setSorting(e.target.value as Sorting);
-												}}
-												defaultValue="exp"
-												autoWidth
-												sx={{
-													flexShrink: 0,
-													width: isMobile ? "100%" : 360,
-													backgroundColor: "surface.primary",
-												}}
-											>
-												<MenuItem value={"popular"}>Сначала популярные</MenuItem>
-												<MenuItem value={"new"}>Сначала новые</MenuItem>
-												<MenuItem value={"old"}>Сначала старые</MenuItem>
-												<MenuItem value={"expensive"}>Сначала дорогие</MenuItem>
-												<MenuItem value={"cheap"}>Сначала недорогие</MenuItem>
-											</Select>
+											{isMobile ? (
+												<NativeSelect
+													value={sorting}
+													onChange={(e) => {
+														setSorting(e.target.value as Sorting);
+													}}
+												>
+													<option value={"popular"}>Сначала популярные</option>
+													<option value={"new"}>Сначала новые</option>
+													<option value={"old"}>Сначала старые</option>
+													<option value={"expensive"}>Сначала дорогие</option>
+													<option value={"cheap"}>Сначала недорогие</option>
+												</NativeSelect>
+											) : (
+												<Select
+													labelId="demo-simple-select-label"
+													id="demo-simple-select"
+													value={sorting}
+													onChange={(e) => {
+														setSorting(e.target.value as Sorting);
+													}}
+													sx={{
+														flexShrink: 0,
+														width: isMobile ? "100%" : 360,
+														backgroundColor: "surface.primary",
+													}}
+												>
+													<MenuItem value={"popular"}>Сначала популярные</MenuItem>
+													<MenuItem value={"new"}>Сначала новые</MenuItem>
+													<MenuItem value={"old"}>Сначала старые</MenuItem>
+													<MenuItem value={"expensive"}>Сначала дорогие</MenuItem>
+													<MenuItem value={"cheap"}>Сначала недорогие</MenuItem>
+												</Select>
+											)}
 										</FormControl>
 									</div>
 

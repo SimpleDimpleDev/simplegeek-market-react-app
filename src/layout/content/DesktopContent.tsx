@@ -23,7 +23,7 @@ const DesktopContent: React.FC = () => {
 				<CSSTransition
 					key={location.pathname}
 					classNames={"page"}
-					timeout={200} // adjust the transition duration to your liking
+					timeout={100} // adjust the transition duration to your liking
 					unmountOnExit
 				>
 					{() => (

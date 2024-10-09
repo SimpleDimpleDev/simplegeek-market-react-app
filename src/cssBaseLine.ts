@@ -169,5 +169,8 @@ export const cssBaseLine = {
 	/* transition */
 	".tr-a-2": { transition: "all 0.2s ease-in-out" },
 
-	".hov-item": { "&:hover": { backgroundColor: "white", boxShadow: "0px 6px 21px - 7px rgba(0, 0, 0, 0.75)" } },
+	".hov-item": {
+		backgroundColor: "#f6f6f981",
+		"&:hover": { backgroundColor: "white", boxShadow: "0px 6px 21px - 7px rgba(0, 0, 0, 0.75)" },
+	},
 };
