@@ -395,6 +395,8 @@ export function Component() {
 							<Box
 								display="flex"
 								flexDirection="column"
+								position={"sticky"}
+								top={24}
 								gap={2}
 								p={2}
 								borderRadius={2}
