@@ -11,7 +11,7 @@ import {
 	Select,
 	Typography,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
@@ -30,7 +30,7 @@ import { useFilters } from "src/hooks/useFilters";
 export function Component() {
 	const isMobile = useIsMobile();
 	const params = useParams();
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: availableItemIds } = useGetItemsAvailabilityQuery();
@@ -78,7 +78,7 @@ export function Component() {
 						title={`В категории ${params.categoryLink} пока нет товаров`}
 						description="Вернитесь позже"
 						icon={<Search sx={{ height: 96, width: 96 }} />}
-						button={<Button onClick={() => navigate("/")}>На главную</Button>}
+						// button={<Button onClick={() => navigate("/")}>На главную</Button>}
 					/>
 				) : (
 					<div>
