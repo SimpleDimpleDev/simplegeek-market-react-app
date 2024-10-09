@@ -111,10 +111,18 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>(true);
 	const [preorderIdFilter, setPreorderIdFilter] = useState<PreorderFilter>(null);
 	const [checkedFilters, setCheckedFilters] = useState<CheckedFilter[]>([]);
-	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([
-		0,
-		items.map((item) => item.price).reduce((a, b) => Math.max(a, b), 0),
-	]);
+	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([0, 0]);
+
+	useEffect(() => {
+		setPriceRangeFilter((range) => [range[0], items.map((item) => item.price).reduce((a, b) => a + b, 0)]);
+	}, [items]);
+
+	console.log("filters:", {
+		availabilityFilter,
+		preorderIdFilter,
+		checkedFilters,
+		priceRangeFilter,
+	});
 
 	useEffect(() => {
 		const { preorderFilter, checkedFilters } = parseFilterParams(searchParams);
