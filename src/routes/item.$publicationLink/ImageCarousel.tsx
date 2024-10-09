@@ -81,7 +81,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 
 	return (
 		<Box width={"100%"} gap={16}>
-			<div className="w-100 ai-c br-3 d-f jc-c of-h" style={{ height: isMobile ? 345 : 630 }}>
+			<div className="bg-primary w-100 ai-c br-3 d-f jc-c of-h" style={{ height: isMobile ? 345 : 630 }}>
 				<img
 					style={isMobile ? { width: 345, height: 345 } : { width: 630, height: 630 }}
 					className="contain"
@@ -108,6 +108,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 						<ThumbnailContainer
 							sx={{
 								border: "4px solid",
+								backgroundColor: "white",
 								borderColor: selectedImageIndex === index ? "icon.brandSecondary" : "transparent",
 								"&:hover":
 									selectedImageIndex === index
