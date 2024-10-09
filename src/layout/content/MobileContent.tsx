@@ -12,7 +12,7 @@ const MobileContent: React.FC = () => {
 		{};
 
 	return (
-		<div className="bg-secondary w-100v d-f fd-r fg-1 jc-c">
+		<div className="bg-secondary d-f fd-r fg-1 jc-c">
 			<SwitchTransition>
 				<CSSTransition
 					key={location.pathname}
@@ -22,7 +22,7 @@ const MobileContent: React.FC = () => {
 				>
 					{() => (
 						<div
-							className="bg-secondary px-2 pt-4 d-f fd-c fg-1 jc-fs"
+							className="bg-secondary px-2 pt-4 w-100v d-f fd-c fg-1 jc-fs"
 							style={{
 								marginTop: "144px",
 								paddingBottom: "28px",

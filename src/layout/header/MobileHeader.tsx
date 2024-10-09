@@ -18,7 +18,10 @@ import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 const MobileHeader: React.FC = () => {
 	const navigate = useNavigate();
 	const [mobileMenuIsOpened, setMobileMenuIsOpened] = useState(false);
-	const trigger = useScrollTrigger();
+	const trigger = useScrollTrigger({
+		disableHysteresis: true,
+		threshold: 100,
+	});
 
 	const userAuthority = useSelector((state: RootState) => state.userAuthority.authority);
 
