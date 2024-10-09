@@ -391,7 +391,7 @@ export function Component() {
 							)}
 						</Box>
 
-						<Box display="flex" flexDirection="column" gap={3} width={360}>
+						<Box display="flex" flexDirection="column" gap={3} width={360} flexShrink={0}>
 							<Box
 								display="flex"
 								flexDirection="column"
