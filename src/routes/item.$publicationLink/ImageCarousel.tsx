@@ -51,7 +51,7 @@ const responsive = {
 	},
 	mobile: {
 		breakpoint: { max: 464, min: 0 },
-		items: 1,
+		items: 2,
 	},
 };
 
@@ -80,7 +80,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 	const selectedImageUrl = imageUrls[selectedImageIndex];
 
 	return (
-		<Box width={"100%"} gap={16}>
+		<Box width={"100%"} display={"flex"} flexDirection={"column"} gap={2}>
 			<div className="bg-primary w-100 ai-c br-3 d-f jc-c of-h" style={{ height: isMobile ? 345 : 630 }}>
 				<img
 					style={isMobile ? { width: 345, height: 345 } : { width: 630, height: 630 }}
