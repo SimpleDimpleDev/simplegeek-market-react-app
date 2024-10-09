@@ -1,5 +1,5 @@
 import { AvailabilityFilter, CheckedFilter, FilterGroupGet, PreorderFilter, PriceRangeFilter } from "@appTypes/Filters";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
 	Typography,
@@ -145,6 +145,11 @@ export const CatalogFilters = ({
 	const handleChangeMaxPriceFilter = () => {
 		handleChangePriceRangeFilter("max", maxPrice);
 	};
+
+	useEffect(() => {
+		setMinPrice(priceRangeFilter[0]);
+		setMaxPrice(priceRangeFilter[1]);
+	}, [priceRangeFilter]);
 
 	return (
 		<div
