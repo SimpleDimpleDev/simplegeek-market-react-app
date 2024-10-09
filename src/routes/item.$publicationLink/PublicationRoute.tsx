@@ -212,7 +212,7 @@ export function Component() {
 					</Box>
 					<Box display="flex" flexDirection="column" gap={2}>
 						{publication.items.length !== 1 && (
-							<Box display="flex" flexDirection="column" gap={2}>
+							<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={2}>
 								<Typography variant="h6">Вариация</Typography>
 								<Select
 									fullWidth
@@ -352,7 +352,7 @@ export function Component() {
 
 						<Box display="flex" flexDirection="column" gap={3}>
 							{publication.items.length !== 1 && (
-								<Box display="flex" flexDirection="column" gap={2}>
+								<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={2}>
 									<Typography variant="h5">Вариация</Typography>
 									<Select
 										fullWidth
