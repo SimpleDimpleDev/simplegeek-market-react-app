@@ -210,9 +210,9 @@ export function Component() {
 					<Box paddingTop={3} paddingBottom={2}>
 						<Typography variant="h5">{selectedVariation.product.title}</Typography>
 					</Box>
-					<Box display="flex" flexDirection="column" gap={2}>
+					<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={2}>
 						{publication.items.length !== 1 && (
-							<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={2}>
+							<Box display="flex" flexDirection="column" gap={2}>
 								<Typography variant="h6">Вариация</Typography>
 								<Select
 									fullWidth
@@ -350,9 +350,9 @@ export function Component() {
 							<ImageCarousel isMobile={false} imageUrls={preparedImageUrls} />
 						</Box>
 
-						<Box display="flex" flexDirection="column" gap={3}>
+						<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={3}>
 							{publication.items.length !== 1 && (
-								<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={2}>
+								<Box display="flex" flexDirection="column" gap={2}>
 									<Typography variant="h5">Вариация</Typography>
 									<Select
 										fullWidth
