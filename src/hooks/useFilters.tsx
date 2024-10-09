@@ -120,7 +120,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 				const newSearchParams = new URLSearchParams(prevSearchParams);
 				setPreorderFilterParam(newSearchParams, preorderId);
 				return newSearchParams;
-			});
+			}, {replace: true});
 		},
 		[setSearchParams]
 	);
@@ -131,7 +131,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 				const newSearchParams = new URLSearchParams(prevSearchParams);
 				setFiltersParam(newSearchParams, checkedFilters);
 				return newSearchParams;
-			});
+			}, {replace: true});
 		},
 		[setSearchParams]
 	);
