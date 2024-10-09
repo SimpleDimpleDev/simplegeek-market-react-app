@@ -13,7 +13,7 @@ const setPreorderFilterParam = (searchParams: URLSearchParams, preorderFilter: P
 };
 
 const setFiltersParam = (searchParams: URLSearchParams, checkedFilters: CheckedFilter[]): void => {
-	if (!checkedFilters.length) {
+	if (checkedFilters.length === 0) {
 		searchParams.delete("f[]");
 		return;
 	}
