@@ -12,7 +12,13 @@ const routes = createRoutesFromElements(
 		</Route>
 		<Route path="cart" lazy={() => import("@routes/cart/CartRoute")} />
 		<Route path="category" lazy={() => import("@routes/category/index")} />
-		<Route path="category/:categoryLink" lazy={() => import("@routes/category/$categoryLink/CatalogRoute")} />
+		<Route
+			path="category/:categoryLink"
+			loader={({ params }) => {
+				return { categoryLink: params.categoryLink };
+			}}
+			lazy={() => import("@routes/category/$categoryLink/CatalogRoute")}
+		/>
 		<Route path="faq" lazy={() => import("@routes/faq/FAQRoute")} />
 		<Route path="favorites" lazy={() => import("@routes/favorites/FavoritesRoute")} />
 		<Route path="item/:publicationLink" lazy={() => import("@routes/item.$publicationLink/PublicationRoute")} />
