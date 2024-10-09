@@ -17,8 +17,10 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 
 	const performSearch = () => {
 		if (searchText === "") return;
-		return navigate(`/search?q=${searchText}`);
+		setSearchText("");
+		navigate(`/search?q=${searchText}`);
 	};
+
 	return (
 		<Autocomplete
 			freeSolo
@@ -27,7 +29,6 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 			sx={!isMobile ? { maxWidth: 440, width: "100%" } : {}}
 			options={catalogItems}
 			getOptionLabel={(item) => (typeof item === "string" ? item : item.product.title)}
-			groupBy={(item) => (typeof item === "string" ? item : item.product.category.title.toUpperCase())}
 			inputValue={searchText}
 			onInputChange={(_, newInputValue) => {
 				setSearchText(newInputValue);
@@ -43,8 +44,13 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 			isOptionEqualToValue={(option) => isCatalogItemMatchQuery(option, searchText)}
 			renderInput={(params) => (
 				<div className="w-100 br-12px ps-r">
-					<TextField {...params} label="Поиск" variant="filled" color="warning" />
-
+					<TextField
+						{...params}
+						label="Поиск"
+						variant="filled"
+						color="warning"
+						slotProps={{ input: { ...params.InputProps, type: "search" } }}
+					/>
 					<Button
 						onClick={performSearch}
 						variant="contained"
