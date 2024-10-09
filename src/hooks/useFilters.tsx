@@ -24,7 +24,7 @@ const setFiltersParam = (searchParams: URLSearchParams, checkedFilters: CheckedF
 
 const parseFilterParams = (
 	searchParams: URLSearchParams
-): { preorderFilter: PreorderFilter; checkedFilters: CheckedFilter[] } => {
+): { preorderIdFilter: PreorderFilter; checkedFilters: CheckedFilter[] } => {
 	let preorderFilter: PreorderFilter = null;
 	const checkedFilters: CheckedFilter[] = [];
 
@@ -45,7 +45,7 @@ const parseFilterParams = (
 	}
 
 	return {
-		preorderFilter,
+		preorderIdFilter: preorderFilter,
 		checkedFilters,
 	};
 };
@@ -108,55 +108,39 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		return existingPreorderList;
 	}, [items]);
 
+	const { preorderIdFilter, checkedFilters } = parseFilterParams(searchParams);
 	const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>(true);
-	const [preorderIdFilter, setPreorderIdFilter] = useState<PreorderFilter>(null);
-	const [checkedFilters, setCheckedFilters] = useState<CheckedFilter[]>([]);
 	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([0, 0]);
 
 	useEffect(() => {
 		setPriceRangeFilter((range) => [range[0], items.map((item) => item.price).reduce((a, b) => a + b, 0)]);
 	}, [items]);
 
-	useEffect(() => {
-		console.log("filters:", {
-			availabilityFilter,
-			preorderIdFilter,
-			checkedFilters,
-			priceRangeFilter,
-		});
-	});
+	const setPreorderIdFilter = useCallback(
+		(preorderId: string | null) => {
+			setSearchParams((prevSearchParams) => {
+				const newSearchParams = new URLSearchParams(prevSearchParams);
+				setPreorderFilterParam(newSearchParams, preorderId);
+				return newSearchParams;
+			});
+		},
+		[setSearchParams]
+	);
 
-	useEffect(() => {
-		const { preorderFilter, checkedFilters } = parseFilterParams(searchParams);
-		setPreorderIdFilter(preorderFilter);
-		setCheckedFilters(checkedFilters);
-	}, [searchParams, items]);
+	const setCheckedFilters = useCallback(
+		(checkedFilters: CheckedFilter[]) => {
+			setSearchParams((prevSearchParams) => {
+				const newSearchParams = new URLSearchParams(prevSearchParams);
+				setFiltersParam(newSearchParams, checkedFilters);
+				return newSearchParams;
+			});
+		},
+		[setSearchParams]
+	);
 
-	useEffect(() => {
-        const { preorderFilter: newPreorderIdFilter } = parseFilterParams(searchParams);
-        if (JSON.stringify(preorderIdFilter) !== JSON.stringify(newPreorderIdFilter)) {
-            setSearchParams(() => {
-                const newParams = new URLSearchParams(searchParams);
-                setPreorderFilterParam(newParams, preorderIdFilter);
-                return newParams;
-            });
-        }
-	}, [searchParams, setSearchParams, preorderIdFilter]);
-
-	useEffect(() => {
-        const { checkedFilters: newCheckedFilters } = parseFilterParams(searchParams);
-        if (JSON.stringify(checkedFilters) !== JSON.stringify(newCheckedFilters)) {
-            setSearchParams(() => {
-                const newParams = new URLSearchParams(searchParams);
-                setFiltersParam(newParams, checkedFilters);
-                return newParams;
-            })
-        }
-	}, [searchParams, setSearchParams, checkedFilters]);
-
-	const handleToggleFilter = useCallback((filterGroupId: string, id: string) => {
-		setCheckedFilters((currentFilters) => {
-			const newCheckedFilters = [...currentFilters];
+	const handleToggleFilter = useCallback(
+		(filterGroupId: string, id: string) => {
+			const newCheckedFilters = [...checkedFilters];
 			const index = newCheckedFilters.findIndex(
 				(filter) => filter.filterGroupId === filterGroupId && filter.id === id
 			);
@@ -165,17 +149,21 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 			} else {
 				newCheckedFilters.splice(index, 1);
 			}
-			return newCheckedFilters;
-		});
-	}, []);
+			setCheckedFilters(newCheckedFilters);
+		},
+		[checkedFilters, setCheckedFilters]
+	);
 
 	const handleToggleAvailabilityFilter = useCallback(() => {
 		setAvailabilityFilter((value) => !value);
 	}, []);
 
-	const handleChangePreorderIdFilter = useCallback((preorderId: string | null) => {
-		setPreorderIdFilter(preorderId);
-	}, []);
+	const handleChangePreorderIdFilter = useCallback(
+		(preorderId: string | null) => {
+			setPreorderIdFilter(preorderId);
+		},
+		[setPreorderIdFilter]
+	);
 
 	const handleChangePriceRangeFilter = useCallback((price: "min" | "max", value: number) => {
 		switch (price) {
@@ -227,7 +215,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		setPreorderIdFilter(null);
 		setAvailabilityFilter(true);
 		setPriceRangeFilter([0, items.map((item) => item.price).reduce((a, b) => Math.max(a, b), 0)]);
-	}, [items]);
+	}, [items, setCheckedFilters, setPreorderIdFilter]);
 
 	return {
 		filterGroupList,
