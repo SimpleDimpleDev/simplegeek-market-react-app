@@ -32,7 +32,7 @@ export function Component() {
 
 	const navigate = useNavigate();
 	const searchParams = useSearchParams();
-	const query = Object.fromEntries(searchParams[0].entries()).q;
+	const query = searchParams[0].get("q") || "";
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: availableItemIds } = useGetItemsAvailabilityQuery();
