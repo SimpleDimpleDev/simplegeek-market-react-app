@@ -18,7 +18,7 @@ const responsive = {
 	},
 	desktop: {
 		breakpoint: { max: 3000, min: 1024 },
-		items: 3,
+		items: 4,
 	},
 	tablet: {
 		breakpoint: { max: 1024, min: 464 },
@@ -30,10 +30,6 @@ const responsive = {
 	},
 };
 const ScrollButton = styled(IconButton)({
-	position: "absolute",
-	top: "38%",
-	transform: "translateY(-50%)",
-	zIndex: 2,
 	boxShadow: "0px 2px 18px -8px #000000",
 	backgroundColor: "white",
 	"&&:hover": {

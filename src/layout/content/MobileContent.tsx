@@ -12,7 +12,7 @@ const MobileContent: React.FC = () => {
 		{};
 
 	return (
-		<div className="bg-secondary d-f fd-r fg-1 jc-c">
+		<div className="bg-secondary w-100v d-f fd-r fg-1 jc-c">
 			<SwitchTransition>
 				<CSSTransition
 					key={location.pathname}
