@@ -103,7 +103,7 @@ const DesktopHeader: React.FC = () => {
 								<MenuItem
 									onClick={() => {
 										handleCloseCatalogMenu();
-										return navigate(`/category/${category.link}`);
+										navigate(`/category/${category.link}`);
 									}}
 								>
 									<div className="gap-12px ai-c d-f fd-r">
