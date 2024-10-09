@@ -23,6 +23,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 
 	return (
 		<Autocomplete
+			open={searchText !== ""}
 			freeSolo
 			id="free-solo-2-demo"
 			disableClearable
@@ -49,7 +50,18 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 						label="Поиск"
 						variant="filled"
 						color="warning"
-						slotProps={{ input: { ...params.InputProps, type: "search" } }}
+						slotProps={{
+							input: {
+								...params.InputProps,
+								type: "search",
+								onKeyDown: (e) => {
+									if (e.key === "Enter") {
+										e.stopPropagation();
+										performSearch();
+									}
+								},
+							},
+						}}
 					/>
 					<Button
 						onClick={performSearch}
