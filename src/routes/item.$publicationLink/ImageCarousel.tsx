@@ -1,35 +1,10 @@
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { Box, IconButton, styled } from "@mui/material";
-import React, { createRef, useState } from "react";
+import React, { useState } from "react";
 
-const Window = ({ isMobile, children }: { isMobile: boolean; children: React.ReactNode }) => {
-	return (
-		<Box
-			width={"100%"}
-			height={isMobile ? 345 : 630}
-			borderRadius={3}
-			display={"flex"}
-			alignItems={"center"}
-			justifyContent={"center"}
-			overflow={"hidden"}
-		>
-			{children}
-		</Box>
-	);
-};
-
-const ImageBar = styled(Box)({
-	display: "flex",
-	alignItems: "center",
-	position: "relative",
-	overflowX: "auto",
-	margin: "10px 0",
-	gap: 8,
-	scrollbarWidth: "none",
-	"&::-webkit-scrollbar": {
-		display: "none",
-	},
-});
+import Carousel from "react-multi-carousel";
+import { ArrowProps } from "react-multi-carousel/lib/types";
+import "react-multi-carousel/lib/styles.css";
 
 const ThumbnailContainer = styled("div")({
 	display: "flex",
@@ -60,6 +35,38 @@ const ScrollButton = styled(IconButton)({
 	},
 });
 
+const responsive = {
+	superLargeDesktop: {
+		// the naming can be any, depends on you.
+		breakpoint: { max: 4000, min: 3000 },
+		items: 5,
+	},
+	desktop: {
+		breakpoint: { max: 3000, min: 1024 },
+		items: 4,
+	},
+	tablet: {
+		breakpoint: { max: 1024, min: 464 },
+		items: 2,
+	},
+	mobile: {
+		breakpoint: { max: 464, min: 0 },
+		items: 1,
+	},
+};
+
+const LeftButton = ({ onClick, ...rest }: ArrowProps) => (
+	<ScrollButton {...rest} onClick={onClick} sx={{ left: "2%" }}>
+		<ChevronLeft />
+	</ScrollButton>
+);
+
+const RightButton = ({ onClick, ...rest }: ArrowProps) => (
+	<ScrollButton {...rest} onClick={onClick} sx={{ right: "2%" }}>
+		<ChevronRight />
+	</ScrollButton>
+);
+
 interface ImageCarouselProps {
 	isMobile: boolean;
 	imageUrls: string[]; // Array of image URLs
@@ -72,76 +79,51 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 	const hoveredImageUrl = hoveredImageIndex ? imageUrls[hoveredImageIndex] : null;
 	const selectedImageUrl = imageUrls[selectedImageIndex];
 
-	const scrollRef = createRef<HTMLDivElement>();
-
-	const scroll = (direction: "left" | "right") => {
-		if (scrollRef.current) {
-			const scrollAmount = direction === "left" ? -502 : 502;
-			scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-		}
-	};
-
 	return (
 		<Box width={"100%"} gap={16}>
-			<Window isMobile={isMobile}>
+			<div className="w-100 ai-c br-3 d-f jc-c of-h" style={{ height: isMobile ? 345 : 630 }}>
 				<img
 					style={isMobile ? { width: 345, height: 345 } : { width: 630, height: 630 }}
 					className="contain"
 					src={hoveredImageUrl || selectedImageUrl}
 					alt="Displayed"
 				/>
-			</Window>
-			<Box display="flex" alignItems="center" position={"relative"}>
-				{!isMobile && (
-					<ScrollButton sx={{ left: "-3%" }} onClick={() => scroll("left")}>
-						<ChevronLeft />
-					</ScrollButton>
-				)}
-				<ImageBar
-					ref={scrollRef}
-					style={
-						{
-							// WebkitTouchCallout: 'none',
-							// WebkitUserSelect: 'none',
-							// KhtmlUserSelect: 'none',
-							// MozUserSelect: 'none',
-							// userSelect: 'none'
-						}
-					}
-				>
-					{imageUrls.map((imageUrl, index) => (
-						<IconButton
-							key={index}
-							sx={{ margin: 0, padding: 0 }}
-							onClick={() => setSelectedImageIndex(index)}
-							onMouseEnter={() => setHoveredImageIndex(index)}
-							onMouseLeave={() => setHoveredImageIndex(null)}
+			</div>
+			<Carousel
+				responsive={responsive}
+				swipeable={isMobile}
+				draggable={isMobile}
+				deviceType={isMobile ? "mobile" : "desktop"}
+				customLeftArrow={<LeftButton />}
+				customRightArrow={<RightButton />}
+			>
+				{imageUrls.map((imageUrl, index) => (
+					<IconButton
+						key={index}
+						sx={{ margin: 0, padding: 0 }}
+						onClick={() => setSelectedImageIndex(index)}
+						onMouseEnter={() => setHoveredImageIndex(index)}
+						onMouseLeave={() => setHoveredImageIndex(null)}
+					>
+						<ThumbnailContainer
+							sx={{
+								border: "4px solid",
+								borderColor: selectedImageIndex === index ? "icon.brandSecondary" : "transparent",
+								"&:hover":
+									selectedImageIndex === index
+										? {
+												opacity: "1",
+										  }
+										: {
+												opacity: "0.7",
+										  },
+							}}
 						>
-							<ThumbnailContainer
-								sx={{
-									border: "4px solid",
-									borderColor: selectedImageIndex === index ? "icon.brandSecondary" : "transparent",
-									"&:hover":
-										selectedImageIndex === index
-											? {
-													opacity: "1",
-											  }
-											: {
-													opacity: "0.7",
-											  },
-								}}
-							>
-								<Thumbnail key={index} src={imageUrl} alt={`Thumbnail ${index}`} />
-							</ThumbnailContainer>
-						</IconButton>
-					))}
-				</ImageBar>
-				{!isMobile && (
-					<ScrollButton sx={{ right: "-3%" }} onClick={() => scroll("right")}>
-						<ChevronRight />
-					</ScrollButton>
-				)}
-			</Box>
+							<Thumbnail key={index} src={imageUrl} alt={`Thumbnail ${index}`} />
+						</ThumbnailContainer>
+					</IconButton>
+				))}
+			</Carousel>
 		</Box>
 	);
 };

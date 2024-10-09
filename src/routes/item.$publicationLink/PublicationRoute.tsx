@@ -291,36 +291,38 @@ export function Component() {
 							</Box>
 						)}
 
-						<Box display="flex" flexDirection="column" paddingTop={4} gap={2}>
-							<Typography variant="h6">О товаре</Typography>
-							{selectedVariation.product.filterGroups.map((filterGroup) =>
-								filterGroup.filters.map((filter, index) => (
-									<Box
-										key={index}
-										display="flex"
-										flexDirection="row"
-										justifyContent={"space-between"}
-									>
-										<Typography variant="body1" color="typography.secondary">
-											{filterGroup.title}
-										</Typography>
-										<Typography
-											variant="body1"
-											color="warning.main"
-											onClick={() => {
-												navigate(
-													`/catalog/${
-														selectedVariation.product.category.link
-													}${`?f=${filterGroup.title}:${filter.value}`}`
-												);
-											}}
+						{selectedVariation.product.filterGroups.length !== 0 && (
+							<Box display="flex" flexDirection="column" paddingTop={4} gap={2}>
+								<Typography variant="h6">О товаре</Typography>
+								{selectedVariation.product.filterGroups.map((filterGroup) =>
+									filterGroup.filters.map((filter, index) => (
+										<Box
+											key={index}
+											display="flex"
+											flexDirection="row"
+											justifyContent={"space-between"}
 										>
-											{filter.value}
-										</Typography>
-									</Box>
-								))
-							)}
-						</Box>
+											<Typography variant="body1" color="typography.secondary">
+												{filterGroup.title}
+											</Typography>
+											<Typography
+												variant="body1"
+												color="warning.main"
+												onClick={() => {
+													navigate(
+														`/catalog/${
+															selectedVariation.product.category.link
+														}${`?f=${filterGroup.title}:${filter.value}`}`
+													);
+												}}
+											>
+												{filter.value}
+											</Typography>
+										</Box>
+									))
+								)}
+							</Box>
+						)}
 
 						<Box display="flex" flexDirection="column" paddingTop={4} gap={3}>
 							<Typography variant="h6">Описание</Typography>
@@ -367,24 +369,26 @@ export function Component() {
 									</Select>
 								</Box>
 							)}
-							<Box display={"flex"} flexDirection={"column"} width={360} gap={2}>
-								<Typography variant="h5">О товаре</Typography>
-								{selectedVariation.product.filterGroups.map((filterGroup) =>
-									filterGroup.filters.map((filter, index) => (
-										<Box
-											key={index}
-											display="flex"
-											flexDirection="row"
-											justifyContent={"space-between"}
-										>
-											<Typography variant="body1" color="typography.secondary">
-												{filterGroup.title}
-											</Typography>
-											<Typography variant="body1">{filter.value}</Typography>
-										</Box>
-									))
-								)}
-							</Box>
+							{selectedVariation.product.filterGroups.length !== 0 && (
+								<Box display={"flex"} flexDirection={"column"} width={360} gap={2}>
+									<Typography variant="h5">О товаре</Typography>
+									{selectedVariation.product.filterGroups.map((filterGroup) =>
+										filterGroup.filters.map((filter, index) => (
+											<Box
+												key={index}
+												display="flex"
+												flexDirection="row"
+												justifyContent={"space-between"}
+											>
+												<Typography variant="body1" color="typography.secondary">
+													{filterGroup.title}
+												</Typography>
+												<Typography variant="body1">{filter.value}</Typography>
+											</Box>
+										))
+									)}
+								</Box>
+							)}
 						</Box>
 
 						<Box display="flex" flexDirection="column" gap={3} width={360}>
