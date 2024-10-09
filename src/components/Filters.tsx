@@ -153,10 +153,9 @@ export const CatalogFilters = ({
 
 	return (
 		<div
-			className="gap-3 bg-primary h-mc d-f fd-c fs-0"
+			className="gap-3 bg-primary p-2 h-mc d-f fd-c fs-0"
 			style={{
 				width: isMobile ? "100%" : 280,
-				padding: "16px 15px 0 15px",
 				borderRadius: 20,
 			}}
 		>
