@@ -24,9 +24,10 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 	return (
 		<Autocomplete
 			open={searchText !== ""}
+			id="search-autocomplete"
 			freeSolo
-			id="free-solo-2-demo"
 			disableClearable
+			clearOnBlur
 			sx={!isMobile ? { maxWidth: 440, width: "100%" } : {}}
 			options={catalogItems}
 			getOptionLabel={(item) => (typeof item === "string" ? item : item.product.title)}
