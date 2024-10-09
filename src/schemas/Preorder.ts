@@ -14,6 +14,7 @@ export const PreorderStatusSchema = z.enum([
 export const ShippingCostIncludedSchema = z.enum(["FOREIGN", "FULL", "NOT"]);
 
 export const PreorderShopSchema = z.object({
+	id: z.string(),
 	title: z.string(),
 	status: PreorderStatusSchema,
 	expectedArrival: z.string().nullable(),

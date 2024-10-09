@@ -16,30 +16,16 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { CatalogFilters } from "@components/Filters";
-import { CatalogItem } from "@appTypes/CatalogItem";
 import { Empty } from "@components/Empty";
 import { isCatalogItemMatchQuery } from "@utils/search";
-import { useGetCatalogQuery } from "@api/shop/catalog";
+import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/catalog";
 import { useIsMobile } from "src/hooks/useIsMobile";
-
-type Sorting = "expensive" | "cheap";
-
-const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] => {
-	switch (sorting) {
-		case "expensive": {
-			return [...items].sort((a, b) => b.price - a.price);
-		}
-		case "cheap": {
-			return [...items].sort((a, b) => a.price - b.price);
-		}
-		default: {
-			throw new Error(`Unknown sorting: ${sorting}`);
-		}
-	}
-};
+import { useFilters } from "src/hooks/useFilters";
+import { Sorting } from "@appTypes/Sorting";
+import { getSortedItems } from "@utils/sorting";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -49,31 +35,50 @@ export function Component() {
 	const query = Object.fromEntries(searchParams[0].entries()).q;
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
+	const { data: availableItemIds } = useGetItemsAvailabilityQuery();
 
-	const [searchedItems, setSearchedItems] = useState<CatalogItem[]>([]);
-
-	const [filtersOpen, setFiltersOpen] = useState(false);
-
-	const [sorting, setSorting] = useState<Sorting>("expensive");
-	const [filteredItems, setFilteredItems] = useState<CatalogItem[]>(searchedItems);
-	const [filtersReset, setFiltersReset] = useState(false);
-	const [itemsFiltering, setItemsFiltering] = useState<boolean>(true);
-	const sortedItems = getSortedItems(filteredItems, sorting);
-
-	useEffect(() => {
+	const searchedItems = useMemo(() => {
 		const searchedItems = catalog?.items.filter((item) => isCatalogItemMatchQuery(item, query)) || [];
-		setSearchedItems(searchedItems);
-		setFilteredItems(searchedItems);
+		return searchedItems;
 	}, [catalog, query]);
 
-	const onApplyFilters = (filteredItems: CatalogItem[]) => {
-		setFilteredItems([]);
-		setItemsFiltering(true);
+	const {
+		filterGroupList,
+		preorderList,
+
+		availabilityFilter,
+		handleToggleAvailabilityFilter,
+
+		preorderIdFilter,
+		handleChangePreorderIdFilter,
+
+		checkedFilters,
+		handleToggleFilter,
+
+		priceRangeFilter,
+		handleChangePriceRangeFilter,
+
+		filterFunction,
+		resetFilters,
+	} = useFilters({ items: searchedItems, availableItemIds: availableItemIds || [] });
+	const [filtersOpen, setFiltersOpen] = useState(false);
+
+	const [sorting, setSorting] = useState<Sorting>("popular");
+	const itemsToRender = useMemo(() => {
+		if (!catalog) return [];
+		const filteredItems = catalog.items.filter(filterFunction);
+		const sortedItems = getSortedItems(filteredItems, sorting);
+		return sortedItems;
+	}, [catalog, filterFunction, sorting]);
+
+	const [showNothing, setShowNothing] = useState(false);
+
+	useEffect(() => {
+		setShowNothing(true);
 		setTimeout(() => {
-			setItemsFiltering(false);
-			setFilteredItems(filteredItems);
+			setShowNothing(false);
 		}, 0);
-	};
+	}, [itemsToRender]);
 
 	return (
 		<>
@@ -105,12 +110,17 @@ export function Component() {
 							</div>
 
 							<CatalogFilters
-								items={searchedItems}
 								isMobile={isMobile}
-								preFilter={undefined}
-								onFilter={onApplyFilters}
-								filtersReset={filtersReset}
-								setFiltersReset={setFiltersReset}
+								filterGroupList={filterGroupList}
+								preorderList={preorderList}
+								availabilityFilter={availabilityFilter}
+								handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
+								preorderIdFilter={preorderIdFilter}
+								handleChangePreorderIdFilter={handleChangePreorderIdFilter}
+								checkedFilters={checkedFilters}
+								handleToggleFilter={handleToggleFilter}
+								priceRangeFilter={priceRangeFilter}
+								handleChangePriceRangeFilter={handleChangePriceRangeFilter}
 							/>
 						</div>
 					</Modal>
@@ -123,12 +133,17 @@ export function Component() {
 					<div className="gap-2 d-f fd-r">
 						{!isMobile && (
 							<CatalogFilters
-								items={searchedItems}
 								isMobile={isMobile}
-								preFilter={undefined}
-								onFilter={onApplyFilters}
-								filtersReset={filtersReset}
-								setFiltersReset={setFiltersReset}
+								filterGroupList={filterGroupList}
+								preorderList={preorderList}
+								availabilityFilter={availabilityFilter}
+								handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
+								preorderIdFilter={preorderIdFilter}
+								handleChangePreorderIdFilter={handleChangePreorderIdFilter}
+								checkedFilters={checkedFilters}
+								handleToggleFilter={handleToggleFilter}
+								priceRangeFilter={priceRangeFilter}
+								handleChangePriceRangeFilter={handleChangePriceRangeFilter}
 							/>
 						)}
 
@@ -172,38 +187,39 @@ export function Component() {
 								)}
 							</div>
 
-							{sortedItems.length === 0 && !itemsFiltering ? (
+							{itemsToRender.length === 0 ? (
 								<Empty
 									title={"Ничего не найдено"}
 									description="Попробуйте изменить фильтры"
 									icon={<SearchIcon sx={{ height: 96, width: 96 }} />}
 									button={
-										<Button variant="contained" onClick={() => setFiltersReset(true)}>
+										<Button variant="contained" onClick={() => resetFilters()}>
 											Сбросить фильтры
 										</Button>
 									}
 								/>
 							) : (
 								<Grid2 container justifyContent="flex-start" spacing={2}>
-									{sortedItems.map((data, index) => (
-										<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
-											<LazyLoad
-												key={index}
-												width={"100%"}
-												height={420}
-												observerOptions={{
-													rootMargin: "100px",
-												}}
-												once
-											>
-												<Grow key={index} in={true} timeout={200}>
-													<div>
-														<ItemCard data={data} />
-													</div>
-												</Grow>
-											</LazyLoad>
-										</Grid2>
-									))}
+									{!showNothing &&
+										itemsToRender.map((data, index) => (
+											<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
+												<LazyLoad
+													key={index}
+													width={"100%"}
+													height={420}
+													observerOptions={{
+														rootMargin: "100px",
+													}}
+													once
+												>
+													<Grow key={index} in={true} timeout={200}>
+														<div>
+															<ItemCard data={data} />
+														</div>
+													</Grow>
+												</LazyLoad>
+											</Grid2>
+										))}
 								</Grid2>
 							)}
 						</div>

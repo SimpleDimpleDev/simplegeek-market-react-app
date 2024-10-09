@@ -11,21 +11,21 @@ import {
 	Select,
 	Typography,
 } from "@mui/material";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
 import { useEffect, useMemo, useState } from "react";
 
 import { CatalogFilters } from "@components/Filters";
-import { CatalogItem } from "@appTypes/CatalogItem";
 import { Empty } from "@components/Empty";
 import { ScrollTop } from "@components/ScrollToTopButton";
-import { useGetCatalogQuery } from "@api/shop/catalog";
+import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/catalog";
 import { Loading } from "@components/Loading";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { Sorting } from "@appTypes/Sorting";
 import { getSortedItems } from "@utils/sorting";
+import { useFilters } from "src/hooks/useFilters";
 
 export function Component() {
 	const navigate = useNavigate();
@@ -33,30 +33,39 @@ export function Component() {
 	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
+	const { data: availableItemIds } = useGetItemsAvailabilityQuery();
 
-	const searchParams = useSearchParams();
-	const preFilter = useMemo(() => {
-		const preFilterString = searchParams[0].get("f");
-		if (!preFilterString) return undefined;
-		const preFilter = preFilterString.split(":");
-		const preFilterGroupTitle = preFilter.at(0);
-		const preFilterValue = preFilter.at(1);
-		if (!preFilterGroupTitle || !preFilterValue) return undefined;
-		return { title: preFilterGroupTitle, value: preFilterValue };
-	}, [searchParams]);
+	const catalogItems = useMemo(() => catalog?.items || [], [catalog]);
+	const {
+		filterGroupList,
+		preorderList,
 
-	const catalogItems = useMemo(
-		() => catalog?.items || [],
-		[catalog]
-	);
+		availabilityFilter,
+		handleToggleAvailabilityFilter,
+
+		preorderIdFilter,
+		handleChangePreorderIdFilter,
+
+		checkedFilters,
+		handleToggleFilter,
+
+		priceRangeFilter,
+		handleChangePriceRangeFilter,
+
+		filterFunction,
+		resetFilters,
+	} = useFilters({ items: catalogItems, availableItemIds: availableItemIds || [] });
 
 	const [filtersOpen, setFiltersOpen] = useState(false);
-	const [filtersReset, setFiltersReset] = useState(false);
-	const [itemsFiltering, setItemsFiltering] = useState<boolean>(false);
-	const [filteredItems, setFilteredItems] = useState<CatalogItem[]>(catalog?.items || []);
 
 	const [sorting, setSorting] = useState<Sorting>("popular");
-	const sortedItems = useMemo(() => getSortedItems(filteredItems, sorting), [filteredItems, sorting]);
+
+	const itemsToRender = useMemo(() => {
+		if (!catalog) return [];
+		const filteredItems = catalog.items.filter(filterFunction);
+		const sortedItems = getSortedItems(filteredItems, sorting);
+		return sortedItems;
+	}, [catalog, filterFunction, sorting]);
 
 	const [showNothing, setShowNothing] = useState(false);
 
@@ -65,27 +74,7 @@ export function Component() {
 		setTimeout(() => {
 			setShowNothing(false);
 		}, 0);
-	}, [sortedItems]);
-
-	useEffect(() => {
-		setShowNothing(true);
-		setTimeout(() => {
-			setShowNothing(false);
-		}, 0);
-	}, [catalogItems]);
-
-	useEffect(() => {
-		setFilteredItems(catalogItems);
-	}, [catalogItems]);
-
-	const onApplyFilters = (filteredItems: CatalogItem[]) => {
-		setFilteredItems([]);
-		setItemsFiltering(true);
-		setTimeout(() => {
-			setItemsFiltering(false);
-			setFilteredItems(filteredItems);
-		}, 0);
-	};
+	}, [itemsToRender]);
 
 	return (
 		<>
@@ -115,29 +104,36 @@ export function Component() {
 								</div>
 
 								<CatalogFilters
-									items={catalogItems}
 									isMobile={isMobile}
-									preFilter={preFilter}
-									onFilter={onApplyFilters}
-									filtersReset={filtersReset}
-									setFiltersReset={setFiltersReset}
+									filterGroupList={filterGroupList}
+									preorderList={preorderList}
+									availabilityFilter={availabilityFilter}
+									handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
+									preorderIdFilter={preorderIdFilter}
+									handleChangePreorderIdFilter={handleChangePreorderIdFilter}
+									checkedFilters={checkedFilters}
+									handleToggleFilter={handleToggleFilter}
+									priceRangeFilter={priceRangeFilter}
+									handleChangePriceRangeFilter={handleChangePriceRangeFilter}
 								/>
 							</div>
 						</Modal>
-						<BreadcrumbsPageHeader
-							isMobile={isMobile}
-							current={"Каталог"}
-						/>
+						<BreadcrumbsPageHeader isMobile={isMobile} current={"Каталог"} />
 
 						<div className="gap-2 d-f fd-r">
 							{!isMobile && (
 								<CatalogFilters
-									items={catalogItems}
 									isMobile={isMobile}
-									preFilter={preFilter}
-									onFilter={onApplyFilters}
-									filtersReset={filtersReset}
-									setFiltersReset={setFiltersReset}
+									filterGroupList={filterGroupList}
+									preorderList={preorderList}
+									availabilityFilter={availabilityFilter}
+									handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
+									preorderIdFilter={preorderIdFilter}
+									handleChangePreorderIdFilter={handleChangePreorderIdFilter}
+									checkedFilters={checkedFilters}
+									handleToggleFilter={handleToggleFilter}
+									priceRangeFilter={priceRangeFilter}
+									handleChangePriceRangeFilter={handleChangePriceRangeFilter}
 								/>
 							)}
 
@@ -184,13 +180,13 @@ export function Component() {
 									)}
 								</div>
 
-								{sortedItems.length === 0 && !itemsFiltering ? (
+								{itemsToRender.length === 0 ? (
 									<Empty
 										title={"Ничего не найдено"}
 										description="Попробуйте изменить фильтры"
 										icon={<Search sx={{ height: 96, width: 96 }} />}
 										button={
-											<Button variant="contained" onClick={() => setFiltersReset(true)}>
+											<Button variant="contained" onClick={() => resetFilters()}>
 												Сбросить фильтры
 											</Button>
 										}
@@ -198,7 +194,7 @@ export function Component() {
 								) : (
 									<Grid2 container justifyContent="flex-start" spacing={2}>
 										{!showNothing &&
-											sortedItems.map((data, index) => (
+											itemsToRender.map((data, index) => (
 												<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
 													<LazyLoad
 														key={index}
