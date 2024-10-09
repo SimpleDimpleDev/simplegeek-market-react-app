@@ -117,11 +117,13 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		setPriceRangeFilter((range) => [range[0], items.map((item) => item.price).reduce((a, b) => a + b, 0)]);
 	}, [items]);
 
-	console.log("filters:", {
-		availabilityFilter,
-		preorderIdFilter,
-		checkedFilters,
-		priceRangeFilter,
+	useEffect(() => {
+		console.log("filters:", {
+			availabilityFilter,
+			preorderIdFilter,
+			checkedFilters,
+			priceRangeFilter,
+		});
 	});
 
 	useEffect(() => {

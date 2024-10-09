@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { CatalogFilters } from "@components/Filters";
 import { Empty } from "@components/Empty";
@@ -66,15 +66,6 @@ export function Component() {
 		const sortedItems = getSortedItems(filteredItems, sorting);
 		return sortedItems;
 	}, [catalog, filterFunction, sorting]);
-
-	const [showNothing, setShowNothing] = useState(false);
-
-	useEffect(() => {
-		setShowNothing(true);
-		setTimeout(() => {
-			setShowNothing(false);
-		}, 0);
-	}, [itemsToRender]);
 
 	return (
 		<>
@@ -193,26 +184,25 @@ export function Component() {
 									/>
 								) : (
 									<Grid2 container justifyContent="flex-start" spacing={2}>
-										{!showNothing &&
-											itemsToRender.map((data, index) => (
-												<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
-													<LazyLoad
-														key={index}
-														width={"100%"}
-														height={420}
-														observerOptions={{
-															rootMargin: "100px",
-														}}
-														once
-													>
-														<Grow key={index} in={true} timeout={200}>
-															<div>
-																<ItemCard data={data} />
-															</div>
-														</Grow>
-													</LazyLoad>
-												</Grid2>
-											))}
+										{itemsToRender.map((data, index) => (
+											<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
+												<LazyLoad
+													key={index}
+													width={"100%"}
+													height={420}
+													observerOptions={{
+														rootMargin: "100px",
+													}}
+													once
+												>
+													<Grow key={index} in={true} timeout={200}>
+														<div>
+															<ItemCard data={data} />
+														</div>
+													</Grow>
+												</LazyLoad>
+											</Grid2>
+										))}
 									</Grid2>
 								)}
 							</div>
