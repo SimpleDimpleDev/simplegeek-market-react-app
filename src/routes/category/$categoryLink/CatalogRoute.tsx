@@ -11,7 +11,7 @@ import {
 	Select,
 	Typography,
 } from "@mui/material";
-import { useLoaderData } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
@@ -29,14 +29,15 @@ import { useFilters } from "src/hooks/useFilters";
 
 export function Component() {
 	const isMobile = useIsMobile();
-	const loaderData = useLoaderData() as { categoryLink: string | undefined } | undefined;
+	const params = useParams();
+	const navigate = useNavigate();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: availableItemIds } = useGetItemsAvailabilityQuery();
 
 	const categoryItems = useMemo(
-		() => catalog?.items.filter((item) => item.product.category.link === loaderData?.categoryLink) || [],
-		[catalog, loaderData]
+		() => catalog?.items.filter((item) => item.product.category.link === params.categoryLink) || [],
+		[catalog, params]
 	);
 
 	const {
@@ -74,10 +75,10 @@ export function Component() {
 			<Loading isLoading={catalogIsLoading} necessaryDataIsPersisted={!!catalog}>
 				{categoryItems.length === 0 ? (
 					<Empty
-						title={`В категории ${loaderData?.categoryLink} пока нет товаров`}
+						title={`В категории ${params.categoryLink} пока нет товаров`}
 						description="Вернитесь позже"
 						icon={<Search sx={{ height: 96, width: 96 }} />}
-						// button={<Button onClick={() => navigate("/")}>На главную</Button>}
+						button={<Button onClick={() => navigate("/")}>На главную</Button>}
 					/>
 				) : (
 					<div>

@@ -133,20 +133,26 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	}, [searchParams, items]);
 
 	useEffect(() => {
-		setSearchParams((prev) => {
-			const newParams = new URLSearchParams(prev);
-			setFiltersParam(newParams, checkedFilters);
-			return newParams;
-		});
-	}, [setSearchParams, checkedFilters]);
+        const { preorderFilter: newPreorderIdFilter } = parseFilterParams(searchParams);
+        if (JSON.stringify(preorderIdFilter) !== JSON.stringify(newPreorderIdFilter)) {
+            setSearchParams(() => {
+                const newParams = new URLSearchParams(searchParams);
+                setPreorderFilterParam(newParams, preorderIdFilter);
+                return newParams;
+            });
+        }
+	}, [searchParams, setSearchParams, preorderIdFilter]);
 
 	useEffect(() => {
-		setSearchParams((prev) => {
-			const newParams = new URLSearchParams(prev);
-			setPreorderFilterParam(newParams, preorderIdFilter);
-			return newParams;
-		});
-	}, [setSearchParams, preorderIdFilter]);
+        const { checkedFilters: newCheckedFilters } = parseFilterParams(searchParams);
+        if (JSON.stringify(checkedFilters) !== JSON.stringify(newCheckedFilters)) {
+            setSearchParams(() => {
+                const newParams = new URLSearchParams(searchParams);
+                setFiltersParam(newParams, checkedFilters);
+                return newParams;
+            })
+        }
+	}, [searchParams, setSearchParams, checkedFilters]);
 
 	const handleToggleFilter = useCallback((filterGroupId: string, id: string) => {
 		setCheckedFilters((currentFilters) => {
