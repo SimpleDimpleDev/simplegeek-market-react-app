@@ -42,13 +42,13 @@ const ScrollButton = styled(IconButton)({
 });
 
 const LeftButton = ({ onClick, ...rest }: ArrowProps) => (
-	<ScrollButton {...rest} onClick={onClick} sx={{ left: "-3%" }}>
+	<ScrollButton {...rest} onClick={onClick} sx={{ left: "2%" }}>
 		<ChevronLeft />
 	</ScrollButton>
 );
 
 const RightButton = ({ onClick, ...rest }: ArrowProps) => (
-	<ScrollButton {...rest} onClick={onClick} sx={{ right: "-3%" }}>
+	<ScrollButton {...rest} onClick={onClick} sx={{ right: "2%" }}>
 		<ChevronRight />
 	</ScrollButton>
 );
