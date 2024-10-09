@@ -140,13 +140,11 @@ export const CatalogFilters = ({
 
 	const handleChangeMinPriceFilter = () => {
 		handleChangePriceRangeFilter("min", minPrice);
-		setMinPrice(priceRangeFilter[0]);
-	}
+	};
 
 	const handleChangeMaxPriceFilter = () => {
 		handleChangePriceRangeFilter("max", maxPrice);
-		setMaxPrice(priceRangeFilter[1]);
-	}
+	};
 
 	return (
 		<div
