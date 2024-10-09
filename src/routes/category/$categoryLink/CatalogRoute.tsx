@@ -29,14 +29,14 @@ import { useFilters } from "src/hooks/useFilters";
 
 export function Component() {
 	const isMobile = useIsMobile();
-	const { categoryLink } = useLoaderData() as { categoryLink: string | undefined };
+	const loaderData = useLoaderData() as { categoryLink: string | undefined } | undefined;
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: availableItemIds } = useGetItemsAvailabilityQuery();
 
 	const categoryItems = useMemo(
-		() => catalog?.items.filter((item) => item.product.category.link === categoryLink) || [],
-		[catalog, categoryLink]
+		() => catalog?.items.filter((item) => item.product.category.link === loaderData?.categoryLink) || [],
+		[catalog, loaderData]
 	);
 
 	const {
@@ -74,7 +74,7 @@ export function Component() {
 			<Loading isLoading={catalogIsLoading} necessaryDataIsPersisted={!!catalog}>
 				{categoryItems.length === 0 ? (
 					<Empty
-						title={`В категории ${categoryLink} пока нет товаров`}
+						title={`В категории ${loaderData?.categoryLink} пока нет товаров`}
 						description="Вернитесь позже"
 						icon={<Search sx={{ height: 96, width: 96 }} />}
 						// button={<Button onClick={() => navigate("/")}>На главную</Button>}
