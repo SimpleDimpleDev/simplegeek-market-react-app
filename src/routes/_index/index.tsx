@@ -67,7 +67,7 @@ export function Component() {
 
 	useEffect(() => {
 		setTransition(true);
-		setTimeout(() => setTransition(false), 100);
+		setTimeout(() => setTransition(false), 200);
 	}, [itemsToRender]);
 
 	return (
