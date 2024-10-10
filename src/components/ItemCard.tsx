@@ -98,7 +98,21 @@ export default function ItemCard({ data }: ItemCardProps) {
 
 				<div className="d-f fd-r jc-sb">
 					<div className="d-f fd-c">
-						<Typography variant="h6">{data.price} ₽</Typography>
+						<div className="gap-1 d-f fd-r">
+							{data.discount ? (
+								<>
+									<Typography
+										variant="h6"
+										sx={{ textDecoration: "line-through", color: "typography.secondary" }}
+									>
+										{data.price} ₽
+									</Typography>
+									<Typography variant="h6">{data.price - data.discount} ₽</Typography>
+								</>
+							) : (
+								<Typography variant="h6">{data.price} ₽</Typography>
+							)}
+						</div>
 						<div>
 							<Typography
 								variant="body1"
