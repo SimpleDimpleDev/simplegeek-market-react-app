@@ -56,8 +56,11 @@ export function Component() {
 	);
 
 	const createOrder = async (items: UserCartItem[]) => {
-		if (!userAuthority) navigate("/auth/login");
-		checkout({ items });
+		if (!userAuthority) {
+			navigate("/auth/login?return_to=cart");
+		} else {
+			checkout({ items });
+		}
 	};
 
 	return (
