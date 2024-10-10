@@ -8,7 +8,7 @@ export function Component() {
 	return (
 		<OryThemeProvider themeOverrides={oryTheme}>
 			<IntlProvider<CustomTranslations> locale="ru" defaultLocale="ru" customTranslations={customTranslations}>
-				<div className="bg-secondary h-100 ai-c d-f jc-c v-100">
+				<div className="bg-secondary w-100 h-100 ai-c d-f jc-c">
 					<Outlet />
 				</div>
 			</IntlProvider>

@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import { SettingsFlow, UpdateSettingsFlowBody } from "@ory/client";
 import { gridStyle, NodeMessages, UserSettingsCard, UserSettingsFlowType } from "@ory/elements";
 import { useSearchParams, useNavigate } from "react-router-dom";
@@ -101,7 +101,9 @@ export function Component() {
 						))}
 					</div>
 				) : (
-					<div>Loading...</div>
+					<div className="w-100 h-100 ai-c d-f jc-c">
+						<CircularProgress />
+					</div>
 				)}
 			</div>
 		</div>

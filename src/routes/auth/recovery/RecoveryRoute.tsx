@@ -87,6 +87,8 @@ export function Component() {
 			onSubmit={({ body }) => submitFlow(body as UpdateRecoveryFlowBody)}
 		/>
 	) : (
-		<CircularProgress />
+		<div className="w-100 h-100 ai-c d-f jc-c">
+			<CircularProgress />
+		</div>
 	);
 }

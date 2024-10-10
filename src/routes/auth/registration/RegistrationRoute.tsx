@@ -20,7 +20,7 @@ export function Component() {
 	const [flow, setFlow] = useState<RegistrationFlow | null>(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const dispatch = useDispatch<AppDispatch>();
-	
+
 	// The return_to is a query parameter is set by you when you would like to redirect
 	// the user back to a specific URL after registration is successful
 	// In most cases it is not necessary to set a return_to if the UI business logic is
@@ -144,6 +144,8 @@ export function Component() {
 			onSubmit={({ body }) => submitFlow(body as UpdateRegistrationFlowBody)}
 		/>
 	) : (
-		<CircularProgress />
+		<div className="w-100 h-100 ai-c d-f jc-c">
+			<CircularProgress />
+		</div>
 	);
 }
