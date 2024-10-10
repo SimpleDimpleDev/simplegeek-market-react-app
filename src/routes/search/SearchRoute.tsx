@@ -17,7 +17,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { CatalogFilters } from "@components/Filters";
 import { Empty } from "@components/Empty";
@@ -26,8 +26,7 @@ import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/cata
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { useFilters } from "src/hooks/useFilters";
 import { Sorting } from "@appTypes/Sorting";
-import { getSortedItems } from "@utils/sorting";
-import { CatalogItem } from "@appTypes/CatalogItem";
+import { useItemsToRender } from "src/hooks/useItemsToRender";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -67,19 +66,7 @@ export function Component() {
 
 	const [sorting, setSorting] = useState<Sorting>("popular");
 
-	const prevItemsToRender = useRef<CatalogItem[]>([]);
-
-	const itemsToRender = useMemo(() => {
-		const items = getSortedItems(searchedItems.filter(filterFunction), sorting);
-		if (
-			JSON.stringify(items.map((item) => item.id)) ===
-			JSON.stringify(prevItemsToRender.current.map((item) => item.id))
-		) {
-			return prevItemsToRender.current;
-		}
-		prevItemsToRender.current = items;
-		return items;
-	}, [searchedItems, filterFunction, sorting]);
+	const { itemsToRender } = useItemsToRender({ items: searchedItems, filterFunction, sorting });
 
 	return (
 		<>
