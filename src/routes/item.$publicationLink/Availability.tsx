@@ -19,7 +19,7 @@ const PublicationAvailability: React.FC<VariationAvailabilityProps> = ({
 	return (
 		<Box display="flex" flexDirection="column" gap={1}>
 			{discount ? (
-				<>
+				<div className="gap-1 ai-c d-f">
 					<Typography
 						variant="h4"
 						sx={{
@@ -30,7 +30,7 @@ const PublicationAvailability: React.FC<VariationAvailabilityProps> = ({
 						{price} ₽
 					</Typography>
 					<Typography variant="h4">{price - discount} ₽</Typography>
-				</>
+				</div>
 			) : (
 				<Typography variant="h4">{price} ₽</Typography>
 			)}
