@@ -130,9 +130,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 										color="warning.main"
 										onClick={() => {
 											navigate(
-												`/catalog/${
-													selectedVariation.product.category.link
-												}${`?f=${filterGroup.title}:${filter.value}`}`
+												`/?f[]=${filterGroup.id}:${filter.id}`
 											);
 										}}
 									>

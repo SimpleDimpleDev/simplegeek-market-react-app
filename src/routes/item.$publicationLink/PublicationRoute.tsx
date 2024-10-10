@@ -30,7 +30,7 @@ export function Component() {
 	}
 
 	const itemVariationIndexString = searchParams[0].get("v");
-	const itemVariationIndex = itemVariationIndexString === null ? 0 : parseInt(itemVariationIndexString) - 1;
+	const itemVariationIndex = itemVariationIndexString === null ? 0 : parseInt(itemVariationIndexString);
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 

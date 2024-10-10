@@ -5,6 +5,7 @@ import ImageCarousel from "./ImageCarousel";
 import { PublicationProps } from "./types";
 import { PublicationAvailability } from "./Availability";
 import { PublicationActionButtons } from "./ActionButtons";
+import { useNavigate } from "react-router-dom";
 
 const DesktopPublication: React.FC<PublicationProps> = ({
 	publication,
@@ -25,6 +26,8 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 	selectedVariationIsFavorite,
 	onFavoriteClick,
 }) => {
+	const navigate = useNavigate();
+
 	return (
 		<>
 			<BreadcrumbsPageHeader
@@ -76,7 +79,15 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 										<Typography variant="body1" color="typography.secondary">
 											{filterGroup.title}
 										</Typography>
-										<Typography variant="body1">{filter.value}</Typography>
+										<Typography
+											variant="body1"
+											color="warning.main"
+											onClick={() => {
+												navigate(`/?f[]=${filterGroup.id}:${filter.id}`);
+											}}
+										>
+											{filter.value}
+										</Typography>
 									</Box>
 								))
 							)}
