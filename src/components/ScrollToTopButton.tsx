@@ -13,12 +13,17 @@ const ScrollTop: React.FC = () => {
 
 	return (
 		<Fade in={trigger}>
-			<Box
-				onClick={handleClick}
-				role="presentation"
-				sx={{ position: "sticky", top: "80%", width: "max-content" }}
-			>
-				<Fab color="primary" size="small" aria-label="scroll back to top">
+			<Box position={"absolute"} top={0} bottom={"28px"}>
+				<Fab
+					onClick={handleClick}
+					color="primary"
+					size="small"
+					aria-label="scroll-top"
+					sx={{
+						position: "sticky",
+						top: "90%",
+					}}
+				>
 					<KeyboardArrowUp />
 				</Fab>
 			</Box>
