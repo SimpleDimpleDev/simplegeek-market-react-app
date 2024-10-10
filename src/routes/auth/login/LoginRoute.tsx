@@ -1,4 +1,6 @@
 import { SdkError, oryClient } from "@api/auth/client";
+import { useGetCartItemListQuery } from "@api/shop/cart";
+import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { CircularProgress } from "@mui/material";
 import { LoginFlow, UpdateLoginFlowBody } from "@ory/client";
 import { UserAuthCard } from "@ory/elements";
@@ -23,6 +25,9 @@ export function Component() {
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const dispatch = useDispatch<AppDispatch>();
+
+	const { refetch: refetchCart } = useGetCartItemListQuery();
+	const { refetch: refetchFavorite } = useGetFavoriteItemListQuery();
 
 	// The aal is set as a query parameter by your Ory project
 	// aal1 is the default authentication level (Single-Factor)
@@ -88,6 +93,9 @@ export function Component() {
 			.updateLoginFlow({ flow: flow.id, updateLoginFlowBody: body })
 			.then(() => {
 				dispatch(fetchUserAuthority());
+				refetchCart();
+				refetchFavorite();
+				
 				if (returnTo) {
 					navigate(returnTo, { replace: true });
 				} else {
@@ -104,7 +112,6 @@ export function Component() {
 			getFlow(flowId).catch(createFlow); // if for some reason the flow has expired, we need to get a new one
 			return;
 		}
-
 		// we assume there was no flow, so we create a new one
 		createFlow();
 	}, [createFlow, getFlow, searchParams]);

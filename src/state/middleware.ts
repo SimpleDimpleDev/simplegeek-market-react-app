@@ -1,7 +1,4 @@
-import { Middleware, ThunkMiddleware } from "@reduxjs/toolkit";
-import { fetchUserAuthority } from "./user/thunks";
-import { cartApi } from "@api/shop/cart";
-import { favoritesApi } from "@api/shop/favorites";
+import { Middleware } from "@reduxjs/toolkit";
 
 /**
  * Logs all actions and next state to the console.
@@ -24,17 +21,4 @@ const crashReporterMiddleware: Middleware = () => (next) => (action) => {
 	}
 };
 
-/**
- * This middleware listens for the `fetchUserAuthority.fulfilled` action and dispatches
- * `fetchUserItems` when it is received. This is useful for keeping the user's items up to
- * date when the user logs in or out.
- */
-const updateUserItemsMiddleware: ThunkMiddleware = (store) => (next) => (action) => {
-	if (fetchUserAuthority.fulfilled.match(action)) {
-		store.dispatch(cartApi.endpoints.getCartItemList.initiate());
-		store.dispatch(favoritesApi.endpoints.getFavoriteItemList.initiate());
-	}
-	return next(action);
-};
-
-export { loggingMiddleware, crashReporterMiddleware, updateUserItemsMiddleware };
+export { loggingMiddleware, crashReporterMiddleware };

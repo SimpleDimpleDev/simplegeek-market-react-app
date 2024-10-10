@@ -34,8 +34,8 @@ const DesktopHeader: React.FC = () => {
 	const userAuthorityLoading = useSelector((state: RootState) => state.userAuthority.loading);
 
 	const { data: catalog } = useGetCatalogQuery();
-	const { data: cartItemList } = useGetCartItemListQuery();
-	const { data: favoriteItemList } = useGetFavoriteItemListQuery();
+	const { data: cartItemList, refetch: refetchCart } = useGetCartItemListQuery();
+	const { data: favoriteItemList, refetch: refetchFavorite } = useGetFavoriteItemListQuery();
 
 	const dispatch = useDispatch<AppDispatch>();
 
@@ -60,7 +60,11 @@ const DesktopHeader: React.FC = () => {
 		await oryClient.updateLogoutFlow({
 			token: flow.logout_token,
 		});
+		// Reset the user state
 		dispatch(fetchUserAuthority());
+		refetchCart();
+		refetchFavorite();
+		// Navigate to the home page
 		navigate("/");
 	};
 
