@@ -69,7 +69,7 @@ export function Component() {
 	}, [catalog, filterFunction, sorting]);
 
 	return (
-		<>
+		<div style={{minHeight: "100vh"}}>
 			<ScrollTop />
 			<Loading isLoading={catalogIsLoading} necessaryDataIsPersisted={!!catalog}>
 				{catalogItems.length === 0 ? (
@@ -224,6 +224,6 @@ export function Component() {
 					</div>
 				)}
 			</Loading>
-		</>
+		</div>
 	);
 }
