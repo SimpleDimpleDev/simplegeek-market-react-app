@@ -13,7 +13,7 @@ const setPreorderFilterParam = (searchParams: URLSearchParams, preorderFilter: P
 };
 
 const setFiltersParam = (searchParams: URLSearchParams, checkedFilters: CheckedFilter[]): void => {
-    searchParams.delete("f[]");
+	searchParams.delete("f[]");
 	if (checkedFilters.length === 0) return;
 	for (const filter of checkedFilters) {
 		searchParams.append("f[]", `${filter.filterGroupId}:${filter.id}`);
@@ -116,22 +116,28 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 
 	const setPreorderIdFilter = useCallback(
 		(preorderId: string | null) => {
-			setSearchParams((prevSearchParams) => {
-				const newSearchParams = new URLSearchParams(prevSearchParams);
-				setPreorderFilterParam(newSearchParams, preorderId);
-				return newSearchParams;
-			}, {replace: true});
+			setSearchParams(
+				(prevSearchParams) => {
+					const newSearchParams = new URLSearchParams(prevSearchParams);
+					setPreorderFilterParam(newSearchParams, preorderId);
+					return newSearchParams;
+				},
+				{ replace: true }
+			);
 		},
 		[setSearchParams]
 	);
 
 	const setCheckedFilters = useCallback(
 		(checkedFilters: CheckedFilter[]) => {
-			setSearchParams((prevSearchParams) => {
-				const newSearchParams = new URLSearchParams(prevSearchParams);
-				setFiltersParam(newSearchParams, checkedFilters);
-				return newSearchParams;
-			}, {replace: true});
+			setSearchParams(
+				(prevSearchParams) => {
+					const newSearchParams = new URLSearchParams(prevSearchParams);
+					setFiltersParam(newSearchParams, checkedFilters);
+					return newSearchParams;
+				},
+				{ replace: true }
+			);
 		},
 		[setSearchParams]
 	);
@@ -182,7 +188,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 			if (availabilityFilter && !availableItemIds.includes(item.id)) return false;
 
 			// preorder
-			if (preorderIdFilter !== null) {
+			if (preorderIdFilter !== null && preorderList.some((preorder) => preorder.id === preorderIdFilter)) {
 				const itemPreorder = item.preorder;
 				if (itemPreorder === null) return false;
 				if (itemPreorder.id !== preorderIdFilter) return false;
@@ -191,10 +197,21 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 			// filters
 			if (checkedFilters.length !== 0) {
 				const itemFilterGroups = item.product.filterGroups;
-				for (const filter of checkedFilters) {
-					const itemFilterGroup = itemFilterGroups.find((group) => group.id === filter.filterGroupId);
+				for (const checkedFilter of checkedFilters) {
+					// check if filter group and filter exists
+					const existingFilterGroup = filterGroupList.find(
+						(group) => group.id === checkedFilter.filterGroupId
+					);
+					if (
+						!existingFilterGroup ||
+						!existingFilterGroup.filters.some((groupFilter) => groupFilter.id === checkedFilter.id)
+					)
+						continue;
+
+					const itemFilterGroup = itemFilterGroups.find((group) => group.id === checkedFilter.filterGroupId);
 					if (!itemFilterGroup) return false;
-					if (!itemFilterGroup.filters.find((groupFilter) => groupFilter.id === filter.id)) return false;
+					if (!itemFilterGroup.filters.find((groupFilter) => groupFilter.id === checkedFilter.id))
+						return false;
 				}
 			}
 
@@ -205,7 +222,15 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 
 			return true;
 		},
-		[availableItemIds, availabilityFilter, preorderIdFilter, checkedFilters, priceRangeFilter]
+		[
+			availableItemIds,
+			availabilityFilter,
+			preorderList,
+			preorderIdFilter,
+			filterGroupList,
+			checkedFilters,
+			priceRangeFilter,
+		]
 	);
 
 	const resetFilters = useCallback(() => {
