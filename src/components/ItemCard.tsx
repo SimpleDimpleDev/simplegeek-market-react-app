@@ -107,7 +107,9 @@ export default function ItemCard({ data }: ItemCardProps) {
 									>
 										{data.price} ₽
 									</Typography>
-									<Typography variant="h6">{data.price - data.discount} ₽</Typography>
+									<Typography variant="h6" sx={{ color: "typography.warning" }}>
+										{data.price - data.discount} ₽
+									</Typography>
 								</>
 							) : (
 								<Typography variant="h6">{data.price} ₽</Typography>
