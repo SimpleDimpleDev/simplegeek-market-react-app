@@ -1,5 +1,5 @@
 import { ItemCreditInfo } from "@components/CreditTimeline";
-import { Box, Typography, Select, MenuItem } from "@mui/material";
+import { Box, Typography, NativeSelect } from "@mui/material";
 import ImageCarousel from "./ImageCarousel";
 import { useNavigate } from "react-router-dom";
 import { PublicationAvailability } from "./Availability";
@@ -39,19 +39,19 @@ const MobilePublication: React.FC<PublicationProps> = ({
 				{publication.items.length !== 1 && (
 					<Box display="flex" flexDirection="column" gap={2}>
 						<Typography variant="h6">Вариация</Typography>
-						<Select
+						<NativeSelect
 							fullWidth
 							value={selectedVariationIndex}
 							onChange={(event) => {
-								onChangeSelectedVariationIndex(event.target.value as number);
+								onChangeSelectedVariationIndex(Number(event.target.value));
 							}}
 						>
 							{publication.items.map((itemVariation, index) => (
-								<MenuItem key={index} value={index}>
+								<option key={index} value={index}>
 									{itemVariation.product.title}
-								</MenuItem>
+								</option>
 							))}
-						</Select>
+						</NativeSelect>
 					</Box>
 				)}
 
