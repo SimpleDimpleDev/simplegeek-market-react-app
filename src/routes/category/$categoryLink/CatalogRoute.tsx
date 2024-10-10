@@ -16,7 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { CatalogFilters } from "@components/Filters";
 import { Empty } from "@components/Empty";
@@ -27,6 +27,7 @@ import { useIsMobile } from "src/hooks/useIsMobile";
 import { Sorting } from "@appTypes/Sorting";
 import { getSortedItems } from "@utils/sorting";
 import { useFilters } from "src/hooks/useFilters";
+import { CatalogItem } from "@appTypes/CatalogItem";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -63,12 +64,20 @@ export function Component() {
 	const [filtersOpen, setFiltersOpen] = useState(false);
 
 	const [sorting, setSorting] = useState<Sorting>("popular");
+
+	const prevItemsToRender = useRef<CatalogItem[]>([]);
+
 	const itemsToRender = useMemo(() => {
-		if (!catalog) return [];
-		const filteredItems = catalog.items.filter(filterFunction);
-		const sortedItems = getSortedItems(filteredItems, sorting);
-		return sortedItems;
-	}, [catalog, filterFunction, sorting]);
+		const items = getSortedItems(categoryItems.filter(filterFunction), sorting);
+		if (
+			JSON.stringify(items.map((item) => item.id)) ===
+			JSON.stringify(prevItemsToRender.current.map((item) => item.id))
+		) {
+			return prevItemsToRender.current;
+		}
+		prevItemsToRender.current = items;
+		return items;
+	}, [categoryItems, filterFunction, sorting]);
 
 	return (
 		<>

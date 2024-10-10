@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { CatalogFilters } from "@components/Filters";
 import { Empty } from "@components/Empty";
@@ -76,10 +76,6 @@ export function Component() {
 		prevItemsToRender.current = items;
 		return items;
 	}, [catalog, filterFunction, sorting]);
-
-	useEffect(() => {
-		console.log("itemsToRender changed");
-	}, [itemsToRender]);
 
 	return (
 		<>
