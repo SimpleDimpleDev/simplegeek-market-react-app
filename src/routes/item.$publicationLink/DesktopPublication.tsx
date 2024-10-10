@@ -112,6 +112,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 							availabilityIsLoading={availableItemIdsIsLoading}
 							variationIsAvailable={selectedVariationIsAvailable}
 							price={selectedVariation.price}
+							discount={selectedVariation.discount}
 							preorder={publication.preorder}
 						/>
 						<PublicationActionButtons

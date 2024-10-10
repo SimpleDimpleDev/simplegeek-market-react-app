@@ -5,6 +5,7 @@ interface VariationAvailabilityProps {
 	availabilityIsLoading: boolean;
 	variationIsAvailable: boolean | undefined;
 	price: number;
+	discount: number | null;
 	preorder: PreorderShop | null;
 }
 
@@ -12,11 +13,27 @@ const PublicationAvailability: React.FC<VariationAvailabilityProps> = ({
 	availabilityIsLoading,
 	variationIsAvailable,
 	price,
+	discount,
 	preorder,
 }) => {
 	return (
 		<Box display="flex" flexDirection="column" gap={1}>
-			<Typography variant="h4">{price} ₽</Typography>
+			{discount ? (
+				<>
+					<Typography
+						variant="h4"
+						sx={{
+							textDecoration: "line-through",
+							color: "typography.secondary",
+						}}
+					>
+						{price} ₽
+					</Typography>
+					<Typography variant="h4">{price - discount} ₽</Typography>
+				</>
+			) : (
+				<Typography variant="h4">{price} ₽</Typography>
+			)}
 			{availabilityIsLoading ? (
 				<Typography variant="body2">Загрузка...</Typography>
 			) : variationIsAvailable === undefined ? null : variationIsAvailable ? (

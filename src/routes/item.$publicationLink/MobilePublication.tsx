@@ -69,6 +69,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 						availabilityIsLoading={availableItemIdsIsLoading}
 						variationIsAvailable={selectedVariationIsAvailable}
 						price={selectedVariation.price}
+						discount={selectedVariation.discount}
 						preorder={publication.preorder}
 					/>
 					<PublicationActionButtons
@@ -129,9 +130,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 										variant="body1"
 										color="warning.main"
 										onClick={() => {
-											navigate(
-												`/?f[]=${filterGroup.id}:${filter.id}`
-											);
+											navigate(`/?f[]=${filterGroup.id}:${filter.id}`);
 										}}
 									>
 										{filter.value}

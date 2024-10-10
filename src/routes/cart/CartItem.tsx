@@ -166,7 +166,28 @@ const CartItem = ({ isMobile, item, checked, onCheck }: CartItemProps) => {
 
 						<Box display="flex" flexDirection="column" justifyContent="space-between">
 							<Box display="flex" flexDirection="column" gap={"4px"} paddingLeft={1}>
-								{isMobile && <Typography variant="subtitle1">{item.price} ₽</Typography>}
+								{isMobile && (
+									<div className="gap-05 d-f fd-r">
+										{item.discount ? (
+											<>
+												<Typography
+													variant="subtitle1"
+													sx={{
+														textDecoration: "line-through",
+														color: "typography.secondary",
+													}}
+												>
+													{item.price} ₽
+												</Typography>
+												<Typography variant="subtitle1">
+													{item.price - item.discount} ₽
+												</Typography>
+											</>
+										) : (
+											<Typography variant="subtitle1">{item.price} ₽</Typography>
+										)}
+									</div>
+								)}
 
 								<Typography variant="body2">{item.product.title}</Typography>
 								{availableItemIdsIsLoading ? (
@@ -203,7 +224,24 @@ const CartItem = ({ isMobile, item, checked, onCheck }: CartItemProps) => {
 
 					{!isMobile && (
 						<Box display="flex" flexDirection="column" justifyContent="space-between" alignItems="end">
-							<Typography variant="subtitle1">{item.price} ₽</Typography>
+							<div className="gap-1 d-f fd-r">
+								{item.discount ? (
+									<>
+										<Typography
+											variant="subtitle1"
+											sx={{
+												textDecoration: "line-through",
+												color: "typography.secondary",
+											}}
+										>
+											{item.price} ₽
+										</Typography>
+										<Typography variant="subtitle1">{item.price - item.discount} ₽</Typography>
+									</>
+								) : (
+									<Typography variant="subtitle1">{item.price} ₽</Typography>
+								)}
+							</div>
 
 							<QuantityButtons
 								quantity={item.quantity}

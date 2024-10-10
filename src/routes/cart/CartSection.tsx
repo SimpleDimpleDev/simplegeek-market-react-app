@@ -17,6 +17,7 @@ import { FormedCartSection } from "@appTypes/Cart";
 import { UserCartItem } from "@appTypes/UserItems";
 import { useDeleteCartItemsMutation } from "@api/shop/cart";
 import { CartItem } from "./CartItem";
+import { getRuGoodsWord } from "@utils/format";
 
 interface CartSectionHeaderProps {
 	allChecked: boolean;
@@ -89,6 +90,11 @@ export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) =
 	const totalPrice = data.items
 		.filter((cartItem) => checkedIds.includes(cartItem.id))
 		.map((cartItem) => cartItem.price * cartItem.quantity)
+		.reduce((a, b) => a + b, 0);
+
+	const totalDiscount = data.items
+		.filter((cartItem) => checkedIds.includes(cartItem.id))
+		.map((cartItem) => cartItem.discount ?? 0)
 		.reduce((a, b) => a + b, 0);
 
 	const handleDeleteSelected = () => {
@@ -196,9 +202,21 @@ export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) =
 						<Box display="flex" flexDirection="column" gap={1}>
 							<Typography variant="subtitle0">Итого:</Typography>
 							<Box display="flex" flexDirection="row" alignItems={"baseline"} gap={1}>
-								<Typography variant="h4">{totalPrice} ₽</Typography>
+								{totalDiscount > 0 ? (
+									<>
+										<Typography
+											variant="h4"
+											sx={{ textDecoration: "line-through", color: "typography.secondary" }}
+										>
+											{totalPrice} ₽
+										</Typography>
+										<Typography variant="h4">{totalPrice - totalDiscount} ₽</Typography>
+									</>
+								) : (
+									<Typography variant="h4">{totalPrice} ₽</Typography>
+								)}
 								<Typography color="typography.secondary" variant="body1">
-									/ {checkedItemsCount} товаров
+									/ {checkedItemsCount} {getRuGoodsWord(checkedItemsCount)}
 								</Typography>
 							</Box>
 							{data.creditAvailable && (
