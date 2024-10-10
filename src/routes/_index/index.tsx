@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { CatalogFilters } from "@components/Filters";
 import { Empty } from "@components/Empty";
@@ -62,13 +62,6 @@ export function Component() {
 	const [sorting, setSorting] = useState<Sorting>("popular");
 
 	const { itemsToRender } = useItemsToRender({ items: catalogItems, filterFunction, sorting });
-
-	const [transition, setTransition] = useState(false);
-
-	useEffect(() => {
-		setTransition(true);
-		setTimeout(() => setTransition(false), 200);
-	}, [itemsToRender]);
 
 	return (
 		<>
@@ -200,7 +193,7 @@ export function Component() {
 									/>
 								) : (
 									<Grid2 container justifyContent={isMobile ? "center" : "flex-start"} spacing={2}>
-										{!transition && itemsToRender.map((data, index) => (
+										{itemsToRender.map((data, index) => (
 											<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
 												<LazyLoad
 													key={index}
