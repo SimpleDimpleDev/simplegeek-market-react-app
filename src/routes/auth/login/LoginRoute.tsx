@@ -112,45 +112,47 @@ export function Component() {
 	// we check if the flow is set, if not we show a loading indicator
 	return flow ? (
 		// we render the login form using Ory Elements
-		<UserAuthCard
-			flowType={"login"}
-			// we always need the flow data which populates the form fields and error messages dynamically
-			flow={flow}
-			// the login card should allow the user to go to the registration page and the recovery page
-			additionalProps={{
-				forgotPasswordURL: {
-					handler: () => {
-						const search = new URLSearchParams();
-						if (flow.return_to) search.set("return_to", flow.return_to);
-						navigate(
-							{
-								pathname: "/auth/recovery",
-								search: search.toString(),
-							},
-							{ replace: true }
-						);
+		<div className="gap-5 bg-primary p-3 pt-2 br-3 d-f fd-c">
+			<UserAuthCard
+				flowType={"login"}
+				// we always need the flow data which populates the form fields and error messages dynamically
+				flow={flow}
+				// the login card should allow the user to go to the registration page and the recovery page
+				additionalProps={{
+					forgotPasswordURL: {
+						handler: () => {
+							const search = new URLSearchParams();
+							if (flow.return_to) search.set("return_to", flow.return_to);
+							navigate(
+								{
+									pathname: "/auth/recovery",
+									search: search.toString(),
+								},
+								{ replace: true }
+							);
+						},
 					},
-				},
-				signupURL: {
-					handler: () => {
-						const search = new URLSearchParams();
-						if (flow.return_to) search.set("return_to", flow.return_to);
-						if (flow.oauth2_login_challenge) search.set("login_challenge", flow.oauth2_login_challenge);
-						navigate(
-							{
-								pathname: "/auth/registration",
-								search: search.toString(),
-							},
-							{ replace: true }
-						);
+					signupURL: {
+						handler: () => {
+							const search = new URLSearchParams();
+							if (flow.return_to) search.set("return_to", flow.return_to);
+							if (flow.oauth2_login_challenge) search.set("login_challenge", flow.oauth2_login_challenge);
+							navigate(
+								{
+									pathname: "/auth/registration",
+									search: search.toString(),
+								},
+								{ replace: true }
+							);
+						},
 					},
-				},
-			}}
-			// we might need webauthn support which requires additional js
-			includeScripts={true}
-			// we submit the form data to Ory
-			onSubmit={({ body }) => submitFlow(body as UpdateLoginFlowBody)}
-		/>
+				}}
+				// we might need webauthn support which requires additional js
+				includeScripts={true}
+				// we submit the form data to Ory
+				onSubmit={({ body }) => submitFlow(body as UpdateLoginFlowBody)}
+			/>
+		</div>
 	) : (
 		<div className="w-100 h-100 ai-c d-f jc-c">
 			<CircularProgress />
