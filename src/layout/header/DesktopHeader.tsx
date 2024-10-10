@@ -61,6 +61,7 @@ const DesktopHeader: React.FC = () => {
 			token: flow.logout_token,
 		});
 		dispatch(fetchUserAuthority());
+		navigate("/");
 	};
 
 	return (
