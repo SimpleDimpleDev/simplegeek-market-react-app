@@ -170,7 +170,7 @@ export const cssBaseLine = {
 	".tr-a-2": { transition: "all 0.2s ease-in-out" },
 
 	".hov-item": {
-		backgroundColor: "#f6f6f981",
+		backgroundColor: "rgba(221, 235, 235, 0.29);",
 		"&:hover": { backgroundColor: "white", boxShadow: "0px 6px 21px - 7px rgba(0, 0, 0, 0.75)" },
 	},
 };

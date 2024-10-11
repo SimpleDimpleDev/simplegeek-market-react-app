@@ -41,6 +41,8 @@ const MobilePublication: React.FC<PublicationProps> = ({
 						<Typography variant="h6">Вариация</Typography>
 						<NativeSelect
 							fullWidth
+							variant="outlined"
+							sx={{ backgroundColor: "surface.primary" }}
 							value={selectedVariationIndex}
 							onChange={(event) => {
 								onChangeSelectedVariationIndex(Number(event.target.value));

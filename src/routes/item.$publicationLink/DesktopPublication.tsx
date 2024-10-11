@@ -52,6 +52,8 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 							<Typography variant="h5">Вариация</Typography>
 							<Select
 								fullWidth
+								variant="outlined"
+								sx={{ backgroundColor: "surface.primary" }}
 								value={selectedVariationIndex}
 								onChange={(event) => {
 									onChangeSelectedVariationIndex(event.target.value as number);
