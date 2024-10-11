@@ -187,18 +187,31 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	const filterFunction = useCallback(
 		(item: CatalogItem) => {
 			// availability
-			if (availabilityFilter && availableItemIds !== undefined && !availableItemIds.includes(item.id))
-				return false;
+			if (availableItemIds !== undefined) {
+				if (availabilityFilter && !availableItemIds.includes(item.id)) {
+					console.log("item not available", item.id);
+					return false;
+				}
+			}
 
 			// preorder
 			if (preorderIdFilter !== null && preorderList.some((preorder) => preorder.id === preorderIdFilter)) {
 				const itemPreorder = item.preorder;
-				if (itemPreorder === null) return false;
-				if (itemPreorder.id !== preorderIdFilter) return false;
+
+				if (itemPreorder === null) {
+					console.log("item not preorder", item.id);
+					return false;
+				}
+
+				if (itemPreorder.id !== preorderIdFilter) {
+					console.log("item mismatch preorder", item.id, itemPreorder.id);
+					return false;
+				}
 			}
 
 			// filters
 			if (checkedFilters.length !== 0) {
+				console.log("some filter checked", item.id);
 				const itemFilterGroups = item.product.filterGroups;
 				for (const checkedFilter of checkedFilters) {
 					// check if filter group and filter exists
@@ -212,14 +225,20 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 						continue;
 
 					const itemFilterGroup = itemFilterGroups.find((group) => group.id === checkedFilter.filterGroupId);
-					if (!itemFilterGroup) return false;
-					if (!itemFilterGroup.filters.find((groupFilter) => groupFilter.id === checkedFilter.id))
+					if (!itemFilterGroup) {
+						console.log("item not filter group", item.id);
 						return false;
+					}
+					if (!itemFilterGroup.filters.find((groupFilter) => groupFilter.id === checkedFilter.id)) {
+						console.log("item not filter", item.id, checkedFilter.id);
+						return false;
+					}
 				}
 			}
 
 			// price
 			if (item.price < priceRangeFilter[0] || item.price > priceRangeFilter[1]) {
+				console.log("item out of price range", item.id);
 				return false;
 			}
 
