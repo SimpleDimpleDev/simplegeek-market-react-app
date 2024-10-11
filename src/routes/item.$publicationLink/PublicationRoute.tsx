@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import SuggestedItems from "@components/SuggestedItems";
 
-import { lazy, Suspense, useMemo, useState } from "react";
+import { lazy, Suspense, useMemo } from "react";
 
 import { getImageUrl } from "@utils/image";
 import { useAddCartItemMutation, useGetCartItemListQuery } from "@api/shop/cart";
@@ -21,7 +21,7 @@ export function Component() {
 	const isMobile = useIsMobile();
 
 	const params = useParams();
-	const searchParams = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
 
 	const publicationLink = params.publicationLink;
@@ -29,8 +29,9 @@ export function Component() {
 		throw new Response("No item link provided", { status: 404 });
 	}
 
-	const itemVariationIndexString = searchParams[0].get("v");
+	const itemVariationIndexString = searchParams.get("v");
 	const itemVariationIndex = itemVariationIndexString === null ? 0 : parseInt(itemVariationIndexString);
+	const setItemVariationIndex = (index: number) => setSearchParams({ ["v"]: index.toString() }, { replace: true });
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 
@@ -42,13 +43,11 @@ export function Component() {
 	const [addFavoriteItem] = useAddFavoriteItemMutation();
 	const [removeFavoriteItem] = useRemoveFavoriteItemMutation();
 
-	const [selectedVariationIndex, setSelectedVariationIndex] = useState<number>(itemVariationIndex);
-
 	const publication = useMemo(
 		() => catalog?.publications.find((publication) => publication.link === publicationLink),
 		[catalog, publicationLink]
 	);
-	const selectedVariation = publication?.items.at(selectedVariationIndex);
+	const selectedVariation = publication?.items.at(itemVariationIndex);
 
 	const selectedVariationIsAvailable = useMemo(
 		() => (selectedVariation === undefined ? undefined : availableItemIds?.includes(selectedVariation.id)),
@@ -110,8 +109,8 @@ export function Component() {
 						publication={publication}
 						selectedVariation={selectedVariation}
 						imageUrls={preparedImageUrls}
-						selectedVariationIndex={selectedVariationIndex}
-						onChangeSelectedVariationIndex={setSelectedVariationIndex}
+						selectedVariationIndex={itemVariationIndex}
+						onChangeSelectedVariationIndex={setItemVariationIndex}
 						availableItemIdsIsLoading={availableItemIdsIsLoading}
 						selectedVariationIsAvailable={selectedVariationIsAvailable}
 						cartItemListIsLoading={cartItemListIsLoading}
@@ -128,8 +127,8 @@ export function Component() {
 						publication={publication}
 						selectedVariation={selectedVariation}
 						imageUrls={preparedImageUrls}
-						selectedVariationIndex={selectedVariationIndex}
-						onChangeSelectedVariationIndex={setSelectedVariationIndex}
+						selectedVariationIndex={itemVariationIndex}
+						onChangeSelectedVariationIndex={setItemVariationIndex}
 						availableItemIdsIsLoading={availableItemIdsIsLoading}
 						selectedVariationIsAvailable={selectedVariationIsAvailable}
 						cartItemListIsLoading={cartItemListIsLoading}
