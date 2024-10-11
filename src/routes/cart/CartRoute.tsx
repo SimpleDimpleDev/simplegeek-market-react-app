@@ -87,7 +87,7 @@ export function Component() {
 				necessaryDataIsPersisted={!!catalog && !!availableItemsIds && !!cartItemList && !!favoriteItemList}
 			>
 				<>
-					{!orderItemsUnavailableError && (
+					{orderItemsUnavailableError && (
 						<div className="gap-1 bg-primary p-3 w-100 ai-c br-3 d-f fd-r">
 							<PriorityHigh color="error" />
 

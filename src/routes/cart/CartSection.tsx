@@ -201,22 +201,31 @@ export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) =
 					>
 						<Box display="flex" flexDirection="column" gap={1}>
 							<Typography variant="subtitle0">Итого:</Typography>
-							<Box display="flex" flexDirection="row" alignItems={"baseline"} gap={1}>
+							<Box display="flex" flexDirection="column" gap={2}>
 								{totalDiscount > 0 ? (
 									<>
-										<Typography
-											variant="h4"
-											sx={{ textDecoration: "line-through", color: "typography.secondary" }}
-										>
-											{totalPrice} ₽
-										</Typography>
-										<Typography variant="h4">{totalPrice - totalDiscount} ₽</Typography>
+										<div className="gap-05 d-f fd-r" style={{ alignItems: "baseline" }}>
+											<Typography variant="body1">Цена без скидки:</Typography>
+											<Typography variant="h4" sx={{ color: "typography.secondary" }}>
+												{totalPrice} ₽
+											</Typography>
+										</div>
+										<div className="gap-05 d-f fd-r" style={{ alignItems: "baseline" }}>
+											<Typography variant="body1">Скидка:</Typography>
+											<Typography variant="h4">{totalDiscount} ₽</Typography>
+										</div>
+										<div className="gap-05 d-f fd-r" style={{ alignItems: "baseline" }}>
+											<Typography variant="body1">Итого:</Typography>
+											<Typography variant="h4" color="warning">
+												{totalPrice - totalDiscount} ₽
+											</Typography>
+										</div>
 									</>
 								) : (
 									<Typography variant="h4">{totalPrice} ₽</Typography>
 								)}
 								<Typography color="typography.secondary" variant="body1">
-									/ {checkedItemsCount} {getRuGoodsWord(checkedItemsCount)}
+									{checkedItemsCount} {getRuGoodsWord(checkedItemsCount)}
 								</Typography>
 							</Box>
 							{data.creditAvailable && (
