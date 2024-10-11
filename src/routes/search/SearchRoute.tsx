@@ -187,7 +187,11 @@ export function Component() {
 										}}
 										onClick={() => setFiltersOpen(!filtersOpen)}
 									>
-										<Badge color="warning" variant="dot" badgeContent={0}>
+										<Badge
+											variant="dot"
+											color="warning"
+											invisible={checkedFilters.length === 0 && preorderIdFilter === null}
+										>
 											<FilterList />
 										</Badge>
 									</IconButton>
