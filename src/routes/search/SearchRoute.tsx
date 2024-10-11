@@ -27,6 +27,8 @@ import { useIsMobile } from "src/hooks/useIsMobile";
 import { useFilters } from "src/hooks/useFilters";
 import { Sorting } from "@appTypes/Sorting";
 import { useItemsToRender } from "src/hooks/useItemsToRender";
+import SomethingWentWrong from "@components/SomethingWentWrong";
+import { ScrollTop } from "@components/ScrollToTopButton";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -70,11 +72,18 @@ export function Component() {
 
 	return (
 		<>
+			<ScrollTop />
 			{catalogIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
-			) : searchedItems.length === 0 ? (
+			) : !catalog ? (
+				<SomethingWentWrong />
+			) : itemsToRender === undefined ? (
+				<div className="w-100 h-100 ai-c d-f jc-c">
+					<CircularProgress />
+				</div>
+			) : itemsToRender.length === 0 ? (
 				<Empty
 					title={`По запросу "${query}" ничего не найдено.`}
 					description="Попробуйте изменить параметры поиска."

@@ -49,7 +49,7 @@ const parseFilterParams = (
 };
 
 interface useFiltersArgs {
-	items: CatalogItem[];
+	items: CatalogItem[] | undefined;
 	availableItemIds: string[];
 }
 
@@ -77,6 +77,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const filterGroupList: FilterGroupGet[] = useMemo(() => {
+		if (!items) return [];
 		const existingGroups: FilterGroupGet[] = [];
 		for (const item of items) {
 			for (const itemFilterGroup of item.product.filterGroups) {
@@ -96,6 +97,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	}, [items]);
 
 	const preorderList: PreorderShop[] = useMemo(() => {
+		if (!items) return [];
 		const existingPreorderList: PreorderShop[] = [];
 		for (const item of items) {
 			const itemPreorder = item.preorder;
@@ -111,7 +113,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([0, 0]);
 
 	useEffect(() => {
-		setPriceRangeFilter((range) => [range[0], items.map((item) => item.price).reduce((a, b) => a + b, 0)]);
+		setPriceRangeFilter([0, Math.max(...items?.map((item) => item.price) || [0])]);
 	}, [items]);
 
 	const setPreorderIdFilter = useCallback(
@@ -244,7 +246,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 			{ replace: true }
 		);
 		setAvailabilityFilter(true);
-		setPriceRangeFilter([0, Math.max(...items.map((item) => item.price))]);
+		setPriceRangeFilter([0, Math.max(...items?.map((item) => item.price) || [0])]);
 	}, [items, setSearchParams]);
 
 	return {
