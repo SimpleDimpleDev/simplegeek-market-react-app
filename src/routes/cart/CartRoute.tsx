@@ -26,7 +26,7 @@ export function Component() {
 	const actionData = useActionData() as { orderItemsUnavailableError: boolean } | undefined;
 	const actionOrderItemsUnavailableError = actionData?.orderItemsUnavailableError;
 
-	const userAuthority = useSelector((state: RootState) => state.userAuthority.authority);
+	const user = useSelector((state: RootState) => state.user.identity);
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const {
@@ -69,7 +69,7 @@ export function Component() {
 	);
 
 	const createOrder = async (items: UserCartItem[]) => {
-		if (!userAuthority) {
+		if (!user) {
 			navigate("/auth/login?return_to=cart");
 		} else {
 			checkout({ items });

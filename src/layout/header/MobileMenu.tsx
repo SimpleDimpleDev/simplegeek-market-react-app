@@ -1,6 +1,6 @@
 import logo from "@assets/MainLogoBig.png";
 import { CategoryShop } from "@appTypes/Category";
-import { UserAuthority } from "@appTypes/User";
+import { User } from "@appTypes/User";
 import { ChevronRight, Close, Info, Person } from "@mui/icons-material";
 import { IconButton, ListItem, ListItemButton, MenuItem, Modal, Slide, Typography } from "@mui/material";
 import { getImageUrl } from "@utils/image";
@@ -19,7 +19,7 @@ const CatalogSectionMenuItem = ({ onClick, title, imgUrl }: { onClick: () => voi
 );
 
 interface MobileMenuProps {
-	user: UserAuthority | null;
+	user: User | null;
 	onLoginClick: () => void;
 	onLogoutClick: () => void;
 	categories: CategoryShop[];

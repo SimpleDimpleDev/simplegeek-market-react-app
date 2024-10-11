@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { shopApi } from "@api/shop/root";
-import userAuthorityReducer from "./user/authoritySlice";
+import userReducer from "./user/userSlice";
 
 import { crashReporterMiddleware, loggingMiddleware } from "./middleware";
 
 const store = configureStore({
 	reducer: {
-		userAuthority: userAuthorityReducer,
+		user: userReducer,
 		[shopApi.reducerPath]: shopApi.reducer,
 	},
 	middleware: (getDefaultMiddleware) =>

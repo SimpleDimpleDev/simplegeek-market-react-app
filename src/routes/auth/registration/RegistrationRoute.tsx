@@ -3,7 +3,7 @@ import { CircularProgress } from "@mui/material";
 import { RegistrationFlow, UpdateRegistrationFlowBody } from "@ory/client";
 import { UserAuthCard } from "@ory/elements";
 import { AppDispatch } from "@state/store";
-import { fetchUserAuthority } from "@state/user/thunks";
+import { fetchUser } from "@state/user/thunks";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -98,7 +98,7 @@ export function Component() {
 				}
 
 				// we successfully submitted the login flow, so lets redirect to the dashboard
-				dispatch(fetchUserAuthority());
+				dispatch(fetchUser());
 				if (returnTo) {
 					navigate(returnTo, { replace: true });
 				} else {

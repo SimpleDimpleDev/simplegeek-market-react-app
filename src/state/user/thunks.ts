@@ -1,16 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { UserAuthority } from "@appTypes/User";
+import { User } from "@appTypes/User";
 import { AuthApiClient } from "../../api/auth/client";
 
 interface StringMessageError {
 	message: string;
 }
 
-export const fetchUserAuthority = createAsyncThunk<UserAuthority | null, void, { rejectValue: StringMessageError }>(
-	"user/authority/fetch",
+export const fetchUser = createAsyncThunk<User | null, void, { rejectValue: StringMessageError }>(
+	"user/fetch",
 	async (_, { rejectWithValue }) => {
 		try {
-			return await AuthApiClient.getUserAuthority();
+			return await AuthApiClient.getUser();
 		} catch (error) {
 			return rejectWithValue({
 				message: `${(error as Error).message}`,

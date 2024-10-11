@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const UserAuthoritySchema = z.object({
+export const UserSchema = z.object({
 	email: z.string(),
 	isAdmin: z.boolean(),
 });

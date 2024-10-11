@@ -7,7 +7,7 @@ import { MobileMenu } from "./MobileMenu";
 
 import logo from "@assets/MainLogoBig.png";
 import { oryClient } from "@api/auth/client";
-import { fetchUserAuthority } from "@state/user/thunks";
+import { fetchUser } from "@state/user/thunks";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@state/store";
 import { useState } from "react";
@@ -23,12 +23,12 @@ const MobileHeader: React.FC = () => {
 		threshold: 100,
 	});
 
-	const userAuthority = useSelector((state: RootState) => state.userAuthority.authority);
+	const user = useSelector((state: RootState) => state.user.identity);
 
 	const { data: catalog } = useGetCatalogQuery();
 	const { data: cartItemList, refetch: refetchCart } = useGetCartItemListQuery();
 	const { data: favoriteItemList, refetch: refetchFavorite } = useGetFavoriteItemListQuery();
-	// const userAuthorityLoading = useSelector((state: RootState) => state.userAuthority.loading);
+	// const userLoading = useSelector((state: RootState) => state.user.loading);
 
 	const dispatch = useDispatch<AppDispatch>();
 
@@ -44,7 +44,7 @@ const MobileHeader: React.FC = () => {
 			token: flow.logout_token,
 		});
 		// Reset the user state
-		dispatch(fetchUserAuthority());
+		dispatch(fetchUser());
 		refetchCart();
 		refetchFavorite();
 		// Navigate to the home page
@@ -54,7 +54,7 @@ const MobileHeader: React.FC = () => {
 	return (
 		<div>
 			<MobileMenu
-				user={userAuthority}
+				user={user}
 				onLoginClick={onLoginClick}
 				onLogoutClick={onLogoutClick}
 				categories={catalog?.categories || []}

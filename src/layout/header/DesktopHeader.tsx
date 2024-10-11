@@ -16,7 +16,7 @@ import { CatalogSearch } from "./CatalogSearch";
 import { HeaderButtons } from "./HeaderButtons";
 
 import { oryClient } from "@api/auth/client";
-import { fetchUserAuthority } from "@state/user/thunks";
+import { fetchUser } from "@state/user/thunks";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@state/store";
@@ -30,8 +30,8 @@ import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 const DesktopHeader: React.FC = () => {
 	const navigate = useNavigate();
 
-	const userAuthority = useSelector((state: RootState) => state.userAuthority.authority);
-	const userAuthorityLoading = useSelector((state: RootState) => state.userAuthority.loading);
+	const user = useSelector((state: RootState) => state.user.identity);
+	const userLoading = useSelector((state: RootState) => state.user.loading);
 
 	const { data: catalog } = useGetCatalogQuery();
 	const { data: cartItemList, refetch: refetchCart } = useGetCartItemListQuery();
@@ -61,7 +61,7 @@ const DesktopHeader: React.FC = () => {
 			token: flow.logout_token,
 		});
 		// Reset the user state
-		dispatch(fetchUserAuthority());
+		dispatch(fetchUser());
 		refetchCart();
 		refetchFavorite();
 		// Navigate to the home page
@@ -135,9 +135,9 @@ const DesktopHeader: React.FC = () => {
 							badgeCount: favoriteItemList?.items.length,
 						},
 						{
-							text: userAuthorityLoading ? "" : userAuthority ? "Профиль" : "Войти",
-							icon: userAuthorityLoading ? <CircularProgress /> : <Person />,
-							onClick: userAuthority
+							text: userLoading ? "" : user ? "Профиль" : "Войти",
+							icon: userLoading ? <CircularProgress /> : <Person />,
+							onClick: user
 								? (event) => setAnchorElProfile(event.currentTarget)
 								: () => onLoginClick(),
 						},

@@ -2,7 +2,7 @@ import { Configuration, FrontendApi } from "@ory/client";
 import { AxiosError, isAxiosError } from "axios";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserAuthority } from "@appTypes/User";
+import { User } from "@appTypes/User";
 
 export const oryClient = new FrontendApi(
 	new Configuration({
@@ -180,17 +180,17 @@ export const SdkError = (
 export class AuthApiClient {
 	private static client: FrontendApi = oryClient;
 
-	public static async getUserAuthority(): Promise<UserAuthority | null> {
+	public static async getUser(): Promise<User | null> {
 		try {
 			const oryResponse = await this.client.toSession();
 			const session = oryResponse.data || null;
-			const userAuthority: UserAuthority | null = session?.identity
+			const user: User | null = session?.identity
 				? {
 						email: session.identity.traits.email!,
 						isAdmin: session.identity.schema_id === "Admin",
 				  }
 				: null;
-			return userAuthority;
+			return user;
 		} catch (e) {
 			if (isAxiosError(e)) {
 				if (e.code === "ECONNREFUSED") {
