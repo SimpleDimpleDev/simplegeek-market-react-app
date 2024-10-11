@@ -1,4 +1,4 @@
-import { ShoppingCart } from "@mui/icons-material";
+import { PriorityHigh, ShoppingCart } from "@mui/icons-material";
 import { Divider, Stack, Typography } from "@mui/material";
 import { useActionData, useNavigate } from "react-router-dom";
 import { CountPageHeader } from "@components/CountPageHeader";
@@ -89,10 +89,13 @@ export function Component() {
 				<>
 					{!orderItemsUnavailableError && (
 						<div className="bg-primary p-3 w-100 br-3">
-							<Typography variant="body2">
-								В вашем заказе содержались товары, указанное количество которых отсутствует на складе.
-								Количество товаров в корзине было скорректировано.
-							</Typography>
+							<PriorityHigh color="error" />
+							<div className="gap-1 ai-c d-f fd-r">
+								<Typography variant="body1">
+									В вашем заказе содержались товары, указанное количество которых отсутствует на
+									складе. Количество товаров в корзине было скорректировано.
+								</Typography>
+							</div>
 						</div>
 					)}
 					<Stack direction={"column"} gap={4} divider={<Divider />} p={"24px 0"}>
