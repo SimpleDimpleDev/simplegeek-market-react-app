@@ -273,7 +273,7 @@ export const CatalogFilters = ({
 			</div>
 
 			<div className="gap-2 d-f fd-c">
-				<Button variant="outlined" onClick={onResetFilters}>
+				<Button variant="outlined" onClick={() => onResetFilters()}>
 					Сбросить
 				</Button>
 				{isMobile && (

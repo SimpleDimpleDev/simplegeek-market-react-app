@@ -237,7 +237,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		setCheckedFilters([]);
 		setPreorderIdFilter(null);
 		setAvailabilityFilter(true);
-		setPriceRangeFilter([0, items.map((item) => item.price).reduce((a, b) => Math.max(a, b), 0)]);
+		setPriceRangeFilter([0, Math.max(...items.map((item) => item.price))]);
 	}, [items, setCheckedFilters, setPreorderIdFilter]);
 
 	return {

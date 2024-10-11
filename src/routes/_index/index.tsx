@@ -195,9 +195,9 @@ export function Component() {
 										}
 									/>
 								) : (
-									<Grid2 container justifyContent={isMobile ? "center" : "flex-start"} spacing={2}>
+									<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} container justifyContent={isMobile ? "center" : "flex-start"} spacing={2}>
 										{itemsToRender.map((data, index) => (
-											<Grid2 size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }} key={index}>
+											<Grid2 size={"grow"} justifyContent={"center"} alignItems={"center"} key={index}>
 												<LazyLoad
 													key={index}
 													width={"100%"}
