@@ -8,6 +8,7 @@ import {
 	DialogTitle,
 	Divider,
 	Grow,
+	Stack,
 	Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -203,24 +204,24 @@ export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) =
 							<Typography variant="subtitle0">Итого:</Typography>
 							<Box display="flex" flexDirection="column" gap={2}>
 								{totalDiscount > 0 ? (
-									<>
-										<div className="gap-05 d-f fd-r" style={{ alignItems: "baseline" }}>
+									<Stack direction={"column"} gap={1} divider={<Divider flexItem />}>
+										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 											<Typography variant="body1">Цена без скидки:</Typography>
 											<Typography variant="h4" sx={{ color: "typography.secondary" }}>
 												{totalPrice} ₽
 											</Typography>
 										</div>
-										<div className="gap-05 d-f fd-r" style={{ alignItems: "baseline" }}>
+										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 											<Typography variant="body1">Скидка:</Typography>
 											<Typography variant="h4">{totalDiscount} ₽</Typography>
 										</div>
-										<div className="gap-05 d-f fd-r" style={{ alignItems: "baseline" }}>
+										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 											<Typography variant="body1">Итого:</Typography>
 											<Typography variant="h4" color="warning">
 												{totalPrice - totalDiscount} ₽
 											</Typography>
 										</div>
-									</>
+									</Stack>
 								) : (
 									<Typography variant="h4">{totalPrice} ₽</Typography>
 								)}
