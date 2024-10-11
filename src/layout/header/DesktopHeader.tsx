@@ -126,7 +126,15 @@ const DesktopHeader: React.FC = () => {
 				</div>
 				<HeaderButtons
 					buttons={[
-						{ text: "Админка", icon: <AdminPanelSettings />, onClick: () => navigate("/admin") },
+						...(user?.isAdmin
+							? [
+									{
+										text: "Админка",
+										icon: <AdminPanelSettings />,
+										onClick: () => window.location.assign("https://admin.simplegeek.ru"),
+									},
+							  ]
+							: []),
 						{ text: "FAQ", icon: <Info />, onClick: () => navigate("/faq") },
 						{
 							text: "Избранное",
@@ -137,9 +145,7 @@ const DesktopHeader: React.FC = () => {
 						{
 							text: userLoading ? "" : user ? "Профиль" : "Войти",
 							icon: userLoading ? <CircularProgress /> : <Person />,
-							onClick: user
-								? (event) => setAnchorElProfile(event.currentTarget)
-								: () => onLoginClick(),
+							onClick: user ? (event) => setAnchorElProfile(event.currentTarget) : () => onLoginClick(),
 						},
 						{
 							text: "Корзина",
