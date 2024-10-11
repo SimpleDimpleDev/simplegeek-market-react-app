@@ -62,12 +62,12 @@ export function Component() {
 	const { itemsToRender } = useItemsToRender({ items: catalogItems, filterFunction, sorting });
 
 	useEffect(() => {
-		console.log({catalogItems})
-	}, [catalogItems])
+		console.log({ catalogItems });
+	}, [catalogItems]);
 
 	useEffect(() => {
-		console.log({itemsToRender})
-	}, [itemsToRender])
+		console.log({ itemsToRender });
+	}, [itemsToRender]);
 
 	return (
 		<>
@@ -78,7 +78,7 @@ export function Component() {
 				</div>
 			) : !catalog || !availableItemIds ? (
 				<SomethingWentWrong />
-			) : catalogItems === undefined || itemsToRender === undefined ? (
+			) : !catalogItems || !itemsToRender ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
