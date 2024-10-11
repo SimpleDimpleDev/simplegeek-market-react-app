@@ -70,11 +70,11 @@ export function Component() {
 				</div>
 			) : !catalog ? (
 				<SomethingWentWrong />
-			) : itemsToRender === undefined ? (
+			) : catalogItems === undefined || itemsToRender === undefined ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
-			) : itemsToRender.length === 0 ? (
+			) : catalogItems.length === 0 ? (
 				<Empty
 					title={`Пока нет товаров`}
 					description="Вернитесь позже"
