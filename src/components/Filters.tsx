@@ -115,6 +115,9 @@ interface CatalogFiltersProps {
 
 	priceRangeFilter: PriceRangeFilter;
 	handleChangePriceRangeFilter: (price: "min" | "max", value: number) => void;
+
+	onResetFilters: () => void;
+	onCloseFilters?: () => void;
 }
 
 export const CatalogFilters = ({
@@ -134,6 +137,9 @@ export const CatalogFilters = ({
 
 	priceRangeFilter,
 	handleChangePriceRangeFilter,
+
+	onResetFilters,
+	onCloseFilters,
 }: CatalogFiltersProps) => {
 	const [minPrice, setMinPrice] = useState(priceRangeFilter[0]);
 	const [maxPrice, setMaxPrice] = useState(priceRangeFilter[1]);
@@ -264,6 +270,21 @@ export const CatalogFilters = ({
 						}}
 					/>
 				</div>
+			</div>
+
+			<div className="gap-2 d-f fd-c">
+				<Button variant="outlined" onClick={onResetFilters}>
+					Сбросить
+				</Button>
+				{isMobile && (
+					<Button
+						onClick={() => {
+							if (onCloseFilters) onCloseFilters();
+						}}
+					>
+						Применить
+					</Button>
+				)}
 			</div>
 		</div>
 	);

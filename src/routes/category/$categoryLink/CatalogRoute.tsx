@@ -105,6 +105,8 @@ export function Component() {
 									handleToggleFilter={handleToggleFilter}
 									priceRangeFilter={priceRangeFilter}
 									handleChangePriceRangeFilter={handleChangePriceRangeFilter}
+									onResetFilters={resetFilters}
+									onCloseFilters={() => setFiltersOpen(false)}
 								/>
 							</div>
 						</Modal>
@@ -131,6 +133,7 @@ export function Component() {
 									handleToggleFilter={handleToggleFilter}
 									priceRangeFilter={priceRangeFilter}
 									handleChangePriceRangeFilter={handleChangePriceRangeFilter}
+									onResetFilters={resetFilters}
 								/>
 							)}
 
