@@ -1,4 +1,4 @@
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import { RootState } from "@state/store";
 import { lazy, Suspense } from "react";
 import { useSelector } from "react-redux";
@@ -25,7 +25,7 @@ export default function ShopLayout() {
 	// only while dev
 	// TODO: remove this on release
 	const user = useSelector((state: RootState) => state.user.identity);
-	if (!user || !user.isAdmin) {
+	if (!user) {
 		return (
 			<OryThemeProvider themeOverrides={oryTheme}>
 				<IntlProvider<CustomTranslations>
@@ -33,11 +33,19 @@ export default function ShopLayout() {
 					defaultLocale="ru"
 					customTranslations={customTranslations}
 				>
-					<div className="bg-secondary w-100 h-100 ai-c d-f jc-c">
+					<div className="bg-secondary w-100v h-100v ai-c d-f jc-c">
 						<LoginRoute />
 					</div>
 				</IntlProvider>
 			</OryThemeProvider>
+		);
+	}
+
+	if (!user.isAdmin) {
+		return (
+			<div className="w-100v h-100v ai-c d-f fd-r jc-c" style={{ textAlign: "center" }}>
+				<Typography variant="h1">Скоро здесь будет магазин {":)"}</Typography>
+			</div>
 		);
 	}
 
