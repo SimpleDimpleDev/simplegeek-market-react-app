@@ -10,14 +10,14 @@ type UseItemsToRenderProps = {
 };
 
 type UseItemsToRenderReturn = {
-	itemsToRender: CatalogItem[];
+	itemsToRender: CatalogItem[] | undefined;
 };
 
 const useItemsToRender = ({ items, filterFunction, sorting }: UseItemsToRenderProps): UseItemsToRenderReturn => {
 	const prevItemsToRender = useRef<CatalogItem[]>([]);
 
 	const itemsToRender = useMemo(() => {
-		if (!items) return [];
+		if (items === undefined) return undefined;
 		const newItemsToRender = getSortedItems(items.filter(filterFunction), sorting);
 		if (
 			JSON.stringify(newItemsToRender.map((item) => item.id)) ===
