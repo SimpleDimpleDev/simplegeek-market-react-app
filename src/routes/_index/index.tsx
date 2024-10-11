@@ -62,6 +62,10 @@ export function Component() {
 	const { itemsToRender } = useItemsToRender({ items: catalogItems, filterFunction, sorting });
 
 	useEffect(() => {
+		console.log({catalogItems})
+	}, [catalogItems])
+
+	useEffect(() => {
 		console.log({itemsToRender})
 	}, [itemsToRender])
 
