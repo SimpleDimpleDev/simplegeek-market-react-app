@@ -14,14 +14,14 @@ type UseItemsToRenderReturn = {
 };
 
 const useItemsToRender = ({ items, filterFunction, sorting }: UseItemsToRenderProps): UseItemsToRenderReturn => {
-	const prevItemsToRender = useRef<CatalogItem[]>([]);
+	const prevItemsToRender = useRef<CatalogItem[] | undefined>(undefined);
 
 	const itemsToRender = useMemo(() => {
 		if (items === undefined) return undefined;
 		const newItemsToRender = getSortedItems(items.filter(filterFunction), sorting);
 		if (
 			JSON.stringify(newItemsToRender.map((item) => item.id)) ===
-			JSON.stringify(prevItemsToRender.current.map((item) => item.id))
+			JSON.stringify(prevItemsToRender.current?.map((item) => item.id))
 		) {
 			return prevItemsToRender.current;
 		}
