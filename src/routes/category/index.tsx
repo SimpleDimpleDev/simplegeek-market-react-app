@@ -42,7 +42,7 @@ export function Component() {
 					<Loading isLoading={catalogIsLoading} necessaryDataIsPersisted={!!catalog}>
 						<Grid2 container spacing={2}>
 							{catalog?.categories.map((category) => (
-								<Grid2 key={category.link} size={{xs: 12, sm: 6, md: 6, lg: 6}}>
+								<Grid2 key={category.link} size={{xs: 12, sm: 12, md: 12, lg: 6}}>
 									<Link
 										to={`/catalog/${category.link}`}
 										title={category.title}
