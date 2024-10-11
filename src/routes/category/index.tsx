@@ -29,59 +29,48 @@ export function Component() {
 				/>
 			</div>
 			<div className="h-100">
-				<div
-					style={{
-						display: "flex",
-						flexDirection: isMobile ? "column" : "row",
-						justifyContent: "space-between",
-						width: "100%",
-						height: "100%",
-						gap: 16,
-					}}
-				>
-					<Loading isLoading={catalogIsLoading} necessaryDataIsPersisted={!!catalog}>
-						<Grid2 container spacing={2}>
-							{catalog?.categories.map((category) => (
-								<Grid2 key={category.link} size={{xs: 12, sm: 12, md: 12, lg: 6}}>
-									<Link
-										to={`/catalog/${category.link}`}
-										title={category.title}
+				<Loading isLoading={catalogIsLoading} necessaryDataIsPersisted={!!catalog}>
+					<Grid2 container spacing={2}>
+						{catalog?.categories.map((category) => (
+							<Grid2 key={category.link} size={{ xs: 12, sm: 12, md: 12, lg: 6 }}>
+								<Link
+									to={`/catalog/${category.link}`}
+									title={category.title}
+									style={{
+										width: isMobile ? "100%" : 696,
+										height: 300,
+										borderRadius: 16,
+										position: "relative",
+										cursor: "pointer",
+										transition: "transform .2s",
+										display: "flex",
+										flexDirection: "row",
+										justifyContent: "center",
+										overflowX: "hidden",
+									}}
+								>
+									<img
+										style={{ height: 300, width: 696 }}
+										src={getImageUrl(category.banner.url, "large")}
+										alt={category.title}
+									/>
+									<div
 										style={{
-											width: isMobile ? "100%" : 696,
-											height: 300,
-											borderRadius: 16,
-											position: "relative",
-											cursor: "pointer",
-											transition: "transform .2s",
-											display: "flex",
-											flexDirection: "row",
-											justifyContent: "center",
-											overflowX: "hidden",
+											position: "absolute",
+											top: 237,
+											left: "50%",
+											transform: "translateX(-50%)",
 										}}
 									>
-										<img
-											style={{ height: 300, width: 696 }}
-											src={getImageUrl(category.banner.url, "large")}
-											alt={category.title}
-										/>
-										<div
-											style={{
-												position: "absolute",
-												top: 237,
-												left: "50%",
-												transform: "translateX(-50%)",
-											}}
-										>
-											<Typography variant="h4" color="white">
-												{category.title}
-											</Typography>
-										</div>
-									</Link>
-								</Grid2>
-							))}
-						</Grid2>
-					</Loading>
-				</div>
+										<Typography variant="h4" color="white">
+											{category.title}
+										</Typography>
+									</div>
+								</Link>
+							</Grid2>
+						))}
+					</Grid2>
+				</Loading>
 			</div>
 		</>
 	);
