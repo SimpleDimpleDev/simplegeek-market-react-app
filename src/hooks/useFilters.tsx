@@ -234,11 +234,18 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	);
 
 	const resetFilters = useCallback(() => {
-		setCheckedFilters([]);
-		setPreorderIdFilter(null);
+		setSearchParams(
+			(prevSearchParams) => {
+				const newSearchParams = new URLSearchParams(prevSearchParams);
+				setPreorderFilterParam(newSearchParams, null);
+				setFiltersParam(newSearchParams, []);
+				return newSearchParams;
+			},
+			{ replace: true }
+		);
 		setAvailabilityFilter(true);
 		setPriceRangeFilter([0, Math.max(...items.map((item) => item.price))]);
-	}, [items, setCheckedFilters, setPreorderIdFilter]);
+	}, [items, setSearchParams]);
 
 	return {
 		filterGroupList,

@@ -273,11 +273,9 @@ export const CatalogFilters = ({
 			</div>
 
 			<div className="gap-2 d-f fd-c">
-				<Button variant="outlined" onClick={() => onResetFilters()}>
-					Сбросить
-				</Button>
 				{isMobile && (
 					<Button
+						variant="contained"
 						onClick={() => {
 							if (onCloseFilters) onCloseFilters();
 						}}
@@ -285,6 +283,9 @@ export const CatalogFilters = ({
 						Применить
 					</Button>
 				)}
+				<Button variant="outlined" onClick={() => onResetFilters()}>
+					Сбросить
+				</Button>
 			</div>
 		</div>
 	);
