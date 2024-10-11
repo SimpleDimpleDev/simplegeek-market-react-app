@@ -2,7 +2,7 @@ import { CircularProgress } from "@mui/material";
 import { RootState } from "@state/store";
 import { lazy, Suspense } from "react";
 import { useSelector } from "react-redux";
-import { ScrollRestoration } from "react-router-dom";
+import { Navigate, ScrollRestoration } from "react-router-dom";
 import { useIsMobile } from "src/hooks/useIsMobile";
 
 const MobileHeader = lazy(() => import("./header/MobileHeader"));
@@ -12,20 +12,10 @@ const DesktopContent = lazy(() => import("./content/DesktopContent"));
 const MobileFooter = lazy(() => import("./footer/MobileFooter"));
 const DesktopFooter = lazy(() => import("./footer/DesktopFooter"));
 
-import { Component as LoginRoute } from "src/routes/auth/login/LoginRoute";
-
 export default function ShopLayout() {
 	const isMobile = useIsMobile();
 
 	const user = useSelector((state: RootState) => state.user.identity);
-
-	if (!user || !user.isAdmin) {
-		return (
-			<div className="ai-c d-f jc-c">
-				<LoginRoute />
-			</div>
-		);
-	}
 
 	return (
 		<div className="d-f fd-c" style={{ height: "100vh" }}>
@@ -50,6 +40,7 @@ export default function ShopLayout() {
 							<DesktopFooter />
 						</>
 					)}
+					{!user || (!user.isAdmin && <Navigate to="/auth/login" replace={true} />)}
 				</Suspense>
 			</div>
 			<ScrollRestoration />
