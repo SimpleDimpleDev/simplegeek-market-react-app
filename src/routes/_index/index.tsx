@@ -102,7 +102,7 @@ export function Component() {
 									handleToggleFilter={handleToggleFilter}
 									priceRangeFilter={priceRangeFilter}
 									handleChangePriceRangeFilter={handleChangePriceRangeFilter}
-									onResetFilters={resetFilters}
+									onResetFilters={() => resetFilters()}
 									onCloseFilters={() => setFiltersOpen(false)}
 								/>
 							</div>
@@ -123,7 +123,7 @@ export function Component() {
 									handleToggleFilter={handleToggleFilter}
 									priceRangeFilter={priceRangeFilter}
 									handleChangePriceRangeFilter={handleChangePriceRangeFilter}
-									onResetFilters={resetFilters}
+									onResetFilters={() => resetFilters()}
 								/>
 							)}
 
