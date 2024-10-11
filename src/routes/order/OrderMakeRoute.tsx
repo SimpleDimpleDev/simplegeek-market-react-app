@@ -1,6 +1,6 @@
 import { ChevronLeft } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSubmit } from "react-router-dom";
 
 import { getRuGoodsWord } from "@utils/format";
 import { useEffect, useMemo, useState } from "react";
@@ -16,6 +16,7 @@ import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
 	const isMobile = useIsMobile();
+	const submit = useSubmit();
 	const navigate = useNavigate();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
@@ -49,8 +50,9 @@ export function Component() {
 	useEffect(() => {
 		if (orderMakeIsError) {
 			console.error(orderMakeError);
+			submit({ orderItemsUnavailableError: true }, { action: "/cart", method: "post" });
 		}
-	}, [orderMakeIsError, orderMakeError]);
+	}, [orderMakeIsError, orderMakeError, submit]);
 
 	const items = useMemo(() => {
 		if (!catalog) return [];

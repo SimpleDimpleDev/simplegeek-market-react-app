@@ -1,5 +1,6 @@
 import NotFound from "@components/NotFound";
 import { createRoutesFromElements, Route } from "react-router-dom";
+import { cartRouteAction } from "./cart/action";
 
 const routes = createRoutesFromElements(
 	<>
@@ -10,7 +11,7 @@ const routes = createRoutesFromElements(
 			<Route path="verification" lazy={() => import("@routes/auth/verification/VerificationRoute")} />
 			<Route path="recovery" lazy={() => import("@routes/auth/recovery/RecoveryRoute")} />
 		</Route>
-		<Route path="cart" lazy={() => import("@routes/cart/CartRoute")} />
+		<Route path="cart" action={cartRouteAction} lazy={() => import("@routes/cart/CartRoute")} />
 		<Route path="category" lazy={() => import("@routes/category/index")} />
 		<Route path="category/:categoryLink" lazy={() => import("@routes/category/$categoryLink/CatalogRoute")} />
 		<Route path="faq" lazy={() => import("@routes/faq/FAQRoute")} />

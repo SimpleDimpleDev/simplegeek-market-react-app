@@ -1,6 +1,6 @@
 import { ShoppingCart } from "@mui/icons-material";
 import { Divider, Stack, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useActionData, useNavigate } from "react-router-dom";
 import { CountPageHeader } from "@components/CountPageHeader";
 import { Empty } from "@components/Empty";
 import { UserCartItem } from "@appTypes/UserItems";
@@ -20,32 +20,45 @@ import { formCart } from "./utils";
 import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
+	const isMobile = useIsMobile();
 	const navigate = useNavigate();
 
-	const isMobile = useIsMobile();
+	const actionData = useActionData() as { orderItemsUnavailableError: boolean } | undefined;
+	const actionOrderItemsUnavailableError = actionData?.orderItemsUnavailableError;
+
 	const userAuthority = useSelector((state: RootState) => state.userAuthority.authority);
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
-	const { data: availableItemsIds, isLoading: availableItemsIdsIsLoading } = useGetItemsAvailabilityQuery();
+	const {
+		data: availableItemsIds,
+		isLoading: availableItemsIdsIsLoading,
+		refetch: refetchAvailable,
+	} = useGetItemsAvailabilityQuery();
 
-	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
+	const { data: cartItemList, isLoading: cartItemListIsLoading, refetch: refetchCart } = useGetCartItemListQuery();
 	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
 
 	const [checkout, { isSuccess: checkoutIsSuccess, isError: checkoutIsError }] = useCheckoutMutation();
 
-	const [orderIsOk, setOrderIsOk] = useState(true);
-
-	const showLoading =
-		catalogIsLoading || availableItemsIdsIsLoading || cartItemListIsLoading || favoriteItemListIsLoading;
+	const [orderItemsUnavailableError, setOrderItemsUnavailableError] = useState<boolean>(
+		actionOrderItemsUnavailableError ?? false
+	);
 
 	useEffect(() => {
 		if (checkoutIsSuccess) {
 			navigate("/order");
 		}
 		if (checkoutIsError) {
-			setOrderIsOk(false);
+			setOrderItemsUnavailableError(true);
 		}
 	}, [checkoutIsSuccess, navigate, checkoutIsError]);
+
+	useEffect(() => {
+		if (orderItemsUnavailableError) {
+			refetchCart();
+			refetchAvailable();
+		}
+	}, [orderItemsUnavailableError, refetchCart, refetchAvailable]);
 
 	const formedCart = useMemo(
 		() =>
@@ -63,6 +76,9 @@ export function Component() {
 		}
 	};
 
+	const showLoading =
+		catalogIsLoading || availableItemsIdsIsLoading || cartItemListIsLoading || favoriteItemListIsLoading;
+
 	return (
 		<>
 			<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
@@ -71,11 +87,11 @@ export function Component() {
 				necessaryDataIsPersisted={!!catalog && !!availableItemsIds && !!cartItemList && !!favoriteItemList}
 			>
 				<>
-					{!orderIsOk && (
+					{!orderItemsUnavailableError && (
 						<div className="bg-primary p-3 w-100 br-3">
 							<Typography variant="body2">
 								В вашем заказе содержались товары, указанное количество которых отсутствует на складе.
-								Количество товаров в корзине было скорректировано
+								Количество товаров в корзине было скорректировано.
 							</Typography>
 						</div>
 					)}
