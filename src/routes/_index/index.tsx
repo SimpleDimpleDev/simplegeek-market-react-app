@@ -32,7 +32,7 @@ export function Component() {
 	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
-	const { data: availableItemIds } = useGetItemsAvailabilityQuery();
+	const { data: availableItemIds, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery();
 
 	const catalogItems = useMemo(() => catalog?.items, [catalog]);
 	const {
@@ -72,7 +72,7 @@ export function Component() {
 	return (
 		<>
 			<ScrollTop />
-			{catalogIsLoading ? (
+			{catalogIsLoading || availabilityIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
