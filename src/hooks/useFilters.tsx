@@ -50,7 +50,7 @@ const parseFilterParams = (
 
 interface useFiltersArgs {
 	items: CatalogItem[] | undefined;
-	availableItemIds: string[];
+	availableItemIds: string[] | undefined;
 }
 
 interface useFiltersReturn {
@@ -113,7 +113,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([0, 0]);
 
 	useEffect(() => {
-		setPriceRangeFilter([0, Math.max(...items?.map((item) => item.price) || [0])]);
+		setPriceRangeFilter([0, Math.max(...(items?.map((item) => item.price) || [0]))]);
 	}, [items]);
 
 	const setPreorderIdFilter = useCallback(
@@ -187,7 +187,8 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	const filterFunction = useCallback(
 		(item: CatalogItem) => {
 			// availability
-			if (availabilityFilter && !availableItemIds.includes(item.id)) return false;
+			if (availabilityFilter && availableItemIds !== undefined && !availableItemIds.includes(item.id))
+				return false;
 
 			// preorder
 			if (preorderIdFilter !== null && preorderList.some((preorder) => preorder.id === preorderIdFilter)) {
@@ -246,7 +247,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 			{ replace: true }
 		);
 		setAvailabilityFilter(true);
-		setPriceRangeFilter([0, Math.max(...items?.map((item) => item.price) || [0])]);
+		setPriceRangeFilter([0, Math.max(...(items?.map((item) => item.price) || [0]))]);
 	}, [items, setSearchParams]);
 
 	return {

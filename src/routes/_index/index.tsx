@@ -53,7 +53,7 @@ export function Component() {
 
 		filterFunction,
 		resetFilters,
-	} = useFilters({ items: catalogItems, availableItemIds: availableItemIds || [] });
+	} = useFilters({ items: catalogItems, availableItemIds: availableItemIds });
 
 	const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -76,7 +76,7 @@ export function Component() {
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
-			) : !catalog ? (
+			) : !catalog || !availableItemIds ? (
 				<SomethingWentWrong />
 			) : catalogItems === undefined || itemsToRender === undefined ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
