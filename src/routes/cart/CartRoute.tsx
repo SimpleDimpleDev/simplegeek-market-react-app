@@ -88,14 +88,13 @@ export function Component() {
 			>
 				<>
 					{!orderItemsUnavailableError && (
-						<div className="bg-primary p-3 w-100 br-3">
+						<div className="gap-1 bg-primary p-3 w-100 ai-c br-3 d-f fd-r">
 							<PriorityHigh color="error" />
-							<div className="gap-1 ai-c d-f fd-r">
-								<Typography variant="body1">
-									В вашем заказе содержались товары, указанное количество которых отсутствует на
-									складе. Количество товаров в корзине было скорректировано.
-								</Typography>
-							</div>
+
+							<Typography variant="body1">
+								В вашем заказе содержались товары, указанное количество которых отсутствует на складе.
+								Количество товаров в корзине было скорректировано.
+							</Typography>
 						</div>
 					)}
 					<Stack direction={"column"} gap={4} divider={<Divider />} p={"24px 0"}>
