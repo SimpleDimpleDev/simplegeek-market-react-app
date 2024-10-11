@@ -94,7 +94,7 @@ export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) =
 
 	const totalDiscount = data.items
 		.filter((cartItem) => checkedIds.includes(cartItem.id))
-		.map((cartItem) => cartItem.discount ?? 0)
+		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
 		.reduce((a, b) => a + b, 0);
 
 	const handleDeleteSelected = () => {
