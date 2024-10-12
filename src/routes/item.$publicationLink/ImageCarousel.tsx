@@ -11,8 +11,8 @@ const ThumbnailContainer = styled("div")({
 	alignItems: "center",
 	justifyContent: "center",
 	flexShrink: 0,
-	width: "160px",
-	height: "160px",
+	width: "157.5px",
+	height: "157.5px",
 	overflow: "hidden",
 	borderRadius: 16,
 	transition: "opacity 0.2s",
@@ -73,10 +73,10 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 	console.log({ imageUrls });
 
 	return (
-		<Box style={{ width: isMobile ? 345 : 630 }} gap={2}>
+		<Box style={{ width: isMobile ? 345 : 630 }}>
 			<div
 				className="bg-primary w-100 ai-c br-3 d-f jc-c of-h"
-				style={{ height: isMobile ? 345 : 630, width: isMobile ? 345 : 630, paddingBottom: "16px" }}
+				style={{ height: isMobile ? 345 : 630, width: isMobile ? 345 : 630 }}
 			>
 				<img
 					style={isMobile ? { width: 345, height: 345 } : { width: 630, height: 630 }}
@@ -85,45 +85,47 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 					alt={"Selected image"}
 				/>
 			</div>
-			<Carousel
-				responsive={responsive}
-				swipeable={isMobile}
-				draggable={isMobile}
-				deviceType={isMobile ? "mobile" : "desktop"}
-				customLeftArrow={<LeftButton />}
-				customRightArrow={<RightButton />}
-			>
-				{imageUrls.map((imageUrl, index) => (
-					<IconButton
-						key={index}
-						sx={{ margin: 0, padding: 0 }}
-						onClick={() => setSelectedImageIndex(index)}
-					>
-						<ThumbnailContainer
-							sx={{
-								border: "4px solid",
-								backgroundColor: "white",
-								borderColor: selectedImageIndex === index ? "icon.brandSecondary" : "transparent",
-								"&:hover":
-									selectedImageIndex === index
-										? {
-												opacity: "1",
-										  }
-										: {
-												opacity: "0.7",
-										  },
-							}}
+			<div className="pt-2 w-100">
+				<Carousel
+					responsive={responsive}
+					swipeable={isMobile}
+					draggable={isMobile}
+					deviceType={isMobile ? "mobile" : "desktop"}
+					customLeftArrow={<LeftButton />}
+					customRightArrow={<RightButton />}
+				>
+					{imageUrls.map((imageUrl, index) => (
+						<IconButton
+							key={index}
+							sx={{ margin: 0, padding: 0 }}
+							onClick={() => setSelectedImageIndex(index)}
 						>
-							<img
-								style={{ width: "100%", height: "100%", objectFit: "cover" }}
-								key={index}
-								src={imageUrl}
-								alt={`Thumbnail ${index}`}
-							/>
-						</ThumbnailContainer>
-					</IconButton>
-				))}
-			</Carousel>
+							<ThumbnailContainer
+								sx={{
+									border: "4px solid",
+									backgroundColor: "white",
+									borderColor: selectedImageIndex === index ? "icon.brandSecondary" : "transparent",
+									"&:hover":
+										selectedImageIndex === index
+											? {
+													opacity: "1",
+											  }
+											: {
+													opacity: "0.7",
+											  },
+								}}
+							>
+								<img
+									style={{ width: "100%", height: "100%", objectFit: "cover" }}
+									key={index}
+									src={imageUrl}
+									alt={`Thumbnail ${index}`}
+								/>
+							</ThumbnailContainer>
+						</IconButton>
+					))}
+				</Carousel>
+			</div>
 		</Box>
 	);
 };
