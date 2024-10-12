@@ -110,7 +110,10 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 
 	const { preorderIdFilter, checkedFilters } = parseFilterParams(searchParams);
 	const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>(true);
-	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([0, 0]);
+	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([
+		0,
+		Math.max(...(items?.map((item) => item.price) || [0])),
+	]);
 
 	useEffect(() => {
 		setPriceRangeFilter([0, Math.max(...(items?.map((item) => item.price) || [0]))]);
