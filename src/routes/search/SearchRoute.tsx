@@ -38,10 +38,10 @@ export function Component() {
 	const query = searchParams[0].get("q") || "";
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
-	const { data: availableItemIds } = useGetItemsAvailabilityQuery();
+	const { data: availableItemIds, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery();
 
 	const searchedItems = useMemo(() => {
-		const searchedItems = catalog?.items.filter((item) => isCatalogItemMatchQuery(item, query)) || [];
+		const searchedItems = catalog?.items.filter((item) => isCatalogItemMatchQuery(item, query));
 		return searchedItems;
 	}, [catalog, query]);
 
@@ -63,7 +63,7 @@ export function Component() {
 
 		filterFunction,
 		resetFilters,
-	} = useFilters({ items: searchedItems, availableItemIds: availableItemIds || [] });
+	} = useFilters({ items: searchedItems, availableItemIds: availableItemIds });
 	const [filtersOpen, setFiltersOpen] = useState(false);
 
 	const [sorting, setSorting] = useState<Sorting>("popular");
@@ -73,17 +73,17 @@ export function Component() {
 	return (
 		<>
 			<ScrollTop />
-			{catalogIsLoading ? (
+			{catalogIsLoading || availabilityIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
-			) : !catalog ? (
+			) : !catalog || !availableItemIds ? (
 				<SomethingWentWrong />
-			) : itemsToRender === undefined ? (
+			) : !searchedItems || !itemsToRender ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
-			) : itemsToRender.length === 0 ? (
+			) : searchedItems.length === 0 ? (
 				<Empty
 					title={`По запросу "${query}" ничего не найдено.`}
 					description="Попробуйте изменить параметры поиска."

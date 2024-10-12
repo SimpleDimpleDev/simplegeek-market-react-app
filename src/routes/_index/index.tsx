@@ -16,7 +16,7 @@ import {
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
 import LazyLoad from "@components/LazyLoad";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { CatalogFilters } from "@components/Filters";
 import { Empty } from "@components/Empty";
@@ -60,14 +60,6 @@ export function Component() {
 	const [sorting, setSorting] = useState<Sorting>("popular");
 
 	const { itemsToRender } = useItemsToRender({ items: catalogItems, filterFunction, sorting });
-
-	useEffect(() => {
-		console.log({ catalogItems });
-	}, [catalogItems]);
-
-	useEffect(() => {
-		console.log({ itemsToRender });
-	}, [itemsToRender]);
 
 	return (
 		<>

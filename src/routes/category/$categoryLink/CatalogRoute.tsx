@@ -34,10 +34,10 @@ export function Component() {
 	const params = useParams();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
-	const { data: availableItemIds } = useGetItemsAvailabilityQuery();
+	const { data: availableItemIds, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery();
 
 	const categoryItems = useMemo(
-		() => catalog?.items.filter((item) => item.product.category.link === params.categoryLink) || [],
+		() => catalog?.items.filter((item) => item.product.category.link === params.categoryLink),
 		[catalog, params]
 	);
 
@@ -59,7 +59,7 @@ export function Component() {
 
 		filterFunction,
 		resetFilters,
-	} = useFilters({ items: categoryItems, availableItemIds: availableItemIds || [] });
+	} = useFilters({ items: categoryItems, availableItemIds: availableItemIds });
 	const [filtersOpen, setFiltersOpen] = useState(false);
 
 	const [sorting, setSorting] = useState<Sorting>("popular");
@@ -69,17 +69,17 @@ export function Component() {
 	return (
 		<>
 			<ScrollTop />
-			{catalogIsLoading ? (
+			{catalogIsLoading || availabilityIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
-			) : !catalog ? (
+			) : !catalog || !availableItemIds ? (
 				<SomethingWentWrong />
-			) : itemsToRender === undefined ? (
+			) : !categoryItems || !itemsToRender ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
-			) : itemsToRender.length === 0 ? (
+			) : categoryItems.length === 0 ? (
 				<Empty
 					title={`Пока нет товаров`}
 					description="Вернитесь позже"

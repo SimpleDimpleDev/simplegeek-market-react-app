@@ -19,7 +19,6 @@ const useItemsToRender = ({ items, filterFunction, sorting }: UseItemsToRenderPr
 	const itemsToRender = useMemo(() => {
 		if (items === undefined) return undefined;
 		const newItemsToRender = getSortedItems(items.filter(filterFunction), sorting);
-		console.log("newItemsToRender", newItemsToRender);
 		if (
 			JSON.stringify(newItemsToRender.map((item) => item.id)) ===
 			JSON.stringify(prevItemsToRender.current?.map((item) => item.id))
