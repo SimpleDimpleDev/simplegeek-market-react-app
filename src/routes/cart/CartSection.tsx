@@ -212,10 +212,10 @@ export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) =
 											</Typography>
 										</div>
 										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
-											<Typography variant="body1" color="warning">
-												Скидка:
+											<Typography variant="body1">Скидка:</Typography>
+											<Typography variant="h4" color="warning">
+												{totalDiscount} ₽
 											</Typography>
-											<Typography variant="h4">{totalDiscount} ₽</Typography>
 										</div>
 										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 											<Typography variant="body1">Итого:</Typography>

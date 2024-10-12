@@ -78,19 +78,25 @@ export function Component() {
 
 	const [deliveryError, setDeliveryError] = useState<string | null>(null);
 
-	const totalNonCreditPrice = useMemo(() => items
-		.filter((cartItem) => !itemsCredit.some((creditItem) => cartItem.id === creditItem.id))
-		.map((checkoutItem) => checkoutItem.price * checkoutItem.quantity)
-		.reduce((a, b) => a + b, 0)
-	, [items, itemsCredit]);
+	const totalNonCreditPrice = useMemo(
+		() =>
+			items
+				.filter((cartItem) => !itemsCredit.some((creditItem) => cartItem.id === creditItem.id))
+				.map((checkoutItem) => checkoutItem.price * checkoutItem.quantity)
+				.reduce((a, b) => a + b, 0),
+		[items, itemsCredit]
+	);
 
-	const totalCreditPrice = useMemo(() => items
-		.filter((cartItem) => itemsCredit.some((creditItem) => cartItem.id === creditItem.id))
-		.map((checkoutItem) => (checkoutItem.creditInfo?.payments[0].sum || 0) * checkoutItem.quantity)
-		.reduce((a, b) => a + b, 0)
-	, [items, itemsCredit]);
+	const totalCreditPrice = useMemo(
+		() =>
+			items
+				.filter((cartItem) => itemsCredit.some((creditItem) => cartItem.id === creditItem.id))
+				.map((checkoutItem) => (checkoutItem.creditInfo?.payments[0].sum || 0) * checkoutItem.quantity)
+				.reduce((a, b) => a + b, 0),
+		[items, itemsCredit]
+	);
 
-	const totalPrice = useMemo(() => totalNonCreditPrice - totalCreditPrice, [totalNonCreditPrice, totalCreditPrice])
+	const totalPrice = useMemo(() => totalNonCreditPrice - totalCreditPrice, [totalNonCreditPrice, totalCreditPrice]);
 
 	const totalDiscount = items
 		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
@@ -222,10 +228,10 @@ export function Component() {
 										</Typography>
 									</div>
 									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
-										<Typography variant="body1" color="warning">
-											Скидка:
+										<Typography variant="body1">Скидка:</Typography>
+										<Typography variant="h4" color="warning">
+											{totalDiscount} ₽
 										</Typography>
-										<Typography variant="h4">{totalDiscount} ₽</Typography>
 									</div>
 									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 										<Typography variant="body1">Итого:</Typography>
