@@ -112,7 +112,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>(true);
 	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([
 		0,
-		Math.max(...(items?.map((item) => item.price) || [0])),
+		Infinity,
 	]);
 
 	useEffect(() => {
