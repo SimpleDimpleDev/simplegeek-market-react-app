@@ -37,12 +37,8 @@ const responsive = {
 		items: 5,
 	},
 	desktop: {
-		breakpoint: { max: 3000, min: 1024 },
+		breakpoint: { max: 3000, min: 928 },
 		items: 4,
-	},
-	tablet: {
-		breakpoint: { max: 1024, min: 464 },
-		items: 2,
 	},
 	mobile: {
 		breakpoint: { max: 464, min: 0 },
@@ -87,44 +83,47 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 				/>
 			</div>
 			<div className="pt-2 w-100">
-				<Carousel
-					responsive={responsive}
-					swipeable={isMobile}
-					draggable={isMobile}
-					deviceType={isMobile ? "mobile" : "desktop"}
-					customLeftArrow={<LeftButton />}
-					customRightArrow={<RightButton />}
-				>
-					{imageUrls.map((imageUrl, index) => (
-						<IconButton
-							key={index}
-							sx={{ margin: 0, padding: 0 }}
-							onClick={() => setSelectedImageIndex(index)}
-						>
-							<ThumbnailContainer
-								sx={{
-									border: "4px solid",
-									borderColor: selectedImageIndex === index ? "icon.brandSecondary" : "transparent",
-									"&:hover":
-										selectedImageIndex === index
-											? {
-													opacity: "1",
-											  }
-											: {
-													opacity: "0.7",
-											  },
-								}}
+				{imageUrls.length > 1 && (
+					<Carousel
+						responsive={responsive}
+						swipeable={isMobile}
+						draggable={isMobile}
+						deviceType={isMobile ? "mobile" : "desktop"}
+						customLeftArrow={<LeftButton />}
+						customRightArrow={<RightButton />}
+					>
+						{imageUrls.map((imageUrl, index) => (
+							<IconButton
+								key={index}
+								sx={{ margin: 0, padding: 0 }}
+								onClick={() => setSelectedImageIndex(index)}
 							>
-								<img
-									style={{ width: "100%", height: "100%", objectFit: "cover" }}
-									key={index}
-									src={imageUrl}
-									alt={`Thumbnail ${index}`}
-								/>
-							</ThumbnailContainer>
-						</IconButton>
-					))}
-				</Carousel>
+								<ThumbnailContainer
+									sx={{
+										border: "4px solid",
+										borderColor:
+											selectedImageIndex === index ? "icon.brandSecondary" : "transparent",
+										"&:hover":
+											selectedImageIndex === index
+												? {
+														opacity: "1",
+												  }
+												: {
+														opacity: "0.7",
+												  },
+									}}
+								>
+									<img
+										style={{ width: "100%", height: "100%", objectFit: "cover" }}
+										key={index}
+										src={imageUrl}
+										alt={`Thumbnail ${index}`}
+									/>
+								</ThumbnailContainer>
+							</IconButton>
+						))}
+					</Carousel>
+				)}
 			</div>
 		</Box>
 	);

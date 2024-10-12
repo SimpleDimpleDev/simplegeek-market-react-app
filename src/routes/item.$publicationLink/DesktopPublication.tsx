@@ -56,7 +56,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 					</Suspense>
 				</Box>
 
-				<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={3}>
+				<Box width={360} display="flex" flexDirection="column" gap={3}>
 					{publication.items.length !== 1 && (
 						<Box display="flex" flexDirection="column" gap={2}>
 							<Typography variant="h5">Вариация</Typography>
@@ -78,7 +78,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 						</Box>
 					)}
 					{selectedVariation.product.filterGroups.length !== 0 && (
-						<Box display={"flex"} flexDirection={"column"} width={360} gap={2}>
+						<Box display={"flex"} flexDirection={"column"}  gap={2}>
 							<Typography variant="h5">О товаре</Typography>
 							{selectedVariation.product.filterGroups.map((filterGroup) =>
 								filterGroup.filters.map((filter, index) => (
