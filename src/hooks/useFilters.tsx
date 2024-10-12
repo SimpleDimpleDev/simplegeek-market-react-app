@@ -110,10 +110,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 
 	const { preorderIdFilter, checkedFilters } = parseFilterParams(searchParams);
 	const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>(true);
-	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([
-		0,
-		Infinity,
-	]);
+	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([0, Infinity]);
 
 	useEffect(() => {
 		setPriceRangeFilter([0, Math.max(...(items?.map((item) => item.price) || [0]))]);
@@ -241,7 +238,11 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 
 			// price
 			if (item.price < priceRangeFilter[0] || item.price > priceRangeFilter[1]) {
-				console.log("item out of price range", item.id);
+				console.log("item out of price range", {
+					itemId: item.id,
+					itemPrice: item.price,
+					priceRange: priceRangeFilter,
+				});
 				return false;
 			}
 
