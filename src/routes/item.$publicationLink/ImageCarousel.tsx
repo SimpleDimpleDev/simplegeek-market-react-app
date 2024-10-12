@@ -79,6 +79,8 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 	const hoveredImageUrl = hoveredImageIndex ? imageUrls[hoveredImageIndex] : null;
 	const selectedImageUrl = imageUrls[selectedImageIndex];
 
+	console.log({imageUrls})
+
 	return (
 		<Box display={"flex"} flexDirection={"column"} alignItems={"center"} gap={2}>
 			<div

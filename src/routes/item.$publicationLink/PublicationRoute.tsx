@@ -72,6 +72,8 @@ export function Component() {
 		[selectedVariation]
 	);
 
+	console.log({preparedImageUrls});
+
 	const handleToggleFavorite = () => {
 		if (selectedVariationIsFavorite === undefined || selectedVariation === undefined) return;
 		if (selectedVariationIsFavorite) {
