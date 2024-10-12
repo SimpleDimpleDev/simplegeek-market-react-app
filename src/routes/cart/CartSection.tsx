@@ -238,7 +238,7 @@ export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) =
 						<Button
 							onClick={() => {
 								const checkedItems = data.items.filter((item) => checkedIds.includes(item.id));
-								onMakeOrder(checkedItems);
+								onMakeOrder(checkedItems.map((item) => ({ id: item.id, quantity: item.quantity })));
 							}}
 							variant="contained"
 							disabled={checkedItemsCount === 0}
