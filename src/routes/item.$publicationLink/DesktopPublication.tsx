@@ -1,11 +1,13 @@
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import { ItemCreditInfo } from "@components/CreditTimeline";
-import { Box, Typography, Select, MenuItem } from "@mui/material";
-import ImageCarousel from "./ImageCarousel";
+import { Box, Typography, Select, MenuItem, CircularProgress } from "@mui/material";
 import { PublicationProps } from "./types";
 import { PublicationAvailability } from "./Availability";
 import { PublicationActionButtons } from "./ActionButtons";
 import { useNavigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
+
+const ImageCarousel = lazy(() => import("./ImageCarousel"));
 
 const DesktopPublication: React.FC<PublicationProps> = ({
 	publication,
@@ -43,7 +45,15 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 			/>
 			<Box display="flex" flexDirection="row" gap={3} paddingBottom={3} justifyContent={"space-between"}>
 				<Box display="flex" flexDirection="column" gap={2}>
-					<ImageCarousel isMobile={false} imageUrls={imageUrls} />
+					<Suspense
+						fallback={
+							<div className="ai-c d-f jc-c">
+								<CircularProgress />
+							</div>
+						}
+					>
+						<ImageCarousel isMobile={false} imageUrls={imageUrls} />
+					</Suspense>
 				</Box>
 
 				<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={3}>
