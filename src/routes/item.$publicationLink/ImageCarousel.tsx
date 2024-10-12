@@ -80,7 +80,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 	const selectedImageUrl = imageUrls[selectedImageIndex];
 
 	return (
-		<Box width={"100%"} display={"flex"} flexDirection={"column"} alignItems={"center"} gap={2}>
+		<Box display={"flex"} flexDirection={"column"} alignItems={"center"} gap={2}>
 			<div
 				className="bg-primary w-100 ai-c br-3 d-f jc-c of-h"
 				style={{ height: isMobile ? 345 : 630, width: isMobile ? 345 : 630 }}
@@ -89,7 +89,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 					style={isMobile ? { width: 345, height: 345 } : { width: 630, height: 630 }}
 					className="contain"
 					src={hoveredImageUrl || selectedImageUrl}
-					alt="Displayed"
+					alt={"Selected image"}
 				/>
 			</div>
 			<Carousel

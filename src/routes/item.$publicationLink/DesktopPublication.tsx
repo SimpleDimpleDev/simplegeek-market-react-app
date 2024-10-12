@@ -42,7 +42,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 				current={selectedVariation.product.title}
 			/>
 			<Box display="flex" flexDirection="row" gap={3} paddingBottom={3} justifyContent={"space-between"}>
-				<Box display="flex" flexDirection="column" width={624} gap={2}>
+				<Box display="flex" flexDirection="column" gap={2}>
 					<ImageCarousel isMobile={false} imageUrls={imageUrls} />
 				</Box>
 
