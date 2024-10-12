@@ -1,9 +1,9 @@
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { Box, IconButton, styled } from "@mui/material";
 import React, { useState } from "react";
+import { ArrowProps } from "react-multi-carousel/lib/types";
 
 import Carousel from "react-multi-carousel";
-import { ArrowProps } from "react-multi-carousel/lib/types";
 import "react-multi-carousel/lib/styles.css";
 
 // const ThumbnailContainer = styled("div")({
@@ -73,13 +73,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 	console.log({ imageUrls });
 
 	return (
-		<Box
-			display={"flex"}
-			style={{ width: isMobile ? 345 : 630 }}
-			flexDirection={"column"}
-			alignItems={"center"}
-			gap={2}
-		>
+		<Box style={{ width: isMobile ? 345 : 630 }} gap={2}>
 			<div
 				className="bg-primary w-100 ai-c br-3 d-f jc-c of-h"
 				style={{ height: isMobile ? 345 : 630, width: isMobile ? 345 : 630 }}
