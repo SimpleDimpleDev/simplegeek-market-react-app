@@ -294,7 +294,7 @@ export function Component() {
 											<Typography variant="subtitle0">{goodsTotal} ₽</Typography>
 										</div>
 									)}
-									
+
 									<div className="gap-1 pt-2">
 										<div className="gap-1">
 											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
@@ -309,8 +309,10 @@ export function Component() {
 									)}
 
 									{order.status === "UNPAID" && (
-										<div className="gap-1">
-											<Typography variant="subtitle1">Заказ не оплачен</Typography>
+										<div className="gap-1 d-f fd-r">
+											<Typography variant="subtitle1" sx={{ color: "typography.error" }}>
+												Заказ не оплачен
+											</Typography>
 											<Button
 												onClick={() => handlePay(order.initialInvoice.id)}
 												variant="contained"

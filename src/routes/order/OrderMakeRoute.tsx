@@ -78,6 +78,24 @@ export function Component() {
 
 	const [deliveryError, setDeliveryError] = useState<string | null>(null);
 
+	const totalNonCreditPrice = useMemo(() => items
+		.filter((cartItem) => !itemsCredit.some((creditItem) => cartItem.id === creditItem.id))
+		.map((checkoutItem) => checkoutItem.price * checkoutItem.quantity)
+		.reduce((a, b) => a + b, 0)
+	, [items, itemsCredit]);
+
+	const totalCreditPrice = useMemo(() => items
+		.filter((cartItem) => itemsCredit.some((creditItem) => cartItem.id === creditItem.id))
+		.map((checkoutItem) => (checkoutItem.creditInfo?.payments[0].sum || 0) * checkoutItem.quantity)
+		.reduce((a, b) => a + b, 0)
+	, [items, itemsCredit]);
+
+	const totalPrice = useMemo(() => totalNonCreditPrice - totalCreditPrice, [totalNonCreditPrice, totalCreditPrice])
+
+	const totalDiscount = items
+		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
+		.reduce((a, b) => a + b, 0);
+
 	const handleCreateOrder = async () => {
 		if (!delivery) {
 			setDeliveryError("Укажите данные доставки");
@@ -195,15 +213,31 @@ export function Component() {
 						height="fit-content"
 					>
 						<Box display="flex" flexDirection="column" gap={1}>
-							<Typography variant="subtitle0">Итого:</Typography>
-							<Box display="flex" flexDirection="row" alignItems={"baseline"} gap={1}>
-								<Typography variant="h4">
-									{items.reduce((sum, item) => sum + item.price * item.quantity, 0)} ₽
-								</Typography>
-								<Typography color="typography.secondary" variant="body1">
-									/ {items.length} {getRuGoodsWord(items.length)}
-								</Typography>
-							</Box>
+							{totalDiscount > 0 ? (
+								<Stack direction={"column"} gap={1} divider={<Divider flexItem />}>
+									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
+										<Typography variant="body1">Цена без скидки:</Typography>
+										<Typography variant="h4" sx={{ color: "typography.secondary" }}>
+											{totalPrice} ₽
+										</Typography>
+									</div>
+									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
+										<Typography variant="body1" color="warning">
+											Скидка:
+										</Typography>
+										<Typography variant="h4">{totalDiscount} ₽</Typography>
+									</div>
+									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
+										<Typography variant="body1">Итого:</Typography>
+										<Typography variant="h4">{totalPrice - totalDiscount} ₽</Typography>
+									</div>
+								</Stack>
+							) : (
+								<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
+									<Typography variant="body1">Итого:</Typography>
+									<Typography variant="h4">{totalPrice} ₽</Typography>
+								</div>
+							)}
 							<Button variant="contained" disabled={orderMakeIsLoading} onClick={handleCreateOrder}>
 								Оплатить
 							</Button>

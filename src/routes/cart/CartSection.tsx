@@ -212,18 +212,21 @@ export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) =
 											</Typography>
 										</div>
 										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
-											<Typography variant="body1">Скидка:</Typography>
+											<Typography variant="body1" color="warning">
+												Скидка:
+											</Typography>
 											<Typography variant="h4">{totalDiscount} ₽</Typography>
 										</div>
 										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 											<Typography variant="body1">Итого:</Typography>
-											<Typography variant="h4" color="warning">
-												{totalPrice - totalDiscount} ₽
-											</Typography>
+											<Typography variant="h4">{totalPrice - totalDiscount} ₽</Typography>
 										</div>
 									</Stack>
 								) : (
-									<Typography variant="h4">{totalPrice} ₽</Typography>
+									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
+										<Typography variant="body1">Итого:</Typography>
+										<Typography variant="h4">{totalPrice} ₽</Typography>
+									</div>
 								)}
 								<Typography color="typography.secondary" variant="body1">
 									{checkedItemsCount} {getRuGoodsWord(checkedItemsCount)}
