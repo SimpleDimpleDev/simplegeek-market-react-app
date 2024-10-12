@@ -214,7 +214,7 @@ export function Component() {
 								<Grid2 container spacing={2}>
 									{itemsToRender.map((data, index) => (
 										<Grid2
-											size={{ xl: 4, lg: 4, md: tablet ? 4 : 6, sm: 6, xs: 12 }}
+											size={{ xl: 4, lg: 4, md: tablet ? 6 : 4, sm: 6, xs: 12 }}
 											width={"100%"}
 											height={420}
 											display={"flex"}
