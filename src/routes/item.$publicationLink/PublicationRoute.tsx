@@ -1,5 +1,5 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import SuggestedItems from "@components/SuggestedItems";
+// import SuggestedItems from "@components/SuggestedItems";
 
 import { lazy, Suspense, useMemo } from "react";
 
@@ -142,7 +142,7 @@ export function Component() {
 					/>
 				</Suspense>
 			)}
-			<SuggestedItems />
+			{/* <SuggestedItems /> */}
 		</Loading>
 	);
 }

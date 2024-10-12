@@ -75,7 +75,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 	return (
 		<Box
 			display={"flex"}
-			style={{ width: "100%" }}
+			style={{ width: isMobile ? 345 : 630 }}
 			flexDirection={"column"}
 			alignItems={"center"}
 			gap={2}
