@@ -285,51 +285,40 @@ export function Component() {
 											)}
 										</>
 									)}
-									{order.initialInvoice.isPaid ? (
-										<>
-											{order.preorder && (
-												<div className="gap-1">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
-														Товары:
-													</Typography>
-													<Typography variant="subtitle0">{goodsTotal} ₽</Typography>
-												</div>
-											)}
-											<div className="gap-1 pt-2">
-												<div className="gap-1">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
-														Итого:
-													</Typography>
-													<Typography variant="subtitle0">
-														{goodsTotal + shippingTotal} ₽
-													</Typography>
-												</div>
-											</div>
-										</>
-									) : (
-										<>
-											{order.status === "CANCELLED" ? (
-												<Typography variant="subtitle1">Заказ отменен</Typography>
-											) : (
-												<div className="gap-1">
-													<Typography variant="subtitle1">Заказ не оплачен</Typography>
-													<Button
-														onClick={() => handlePay(order.initialInvoice.id)}
-														variant="contained"
-														sx={{ width: "fit-content", display: "flex", gap: 1 }}
-													>
-														Оплатить
-														<CountdownTimer deadline={order.initialInvoice.expiresAt!} />
-													</Button>
-												</div>
-											)}
-										</>
+
+									{order.preorder && (
+										<div className="gap-1">
+											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+												Товары:
+											</Typography>
+											<Typography variant="subtitle0">{goodsTotal} ₽</Typography>
+										</div>
+									)}
+									
+									<div className="gap-1 pt-2">
+										<div className="gap-1">
+											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+												Итого:
+											</Typography>
+											<Typography variant="subtitle0">{goodsTotal + shippingTotal} ₽</Typography>
+										</div>
+									</div>
+
+									{order.status === "CANCELLED" && (
+										<Typography variant="subtitle1">Заказ отменен</Typography>
+									)}
+
+									{order.status === "UNPAID" && (
+										<div className="gap-1">
+											<Typography variant="subtitle1">Заказ не оплачен</Typography>
+											<Button
+												onClick={() => handlePay(order.initialInvoice.id)}
+												variant="contained"
+												sx={{ width: "fit-content", display: "flex", gap: 1 }}
+											>
+												Оплатить <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
+											</Button>
+										</div>
 									)}
 								</Stack>
 							</div>
