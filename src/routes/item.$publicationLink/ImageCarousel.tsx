@@ -25,7 +25,7 @@ const ScrollButton = styled(IconButton)({
 	transform: "translateY(-50%)",
 	zIndex: 2,
 	backgroundColor: "rgba(255, 255, 255, 0.8)",
-	"& :hover": {
+	"&:hover": {
 		backgroundColor: "surface.primary",
 	},
 });
