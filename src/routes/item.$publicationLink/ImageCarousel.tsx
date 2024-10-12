@@ -18,7 +18,6 @@ import "react-multi-carousel/lib/styles.css";
 // 	transition: "opacity 0.2s",
 // });
 
-
 const ScrollButton = styled(IconButton)({
 	position: "absolute",
 	top: "50%",
@@ -68,13 +67,19 @@ interface ImageCarouselProps {
 }
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) => {
-	const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+	const [selectedImageIndex] = useState<number>(0);
 	const selectedImageUrl = imageUrls[selectedImageIndex];
 
 	console.log({ imageUrls });
 
 	return (
-		<Box display={"flex"} style={{ width: isMobile ? 345 : 630 }} flexDirection={"column"} alignItems={"center"} gap={2}>
+		<Box
+			display={"flex"}
+			style={{ width: isMobile ? 345 : 630 }}
+			flexDirection={"column"}
+			alignItems={"center"}
+			gap={2}
+		>
 			<div
 				className="bg-primary w-100 ai-c br-3 d-f jc-c of-h"
 				style={{ height: isMobile ? 345 : 630, width: isMobile ? 345 : 630 }}
@@ -94,11 +99,9 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 				customLeftArrow={<LeftButton />}
 				customRightArrow={<RightButton />}
 			>
-				{imageUrls.map((imageUrl, index) => (
-					<div key={index} className="bg-primary w-100 ai-c br-3 d-f jc-c of-h" onClick={() => setSelectedImageIndex(index)}>
-						HELLO {index} {imageUrl}
-					</div>
-					// <IconButton
+				<div className="bg-primary w-100 ai-c br-3 d-f jc-c of-h">HELLO</div>
+				<div className="bg-primary w-100 ai-c br-3 d-f jc-c of-h">HELLO2</div>
+				{/* // <IconButton
 					// 	key={index}
 					// 	sx={{ margin: 0, padding: 0 }}
 					// 	onClick={() => setSelectedImageIndex(index)}
@@ -122,8 +125,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 					// 	>
 					// 		<img style={{ width: "100%", height: "100%", objectFit: "cover" }} key={index} src={imageUrl} alt={`Thumbnail ${index}`} />
 					// 	</ThumbnailContainer>
-					// </IconButton>
-				))}
+					// </IconButton> */}
 			</Carousel>
 		</Box>
 	);
