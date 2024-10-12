@@ -113,7 +113,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([0, Infinity]);
 
 	useEffect(() => {
-		setPriceRangeFilter([0, Math.max(...(items?.map((item) => item.price) || [0]))]);
+		setPriceRangeFilter([0, Math.max(...(items?.map((item) => item.price) || [Infinity]))]);
 	}, [items]);
 
 	const setPreorderIdFilter = useCallback(
