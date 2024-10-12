@@ -24,8 +24,8 @@ const ScrollButton = styled(IconButton)({
 	top: "50%",
 	transform: "translateY(-50%)",
 	zIndex: 2,
-	backgroundColor: "rgba(221, 235, 235, 0.29)",
-	"&&:hover": {
+	backgroundColor: "rgba(255, 255, 255, 0.8)",
+	"& :hover": {
 		backgroundColor: "surface.primary",
 	},
 });
@@ -88,7 +88,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 			</div>
 			<div className="pt-2 w-100">
 				<Carousel
-					containerClass="react-multi-carousel-list-container"
 					responsive={responsive}
 					swipeable={isMobile}
 					draggable={isMobile}
