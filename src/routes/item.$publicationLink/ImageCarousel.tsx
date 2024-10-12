@@ -14,6 +14,7 @@ const ThumbnailContainer = styled("div")({
 	width: "157.5px",
 	height: "157.5px",
 	overflow: "hidden",
+	backgroundColor: "surface.primary",
 	borderRadius: 16,
 	transition: "opacity 0.2s",
 });
@@ -23,9 +24,9 @@ const ScrollButton = styled(IconButton)({
 	top: "50%",
 	transform: "translateY(-50%)",
 	zIndex: 2,
-	backgroundColor: "white",
+	backgroundColor: "rgba(221, 235, 235, 0.29)",
 	"&&:hover": {
-		backgroundColor: "white",
+		backgroundColor: "surface.primary",
 	},
 });
 
@@ -87,6 +88,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 			</div>
 			<div className="pt-2 w-100">
 				<Carousel
+					containerClass="react-multi-carousel-list-container"
 					responsive={responsive}
 					swipeable={isMobile}
 					draggable={isMobile}
@@ -103,7 +105,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 							<ThumbnailContainer
 								sx={{
 									border: "4px solid",
-									backgroundColor: "white",
 									borderColor: selectedImageIndex === index ? "icon.brandSecondary" : "transparent",
 									"&:hover":
 										selectedImageIndex === index

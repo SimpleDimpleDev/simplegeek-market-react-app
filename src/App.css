@@ -39,3 +39,10 @@ body {
   transform: scale(0.99);
   transition: opacity 100ms, transform 100ms;
 }
+
+.react-multi-carousel-list-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow-x: hidden;
+}
