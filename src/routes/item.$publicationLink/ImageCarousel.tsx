@@ -26,7 +26,7 @@ const ScrollButton = styled(IconButton)({
 	zIndex: 2,
 	backgroundColor: "rgba(255, 255, 255, 0.8)",
 	"&:hover": {
-		backgroundColor: "surface.primary",
+		backgroundColor: "white",
 	},
 });
 
