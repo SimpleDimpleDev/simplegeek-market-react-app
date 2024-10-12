@@ -12,6 +12,7 @@ import {
 	NativeSelect,
 	Select,
 	Typography,
+	useMediaQuery,
 } from "@mui/material";
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import ItemCard from "@components/ItemCard";
@@ -60,6 +61,8 @@ export function Component() {
 	const [sorting, setSorting] = useState<Sorting>("popular");
 
 	const { itemsToRender } = useItemsToRender({ items: catalogItems, filterFunction, sorting });
+
+	const tablet = useMediaQuery("(max-width: 980px)");
 
 	return (
 		<>
@@ -211,7 +214,7 @@ export function Component() {
 								<Grid2 container spacing={2}>
 									{itemsToRender.map((data, index) => (
 										<Grid2
-											size={{ xl: 4, lg: 4, md: 6, sm: 6, xs: 12 }}
+											size={{ xl: 4, lg: 4, md: tablet ? 4 : 6, sm: 6, xs: 12 }}
 											width={"100%"}
 											height={420}
 											display={"flex"}
