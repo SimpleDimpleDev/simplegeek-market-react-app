@@ -7,7 +7,7 @@ export const cartApi = shopApi.injectEndpoints({
 	endpoints: (build) => ({
 		getCartItemList: build.query<z.infer<typeof CartItemListSchema>, void>({
 			query: () => ({
-				url: "/user/cart",
+				url: "/cart",
 				method: "GET",
 			}),
 			providesTags: ["Cart"],
@@ -15,7 +15,7 @@ export const cartApi = shopApi.injectEndpoints({
 		}),
 		addCartItem: build.mutation<void, { itemId: string }>({
 			query: ({ itemId }) => ({
-				url: "/user/cart",
+				url: "/cart",
 				method: "POST",
 				params: { itemId },
 			}),
@@ -37,7 +37,7 @@ export const cartApi = shopApi.injectEndpoints({
 		}),
 		patchCartItem: build.mutation<void, { itemId: string; action: "INCREMENT" | "DECREMENT" }>({
 			query: ({ itemId, action }) => ({
-				url: "/user/cart",
+				url: "/cart",
 				method: "PATCH",
 				params: { itemId, action },
 			}),
@@ -59,7 +59,7 @@ export const cartApi = shopApi.injectEndpoints({
 		}),
 		deleteCartItems: build.mutation<void, { itemIds: string[] }>({
 			query: (body) => ({
-				url: "/user/cart",
+				url: "/cart",
 				method: "DELETE",
 				body: body,
 			}),

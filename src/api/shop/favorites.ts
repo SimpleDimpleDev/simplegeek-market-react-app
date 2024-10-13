@@ -7,7 +7,7 @@ export const favoritesApi = shopApi.injectEndpoints({
 	endpoints: (build) => ({
 		getFavoriteItemList: build.query<z.infer<typeof FavoriteItemListSchema>, void>({
 			query: () => ({
-				url: "/user/favorites",
+				url: "/favorites",
 				method: "GET",
 			}),
 			providesTags: ["Favorites"],
@@ -15,7 +15,7 @@ export const favoritesApi = shopApi.injectEndpoints({
 		}),
 		addFavoriteItem: build.mutation<void, { itemId: string }>({
 			query: ({ itemId }) => ({
-				url: "/user/favorites",
+				url: "/favorites",
 				method: "POST",
 				params: { itemId },
 			}),
@@ -36,7 +36,7 @@ export const favoritesApi = shopApi.injectEndpoints({
 		}),
 		removeFavoriteItem: build.mutation<void, { itemId: string }>({
 			query: ({ itemId }) => ({
-				url: "/user/favorites",
+				url: "/favorites",
 				method: "DELETE",
 				params: { itemId },
 			}),
