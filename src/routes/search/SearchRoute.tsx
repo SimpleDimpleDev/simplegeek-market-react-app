@@ -107,7 +107,6 @@ export function Component() {
 
 	return (
 		<>
-			<ScrollTop />
 			{catalogIsLoading || availabilityIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
@@ -126,7 +125,8 @@ export function Component() {
 					button={<Button onClick={() => navigate("/")}>На главную</Button>}
 				/>
 			) : (
-				<div>
+				<>
+					<ScrollTop />
 					<Modal open={filtersOpen} onClose={() => setFiltersOpen(false)}>
 						<div className="top-0 left-0 bg-primary w-100v h-100v ai-fs d-f fd-c jc-fs of-a ps-f">
 							<div className="px-2 w-100 h-9 ai-c d-f fd-r jc-sb">
@@ -289,7 +289,7 @@ export function Component() {
 							)}
 						</div>
 					</div>
-				</div>
+				</>
 			)}
 		</>
 	);
