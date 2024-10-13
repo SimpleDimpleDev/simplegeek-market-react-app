@@ -11,7 +11,7 @@ export const favoritesApi = shopApi.injectEndpoints({
 				method: "GET",
 			}),
 			providesTags: ["Favorites"],
-			transformErrorResponse: (response) => validateData(FavoriteItemListSchema, response),
+			transformResponse: (response) => validateData(FavoriteItemListSchema, response),
 		}),
 		addFavoriteItem: build.mutation<void, { itemId: string }>({
 			query: ({ itemId }) => ({
