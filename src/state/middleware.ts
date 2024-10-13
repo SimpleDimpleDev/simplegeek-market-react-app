@@ -15,9 +15,9 @@ const loggingMiddleware: Middleware = (store) => (next) => (action) => {
 const crashReporterMiddleware: Middleware = () => (next) => (action) => {
 	try {
 		return next(action);
-	} catch (err) {
-		console.error("Caught an exception!", err);
-		throw err;
+	} catch (error) {
+		console.error("Redux error", { error });
+		throw error;
 	}
 };
 

@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { shopApi } from "@api/shop/root";
 import userReducer from "./user/userSlice";
 
-import { crashReporterMiddleware, loggingMiddleware } from "./middleware";
+import { crashReporterMiddleware } from "./middleware";
 
 const store = configureStore({
 	reducer: {
@@ -10,7 +10,7 @@ const store = configureStore({
 		[shopApi.reducerPath]: shopApi.reducer,
 	},
 	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware().concat(shopApi.middleware).concat(loggingMiddleware).concat(crashReporterMiddleware),
+		getDefaultMiddleware().concat(shopApi.middleware).concat(crashReporterMiddleware),
 });
 
 export { store };
