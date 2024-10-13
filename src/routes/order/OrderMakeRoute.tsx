@@ -75,7 +75,9 @@ export function Component() {
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
 		refetchOnMountOrArgChange: true,
 	});
-	const { data: checkoutItemList, isLoading: checkoutItemListIsLoading } = useGetCheckoutItemsQuery();
+	const { data: checkoutItemList, isLoading: checkoutItemListIsLoading } = useGetCheckoutItemsQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+	});
 	const { data: userSavedDelivery, isLoading: userSavedDeliveryIsLoading } = useGetSavedDeliveryQuery();
 	const [
 		createOrder,
@@ -198,17 +200,24 @@ export function Component() {
 		orderItems.map((item) => ({ id: item.id, isCredit: false }))
 	);
 
-	const totalPrice = useMemo(() => orderItems.map((orderItem) => {
-		if (itemsCredit.some((creditItem) => orderItem.id === creditItem.id)) {
-			return (orderItem.creditInfo?.payments[0].sum || 0) * orderItem.quantity;
-		} else {
-			return orderItem.price * orderItem.quantity;
-		}
-	}).reduce((a, b) => a + b, 0), [orderItems, itemsCredit]);
+	const totalPrice = useMemo(
+		() =>
+			orderItems
+				.map((orderItem) => {
+					if (itemsCredit.some((creditItem) => orderItem.id === creditItem.id)) {
+						return (orderItem.creditInfo?.payments[0].sum || 0) * orderItem.quantity;
+					} else {
+						console.log({ id: orderItem.id, price: orderItem.price, quantity: orderItem.quantity });
+						return orderItem.price * orderItem.quantity;
+					}
+				})
+				.reduce((a, b) => a + b, 0),
+		[orderItems, itemsCredit]
+	);
 
-	useEffect(() => console.log({orderItems}), [orderItems]);
-	useEffect(() => console.log({itemsCredit}), [itemsCredit]);
-	useEffect(() => console.log({totalPrice}), [totalPrice]);
+	useEffect(() => console.log({ orderItems }), [orderItems]);
+	useEffect(() => console.log({ itemsCredit }), [itemsCredit]);
+	useEffect(() => console.log({ totalPrice }), [totalPrice]);
 
 	const totalDiscount = orderItems
 		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
