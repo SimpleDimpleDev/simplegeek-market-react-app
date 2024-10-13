@@ -167,12 +167,16 @@ export default function ItemCard({
 								height: 48,
 								borderRadius: 8,
 							}}
-							sx={{
-								backgroundColor: "primary.main",
-								"&:hover": {
-									backgroundColor: "primary.dark",
-								},
-							}}
+							sx={
+								isAvailable
+									? {
+											backgroundColor: "primary.main",
+											"&:hover": {
+												backgroundColor: "primary.dark",
+											},
+									  }
+									: {}
+							}
 						>
 							{availabilityIsLoading || cartItemListIsLoading || trackedItemListIsLoading ? (
 								<CircularProgress sx={{ color: "icon.primary" }} />
@@ -183,9 +187,9 @@ export default function ItemCard({
 									<AddShoppingCart sx={{ color: "icon.primary" }} />
 								)
 							) : isTracked ? (
-								<NotificationAdd sx={{ color: "icon.tertiary" }} />
+								<NotificationsOff sx={{ color: "icon.primary" }} />
 							) : (
-								<NotificationsOff sx={{ color: "icon.tertiary" }} />
+								<NotificationAdd sx={{ color: "icon.primary" }} />
 							)}
 						</IconButton>
 					</div>
