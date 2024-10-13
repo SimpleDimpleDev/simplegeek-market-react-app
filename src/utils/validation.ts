@@ -5,7 +5,7 @@ export const validateData = <T extends ZodSchema>(schema: T, data: unknown): z.i
 		return schema.parse(data);
 	} catch (error) {
 		if (error instanceof ZodError) {
-			console.error("Validation error", { schemaName: Object.keys(schema._def)[0] });
+			console.error("Validation error", { schemaName: Object.keys(schema)[0], schema: schema._def });
 		}
 		throw error;
 	}
