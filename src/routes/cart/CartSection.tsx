@@ -70,10 +70,28 @@ const CartSectionItemsWrapper = ({ isMobile, children }: { isMobile: boolean; ch
 interface CartSectionProps {
 	isMobile: boolean;
 	data: FormedCartSection;
+	availableItemIds: Set<string> | undefined;
+	availabilityIsLoading: boolean;
+
+	cartItemIds: Set<string> | undefined;
+	cartItemListIsLoading: boolean;
+
+	favoriteItemIds: Set<string> | undefined;
+	favoriteItemListIsLoading: boolean;
 	onMakeOrder: (items: UserCartItem[]) => void;
 }
 
-export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) => {
+export const CartSection = ({
+	isMobile,
+	data,
+	availableItemIds,
+	availabilityIsLoading,
+	cartItemIds,
+	cartItemListIsLoading,
+	favoriteItemIds,
+	favoriteItemListIsLoading,
+	onMakeOrder,
+}: CartSectionProps) => {
 	const navigate = useNavigate();
 
 	const [checkedIds, setCheckedIds] = useState<string[]>(data.unavailable ? [] : data.items.map((item) => item.id));
@@ -171,6 +189,12 @@ export const CartSection = ({ isMobile, data, onMakeOrder }: CartSectionProps) =
 										isMobile={isMobile}
 										key={cartItem.id}
 										item={cartItem}
+										isAvailable={availableItemIds?.has(cartItem.id)}
+										availabilityIsLoading={availabilityIsLoading}
+										isFavorite={favoriteItemIds?.has(cartItem.id)}
+										favoriteItemListIsLoading={favoriteItemListIsLoading}
+										isInCart={cartItemIds?.has(cartItem.id)}
+										cartItemListIsLoading={cartItemListIsLoading}
 										checked={checkedIds.includes(cartItem.id)}
 										onClick={() => {
 											const variationParam =

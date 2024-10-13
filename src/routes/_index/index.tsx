@@ -40,7 +40,8 @@ export function Component() {
 		skipPollingIfUnfocused: true,
 		refetchOnFocus: true,
 	});
-	const { data: availableItemIds, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery(void 0, {
+
+	const { data: availableItemList, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery(void 0, {
 		refetchOnMountOrArgChange: true,
 		pollingInterval: availabilityPollingInterval,
 		skipPollingIfUnfocused: true,
@@ -50,8 +51,23 @@ export function Component() {
 	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
 	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
 
-	const favoriteItemIds = useMemo(() => favoriteItemList?.items.map((item) => item.id), [favoriteItemList]);
-	const cartItemIds = useMemo(() => cartItemList?.items.map((item) => item.id), [cartItemList]);
+	const availableItemIds = useMemo(() => {
+		const idSet = new Set<string>();
+		availableItemList?.items.forEach((item) => idSet.add(item));
+		return idSet;
+	}, [availableItemList]);
+
+	const favoriteItemIds = useMemo(() => {
+		const idSet = new Set<string>();
+		favoriteItemList?.items.forEach((item) => idSet.add(item.id));
+		return idSet;
+	}, [favoriteItemList]);
+
+	const cartItemIds = useMemo(() => {
+		const idSet = new Set<string>();
+		cartItemList?.items.forEach((item) => idSet.add(item.id));
+		return idSet;
+	}, [cartItemList]);
 
 	const catalogItems = useMemo(() => catalog?.items, [catalog]);
 	const {
@@ -251,11 +267,11 @@ export function Component() {
 													<div>
 														<ItemCard
 															data={data}
-															isAvailable={availableItemIds.includes(data.id)}
+															isAvailable={availableItemIds.has(data.id)}
 															availabilityIsLoading={availabilityIsLoading}
-															isInCart={cartItemIds?.includes(data.id)}
+															isInCart={cartItemIds?.has(data.id)}
 															cartItemListIsLoading={cartItemListIsLoading}
-															isFavorite={favoriteItemIds?.includes(data.id)}
+															isFavorite={favoriteItemIds?.has(data.id)}
 															favoriteItemListIsLoading={favoriteItemListIsLoading}
 														/>
 													</div>

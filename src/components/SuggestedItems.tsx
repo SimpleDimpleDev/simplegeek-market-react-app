@@ -12,6 +12,7 @@ import "react-multi-carousel/lib/styles.css";
 import { useGetCartItemListQuery } from "@api/shop/cart";
 import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { useMemo } from "react";
+import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
 
 const responsive = {
 	desktop: {
@@ -60,13 +61,14 @@ export default function SuggestedItems() {
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
 		refetchOnMountOrArgChange: true,
-		pollingInterval: 60000,
+		pollingInterval: catalogPollingInterval,
 		skipPollingIfUnfocused: true,
 		refetchOnFocus: true,
 	});
-	const { data: availableItemIds, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery(void 0, {
+	
+	const { data: availableItemList, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery(void 0, {
 		refetchOnMountOrArgChange: true,
-		pollingInterval: 5000,
+		pollingInterval: availabilityPollingInterval,
 		skipPollingIfUnfocused: true,
 		refetchOnFocus: true,
 	});
@@ -74,8 +76,23 @@ export default function SuggestedItems() {
 	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
 	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
 
-	const favoriteItemIds = useMemo(() => favoriteItemList?.items.map((item) => item.id), [favoriteItemList]);
-	const cartItemIds = useMemo(() => cartItemList?.items.map((item) => item.id), [cartItemList]);
+	const availableItemIds = useMemo(() => {
+		const idSet = new Set<string>();
+		availableItemList?.items.forEach((item) => idSet.add(item));
+		return idSet;
+	}, [availableItemList]);
+
+	const favoriteItemIds = useMemo(() => {
+		const idSet = new Set<string>();
+		favoriteItemList?.items.forEach((item) => idSet.add(item.id));
+		return idSet;
+	}, [favoriteItemList]);
+
+	const cartItemIds = useMemo(() => {
+		const idSet = new Set<string>();
+		cartItemList?.items.forEach((item) => idSet.add(item.id));
+		return idSet;
+	}, [cartItemList]);
 
 	return (
 		<Box padding={"40px 0 24px 0"} width={"100%"} gap={3}>
@@ -92,11 +109,11 @@ export default function SuggestedItems() {
 					{catalog?.items.map((item) => (
 						<ItemCard
 							data={item}
-							isAvailable={availableItemIds?.includes(item.id)}
+							isAvailable={availableItemIds?.has(item.id)}
 							availabilityIsLoading={availabilityIsLoading}
-							isInCart={cartItemIds?.includes(item.id)}
+							isInCart={cartItemIds?.has(item.id)}
 							cartItemListIsLoading={cartItemListIsLoading}
-							isFavorite={favoriteItemIds?.includes(item.id)}
+							isFavorite={favoriteItemIds?.has(item.id)}
 							favoriteItemListIsLoading={favoriteItemListIsLoading}
 						/>
 					))}

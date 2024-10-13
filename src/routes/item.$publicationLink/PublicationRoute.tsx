@@ -35,7 +35,7 @@ export function Component() {
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 
-	const { data: availableItemIds, isLoading: availableItemIdsIsLoading } = useGetItemsAvailabilityQuery();
+	const { data: availableItemList, isLoading: availableItemListIsLoading } = useGetItemsAvailabilityQuery();
 	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
 	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
 
@@ -50,8 +50,8 @@ export function Component() {
 	const selectedVariation = publication?.items.at(itemVariationIndex);
 
 	const selectedVariationIsAvailable = useMemo(
-		() => (selectedVariation === undefined ? undefined : availableItemIds?.includes(selectedVariation.id)),
-		[availableItemIds, selectedVariation]
+		() => (selectedVariation === undefined ? undefined : availableItemList?.items.includes(selectedVariation.id)),
+		[availableItemList, selectedVariation]
 	);
 	const selectedVariationIsInCart = useMemo(
 		() =>
@@ -111,7 +111,7 @@ export function Component() {
 						imageUrls={preparedImageUrls}
 						selectedVariationIndex={itemVariationIndex}
 						onChangeSelectedVariationIndex={setItemVariationIndex}
-						availableItemIdsIsLoading={availableItemIdsIsLoading}
+						availableItemIdsIsLoading={availableItemListIsLoading}
 						selectedVariationIsAvailable={selectedVariationIsAvailable}
 						cartItemListIsLoading={cartItemListIsLoading}
 						selectedVariationIsInCart={selectedVariationIsInCart}
@@ -129,7 +129,7 @@ export function Component() {
 						imageUrls={preparedImageUrls}
 						selectedVariationIndex={itemVariationIndex}
 						onChangeSelectedVariationIndex={setItemVariationIndex}
-						availableItemIdsIsLoading={availableItemIdsIsLoading}
+						availableItemIdsIsLoading={availableItemListIsLoading}
 						selectedVariationIsAvailable={selectedVariationIsAvailable}
 						cartItemListIsLoading={cartItemListIsLoading}
 						selectedVariationIsInCart={selectedVariationIsInCart}

@@ -5,10 +5,10 @@ import { UserCartItem } from "@appTypes/UserItems";
 interface FormCartArgs {
 	catalogItems: CatalogItem[];
 	userCart: UserCartItem[];
-	availableItemsIds: string[];
+	availableItemIds: Set<string>;
 }
 
-export function formCart({ catalogItems, userCart, availableItemsIds }: FormCartArgs): FormedCart {
+export function formCart({ catalogItems, userCart, availableItemIds }: FormCartArgs): FormedCart {
 	const stockSection: FormedCartSection = {
 		title: "В наличии",
 		unavailable: false,
@@ -31,7 +31,7 @@ export function formCart({ catalogItems, userCart, availableItemsIds }: FormCart
 			continue;
 		}
 		const item: CatalogItemCart = { ...catalogItem, quantity: userCartItem.quantity };
-		const isAvailable = availableItemsIds.includes(item.id);
+		const isAvailable = availableItemIds.has(item.id);
 		if (!isAvailable) {
 			unavailableSection.items.push(item);
 		} else {

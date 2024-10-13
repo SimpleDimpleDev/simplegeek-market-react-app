@@ -1,8 +1,6 @@
-import { useDeleteCartItemsMutation, useGetCartItemListQuery, usePatchCartItemMutation } from "@api/shop/cart";
-import { useGetItemsAvailabilityQuery } from "@api/shop/catalog";
+import { useDeleteCartItemsMutation, usePatchCartItemMutation } from "@api/shop/cart";
 import {
 	useAddFavoriteItemMutation,
-	useGetFavoriteItemListQuery,
 	useRemoveFavoriteItemMutation,
 } from "@api/shop/favorites";
 import { CatalogItemCart } from "@appTypes/Cart";
@@ -10,7 +8,6 @@ import { Favorite, FavoriteBorder, Delete, Remove, Add } from "@mui/icons-materi
 import { Box, IconButton, Typography, Checkbox, CircularProgress } from "@mui/material";
 
 import { getImageUrl } from "@utils/image";
-import { useMemo } from "react";
 
 const ControlButtons = ({
 	isFavorite,
@@ -20,10 +17,10 @@ const ControlButtons = ({
 	onDelete,
 	cartLoading,
 }: {
-	isFavorite: boolean;
+	isFavorite: boolean | undefined;
 	onFavoriteClick: () => void;
 	favoriteLoading: boolean;
-	isInCart: boolean;
+	isInCart: boolean | undefined;
 	onDelete: () => void;
 	cartLoading: boolean;
 }) => (
@@ -88,31 +85,33 @@ const QuantityButtons = ({
 interface CartItemProps {
 	isMobile: boolean;
 	item: CatalogItemCart;
+
+	isAvailable?: boolean;
+	availabilityIsLoading: boolean;
+
+	isInCart?: boolean;
+	cartItemListIsLoading: boolean;
+
+	isFavorite?: boolean;
+	favoriteItemListIsLoading: boolean;
+
 	checked: boolean;
 	onCheck: () => void;
 	onClick: () => void;
 }
 
-const CartItem = ({ isMobile, item, checked, onCheck }: CartItemProps) => {
-	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
-	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
-	const { data: availableItemIds, isLoading: availableItemIdsIsLoading } = useGetItemsAvailabilityQuery();
-
-	const isAvailable = useMemo(() => {
-		if (!availableItemIds) return false;
-		return availableItemIds.includes(item.id);
-	}, [availableItemIds, item.id]);
-
-	const isInCart = useMemo(() => {
-		if (!cartItemList) return false;
-		return cartItemList.items.some((cartItem) => cartItem.id === item.id);
-	}, [cartItemList, item.id]);
-
-	const isFavorite = useMemo(() => {
-		if (!favoriteItemList) return false;
-		return favoriteItemList.items.some((favoriteItem) => favoriteItem.id === item.id);
-	}, [favoriteItemList, item.id]);
-
+const CartItem = ({
+	isMobile,
+	item,
+	isAvailable,
+	availabilityIsLoading,
+	isInCart,
+	cartItemListIsLoading,
+	isFavorite,
+	favoriteItemListIsLoading,
+	checked,
+	onCheck,
+}: CartItemProps) => {
 	const [addFavoriteItem] = useAddFavoriteItemMutation();
 	const [removeFavoriteItem] = useRemoveFavoriteItemMutation();
 
@@ -190,9 +189,9 @@ const CartItem = ({ isMobile, item, checked, onCheck }: CartItemProps) => {
 								)}
 
 								<Typography variant="body2">{item.product.title}</Typography>
-								{availableItemIdsIsLoading ? (
+								{availabilityIsLoading ? (
 									<Typography variant="body2">Загрузка...</Typography>
-								) : !availableItemIds ? null : isAvailable ? (
+								) : isAvailable === undefined ? null : isAvailable ? (
 									item.preorder !== null ? (
 										<Typography color="typography.secondary" variant="body2">
 											Доступно для предзаказа

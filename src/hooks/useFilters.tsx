@@ -50,7 +50,7 @@ const parseFilterParams = (
 
 interface useFiltersArgs {
 	items: CatalogItem[] | undefined;
-	availableItemIds: string[] | undefined;
+	availableItemIds: Set<string> | undefined;
 }
 
 interface useFiltersReturn {
@@ -188,7 +188,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		(item: CatalogItem) => {
 			// availability
 			if (availableItemIds !== undefined) {
-				if (availabilityFilter && !availableItemIds.includes(item.id)) return false;
+				if (availabilityFilter && !availableItemIds.has(item.id)) return false;
 			}
 
 			// preorder

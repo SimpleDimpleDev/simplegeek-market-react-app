@@ -18,6 +18,7 @@ import { useCheckoutMutation } from "@api/shop/order";
 import { Loading } from "@components/Loading";
 import { formCart } from "./utils";
 import { useIsMobile } from "src/hooks/useIsMobile";
+import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -28,15 +29,43 @@ export function Component() {
 
 	const user = useSelector((state: RootState) => state.user.identity);
 
-	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
-	const {
-		data: availableItemsIds,
-		isLoading: availableItemsIdsIsLoading,
-		refetch: refetchAvailable,
-	} = useGetItemsAvailabilityQuery();
+	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+		pollingInterval: catalogPollingInterval,
+		skipPollingIfUnfocused: true,
+		refetchOnFocus: true,
+	});
 
-	const { data: cartItemList, isLoading: cartItemListIsLoading, refetch: refetchCart } = useGetCartItemListQuery();
+	const { data: availableItemList, isLoading: availabilityIsLoading, refetch: refetchAvailability } = useGetItemsAvailabilityQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+		pollingInterval: availabilityPollingInterval,
+		skipPollingIfUnfocused: true,
+		refetchOnFocus: true,
+	});
+
 	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
+	const { data: cartItemList, isLoading: cartItemListIsLoading, refetch: refetchCart } = useGetCartItemListQuery();
+
+	const availableItemIds = useMemo(() => {
+		if (!availableItemList) return undefined;
+		const idSet = new Set<string>();
+		availableItemList?.items.forEach((item) => idSet.add(item));
+		return idSet;
+	}, [availableItemList]);
+
+	const favoriteItemIds = useMemo(() => {
+		if (!favoriteItemList) return undefined;
+		const idSet = new Set<string>();
+		favoriteItemList?.items.forEach((item) => idSet.add(item.id));
+		return idSet;
+	}, [favoriteItemList]);
+
+	const cartItemIds = useMemo(() => {
+		if (!cartItemList) return undefined;
+		const idSet = new Set<string>();
+		cartItemList?.items.forEach((item) => idSet.add(item.id));
+		return idSet;
+	}, [cartItemList]);
 
 	const [checkout, { isSuccess: checkoutIsSuccess, isError: checkoutIsError }] = useCheckoutMutation();
 
@@ -56,16 +85,16 @@ export function Component() {
 	useEffect(() => {
 		if (orderItemsUnavailableError) {
 			refetchCart();
-			refetchAvailable();
+			refetchAvailability();
 		}
-	}, [orderItemsUnavailableError, refetchCart, refetchAvailable]);
+	}, [orderItemsUnavailableError, refetchCart, refetchAvailability]);
 
 	const formedCart = useMemo(
 		() =>
-			catalog && availableItemsIds && cartItemList
-				? formCart({ catalogItems: catalog.items, userCart: cartItemList.items, availableItemsIds })
+			catalog && availableItemIds && cartItemList
+				? formCart({ catalogItems: catalog.items, userCart: cartItemList.items, availableItemIds })
 				: { sections: [] },
-		[catalog, availableItemsIds, cartItemList]
+		[catalog, availableItemIds, cartItemList]
 	);
 
 	const createOrder = async (items: UserCartItem[]) => {
@@ -76,15 +105,12 @@ export function Component() {
 		}
 	};
 
-	const showLoading =
-		catalogIsLoading || availableItemsIdsIsLoading || cartItemListIsLoading || favoriteItemListIsLoading;
-
 	return (
 		<>
 			<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
 			<Loading
-				isLoading={showLoading}
-				necessaryDataIsPersisted={!!catalog && !!availableItemsIds && !!cartItemList && !!favoriteItemList}
+				isLoading={catalogIsLoading || availabilityIsLoading || cartItemListIsLoading || favoriteItemListIsLoading}
+				necessaryDataIsPersisted={!!catalog && !!availableItemIds && !!cartItemList && !!favoriteItemList}
 			>
 				<>
 					{orderItemsUnavailableError && (
@@ -109,6 +135,12 @@ export function Component() {
 										isMobile={isMobile}
 										key={section.title}
 										data={section}
+										availableItemIds={availableItemIds}
+										availabilityIsLoading={availabilityIsLoading}
+										cartItemIds={cartItemIds}
+										cartItemListIsLoading={cartItemListIsLoading}
+										favoriteItemIds={favoriteItemIds}
+										favoriteItemListIsLoading={favoriteItemListIsLoading}
 										onMakeOrder={createOrder}
 									/>
 								)

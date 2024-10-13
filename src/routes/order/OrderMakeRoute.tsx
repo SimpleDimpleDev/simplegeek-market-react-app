@@ -36,7 +36,6 @@ type DeliveryFormData = {
 const DeliveryFormResolver = z
 	.object({
 		recipient: z.object({
-			email: z.string({ message: "Укажите почту" }).regex(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/, "Невалидная почта"),
 			fullName: z.string({ message: "Укажите ФИО" }).min(2, "ФИО должно быть не менее 2 символов"),
 			phone: z
 				.string({ message: "Укажите номер телефона" })
@@ -98,7 +97,6 @@ export function Component() {
 		resolver: zodResolver(DeliveryFormResolver),
 		defaultValues: {
 			recipient: {
-				email: "",
 				fullName: "",
 				phone: "",
 			},
@@ -119,7 +117,6 @@ export function Component() {
 		} else {
 			reset({
 				recipient: {
-					email: user?.email || "",
 					fullName: "",
 					phone: "",
 				},
@@ -368,21 +365,6 @@ export function Component() {
 											className="gap-1 ai-c d-f"
 											style={{ flexDirection: isMobile ? "column" : "row" }}
 										>
-											<Controller
-												name="recipient.email"
-												control={control}
-												render={({ field, fieldState: { error } }) => (
-													<TextField
-														{...field}
-														label="Электронная почта"
-														variant="outlined"
-														fullWidth
-														margin="normal"
-														error={!!error}
-														helperText={error?.message}
-													/>
-												)}
-											/>
 											<Controller
 												name="recipient.phone"
 												control={control}

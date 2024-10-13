@@ -12,33 +12,34 @@ import { useIsMobile } from "src/hooks/useIsMobile";
 export function Component() {
 	const isMobile = useIsMobile();
 
-	const { data: availableItemsIds, isLoading: availableItemsIdsIsLoading } = useGetItemsAvailabilityQuery();
+	const { data: availableItemsList, isLoading: availableItemListIsLoading } = useGetItemsAvailabilityQuery();
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
 
 	const mappedItems = useMemo(() => {
-		if (!catalog || !favoriteItemList || !availableItemsIds) return { available: [], unavailable: [], empty: true };
+		if (!catalog || !favoriteItemList || !availableItemsList)
+			return { available: [], unavailable: [], empty: true };
 		const favoriteItems = catalog.items.filter((item) =>
 			favoriteItemList.items.some((favorite) => favorite.id === item.id)
 		);
 		const available = [];
 		const unavailable = [];
 		for (const item of favoriteItems) {
-			if (availableItemsIds.includes(item.id)) {
+			if (availableItemsList.items.includes(item.id)) {
 				available.push(item);
 			} else {
 				unavailable.push(item);
 			}
 		}
 		return { available, unavailable, empty: favoriteItems.length === 0 };
-	}, [catalog, favoriteItemList, availableItemsIds]);
+	}, [catalog, favoriteItemList, availableItemsList]);
 
 	return (
 		<>
 			<CountPageHeader title="Избранное" count={favoriteItemList?.items.length || 0} isMobile={isMobile} />
 			<Loading
-				isLoading={catalogIsLoading || availableItemsIdsIsLoading || favoriteItemListIsLoading}
-				necessaryDataIsPersisted={!!catalog && !!availableItemsIds && !!favoriteItemList}
+				isLoading={catalogIsLoading || availableItemListIsLoading || favoriteItemListIsLoading}
+				necessaryDataIsPersisted={!!catalog && !!availableItemsList && !!favoriteItemList}
 			>
 				<Stack divider={<Divider sx={{ color: "divider" }} />}>
 					{mappedItems.available.length > 0 && (

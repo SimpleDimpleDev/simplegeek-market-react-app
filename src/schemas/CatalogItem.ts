@@ -15,4 +15,6 @@ export const CatalogItemShopSchema = z.object({
 	createdAt: ISOToDateSchema,
 });
 
-export const CatalogItemsAvailabilitySchema = IdSchema.array();
+export const CatalogItemsAvailabilitySchema = z.object({
+	items: IdSchema.array(),
+});
