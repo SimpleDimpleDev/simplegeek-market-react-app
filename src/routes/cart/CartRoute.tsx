@@ -48,7 +48,16 @@ export function Component() {
 	});
 
 	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
-	const { data: cartItemList, isLoading: cartItemListIsLoading, refetch: refetchCart } = useGetCartItemListQuery();
+	const {
+		data: cartItemList,
+		isLoading: cartItemListIsLoading,
+		refetch: refetchCart,
+	} = useGetCartItemListQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+		pollingInterval: availabilityPollingInterval,
+		skipPollingIfUnfocused: true,
+		refetchOnFocus: true,
+	});
 
 	const availableItemIds = useMemo(() => {
 		if (!availableItemList) return undefined;
