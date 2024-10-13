@@ -19,30 +19,42 @@ export const OrderStatusSchema = z.enum([
 	"FINISHED",
 ]);
 
-export const OrderCreateSchema = z.object({
-	creditIds: IdSchema.array(),
-	delivery: DeliverySchema.nullable(),
-});
+export const OrderCreateSchema = z.object(
+	{
+		creditIds: IdSchema.array(),
+		delivery: DeliverySchema.nullable(),
+	},
+	{ description: "OrderCreate" }
+);
 
-export const OrderItemShopSchema = z.object({
-	id: IdSchema,
-	title: z.string(),
-	image: z.string(),
-	quantity: z.number(),
-	sum: z.number(),
-	credit: CreditShopSchema.nullable(),
-});
+export const OrderItemShopSchema = z.object(
+	{
+		id: IdSchema,
+		title: z.string(),
+		image: z.string(),
+		quantity: z.number(),
+		sum: z.number(),
+		credit: CreditShopSchema.nullable(),
+	},
+	{ description: "OrderItemShop" }
+);
 
-export const OrderShopSchema = z.object({
-	id: IdSchema,
-	status: OrderStatusSchema,
-	createdAt: ISOToDateSchema,
-	delivery: DeliveryOrderSchema.nullable(),
-	preorder: PreorderOrderShopSchema.nullable(),
-	items: OrderItemShopSchema.array(),
-	initialInvoice: InvoiceShopSchema,
-});
+export const OrderShopSchema = z.object(
+	{
+		id: IdSchema,
+		status: OrderStatusSchema,
+		createdAt: ISOToDateSchema,
+		delivery: DeliveryOrderSchema.nullable(),
+		preorder: PreorderOrderShopSchema.nullable(),
+		items: OrderItemShopSchema.array(),
+		initialInvoice: InvoiceShopSchema,
+	},
+	{ description: "OrderShop" }
+);
 
-export const OrderListSchema = z.object({
-	items: OrderShopSchema.array(),
-});
+export const OrderListSchema = z.object(
+	{
+		items: OrderShopSchema.array(),
+	},
+	{ description: "OrderList" }
+);
