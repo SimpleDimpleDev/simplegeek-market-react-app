@@ -52,18 +52,21 @@ export function Component() {
 	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
 
 	const availableItemIds = useMemo(() => {
+		if (!availableItemList) return undefined;
 		const idSet = new Set<string>();
 		availableItemList?.items.forEach((item) => idSet.add(item));
 		return idSet;
 	}, [availableItemList]);
 
 	const favoriteItemIds = useMemo(() => {
+		if (!favoriteItemList) return undefined;
 		const idSet = new Set<string>();
 		favoriteItemList?.items.forEach((item) => idSet.add(item.id));
 		return idSet;
 	}, [favoriteItemList]);
 
 	const cartItemIds = useMemo(() => {
+		if (!cartItemList) return undefined;
 		const idSet = new Set<string>();
 		cartItemList?.items.forEach((item) => idSet.add(item.id));
 		return idSet;
