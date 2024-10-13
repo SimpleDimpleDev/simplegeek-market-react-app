@@ -36,7 +36,11 @@ export function Component() {
 		refetchOnFocus: true,
 	});
 
-	const { data: availableItemList, isLoading: availabilityIsLoading, refetch: refetchAvailability } = useGetItemsAvailabilityQuery(void 0, {
+	const {
+		data: availableItemList,
+		isLoading: availabilityIsLoading,
+		refetch: refetchAvailability,
+	} = useGetItemsAvailabilityQuery(void 0, {
 		refetchOnMountOrArgChange: true,
 		pollingInterval: availabilityPollingInterval,
 		skipPollingIfUnfocused: true,
@@ -109,7 +113,9 @@ export function Component() {
 		<>
 			<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
 			<Loading
-				isLoading={catalogIsLoading || availabilityIsLoading || cartItemListIsLoading || favoriteItemListIsLoading}
+				isLoading={
+					catalogIsLoading || availabilityIsLoading || cartItemListIsLoading || favoriteItemListIsLoading
+				}
 				necessaryDataIsPersisted={!!catalog && !!availableItemIds && !!cartItemList && !!favoriteItemList}
 			>
 				<>
@@ -118,8 +124,9 @@ export function Component() {
 							<PriorityHigh color="error" />
 
 							<Typography variant="body1">
-								В вашем заказе содержались товары, указанное количество которых отсутствует на складе.
-								Количество товаров в корзине было скорректировано.
+								В вашем заказе содержались товары, которые теперь недоступны.
+								<br />
+								Корзина была скорректирована.
 							</Typography>
 						</div>
 					)}

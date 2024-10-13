@@ -295,222 +295,222 @@ export function Component() {
 					<Typography variant={isMobile ? "h4" : "h3"}>Оформление заказа</Typography>
 				</Box>
 
-				<form onSubmit={handleSubmit(handleCreateOrder)}>
-					<Box display={"flex"} flexDirection={isMobile ? "column" : "row"} gap={2} width={"100%"}>
-						<Box display={"flex"} flexDirection={"column"} gap={2} width={"100%"}>
-							{preorder === null ? (
-								<div className="section">
-									<div className="gap-2 d-f fd-c">
-										<Typography variant={"h5"}>
-											{isMobile ? "Доставка" : "Адрес и способ доставки"}{" "}
-										</Typography>
-										<Box>
-											<CardRadio
-												isChecked={service === "SELF_PICKUP"}
-												onChange={() => setValue("service", "SELF_PICKUP")}
-												mainText={"Самовывоз"}
-												subText={"Оплата при получении"}
-												imgUrl={mainLogoSmall}
-											/>
+				<form
+					onSubmit={handleSubmit(handleCreateOrder)}
+					className="gap-2 w-100 d-f"
+					style={{ flexDirection: isMobile ? "column" : "row" }}
+				>
+					<Box display={"flex"} flexDirection={"column"} gap={2} width={"100%"}>
+						{preorder === null ? (
+							<div className="section">
+								<div className="gap-2 d-f fd-c">
+									<Typography variant={"h5"}>
+										{isMobile ? "Доставка" : "Адрес и способ доставки"}{" "}
+									</Typography>
+									<Box>
+										<CardRadio
+											isChecked={service === "SELF_PICKUP"}
+											onChange={() => setValue("service", "SELF_PICKUP")}
+											mainText={"Самовывоз"}
+											subText={"Оплата при получении"}
+											imgUrl={mainLogoSmall}
+										/>
 
-											<CardRadio
-												isChecked={service === "CDEK"}
-												onChange={() => setValue("service", "CDEK")}
-												mainText={"СДЭК"}
-												subText={"Оплата доставки при получении"}
-												imgUrl={cdekLogo}
-											/>
+										<CardRadio
+											isChecked={service === "CDEK"}
+											onChange={() => setValue("service", "CDEK")}
+											mainText={"СДЭК"}
+											subText={"Оплата доставки при получении"}
+											imgUrl={cdekLogo}
+										/>
+									</Box>
+
+									{service === "SELF_PICKUP" && (
+										<Box display={"flex"} flexDirection={"column"} gap={"8px"}>
+											<Typography variant="h6">Самовывоз</Typography>
 										</Box>
+									)}
 
-										{service === "SELF_PICKUP" && (
-											<Box display={"flex"} flexDirection={"column"} gap={"8px"}>
-												<Typography variant="h6">Самовывоз</Typography>
-											</Box>
-										)}
+									{service === "CDEK" && (
+										<Box display={"flex"} flexDirection={"column"} gap={"8px"}>
+											{cdekDeliveryData ? (
+												<CDEKDeliveryInfo {...cdekDeliveryData} />
+											) : (
+												<Typography variant="h6">Адрес не выбран</Typography>
+											)}
 
-										{service === "CDEK" && (
-											<Box display={"flex"} flexDirection={"column"} gap={"8px"}>
-												{cdekDeliveryData ? (
-													<CDEKDeliveryInfo {...cdekDeliveryData} />
-												) : (
-													<Typography variant="h6">Адрес не выбран</Typography>
-												)}
+											<Button
+												variant="text"
+												color="warning"
+												size="medium"
+												sx={{ width: "fit-content", padding: 0, color: "warning.main" }}
+												onClick={() => setCdekWidgetOpen(true)}
+											>
+												{cdekDeliveryData ? "Изменить" : "Выбрать"}
+											</Button>
+										</Box>
+									)}
+									{errors.service && (
+										<Typography color="error" variant="body1">
+											{errors.service.message}
+										</Typography>
+									)}
+									{errors.point && (
+										<Typography color="error" variant="body1">
+											{errors.point.message}
+										</Typography>
+									)}
+								</div>
 
-												<Button
-													variant="text"
-													color="warning"
-													size="medium"
-													sx={{ width: "fit-content", padding: 0, color: "warning.main" }}
-													onClick={() => setCdekWidgetOpen(true)}
-												>
-													{cdekDeliveryData ? "Изменить" : "Выбрать"}
-												</Button>
-											</Box>
-										)}
-										{errors.service && (
-											<Typography color="error" variant="body1">
-												{errors.service.message}
-											</Typography>
-										)}
-										{errors.point && (
-											<Typography color="error" variant="body1">
-												{errors.point.message}
-											</Typography>
-										)}
-									</div>
+								<div>
+									<Typography variant="h5">Получатель</Typography>
+									<div
+										className="gap-1 ai-c d-f"
+										style={{ flexDirection: isMobile ? "column" : "row" }}
+									>
+										<Controller
+											name="recipient.phone"
+											control={control}
+											render={({ field, fieldState: { error } }) => (
+												<TextField
+													{...field}
+													label="Номер телефона"
+													variant="outlined"
+													fullWidth
+													margin="normal"
+													error={!!error}
+													helperText={error?.message}
+												/>
+											)}
+										/>
 
-									<div>
-										<Typography variant="h5">Получатель</Typography>
-										<div
-											className="gap-1 ai-c d-f"
-											style={{ flexDirection: isMobile ? "column" : "row" }}
-										>
-											<Controller
-												name="recipient.phone"
-												control={control}
-												render={({ field, fieldState: { error } }) => (
-													<TextField
-														{...field}
-														label="Номер телефона"
-														variant="outlined"
-														fullWidth
-														margin="normal"
-														error={!!error}
-														helperText={error?.message}
-													/>
-												)}
-											/>
-
-											<Controller
-												name="recipient.fullName"
-												control={control}
-												render={({ field, fieldState: { error } }) => (
-													<TextField
-														{...field}
-														label="ФИО"
-														variant="outlined"
-														fullWidth
-														margin="normal"
-														error={!!error}
-														helperText={error?.message}
-													/>
-												)}
-											/>
-										</div>
+										<Controller
+											name="recipient.fullName"
+											control={control}
+											render={({ field, fieldState: { error } }) => (
+												<TextField
+													{...field}
+													label="ФИО"
+													variant="outlined"
+													fullWidth
+													margin="normal"
+													error={!!error}
+													helperText={error?.message}
+												/>
+											)}
+										/>
 									</div>
 								</div>
-							) : (
-								<div className="section">
-									<Typography variant="h5">Доставка и дата получения на склад</Typography>
-									<Box gap={"8px"}>
-										<Typography variant="subtitle1">
-											Доставка к вам оформляется после полной оплаты товара и его приезда на склад
+							</div>
+						) : (
+							<div className="section">
+								<Typography variant="h5">Доставка и дата получения на склад</Typography>
+								<Box gap={"8px"}>
+									<Typography variant="subtitle1">
+										Доставка к вам оформляется после полной оплаты товара и его приезда на склад
+									</Typography>
+									<Box display={"flex"} flexDirection={"row"} gap={"8px"}>
+										<Typography color="typography.secondary" variant="subtitle1">
+											На складе ожидается:
 										</Typography>
-										<Box display={"flex"} flexDirection={"row"} gap={"8px"}>
-											<Typography color="typography.secondary" variant="subtitle1">
-												На складе ожидается:
-											</Typography>
-											<Typography variant="subtitle1">
-												{preorder.expectedArrival ?? "Неизвестно"}
-											</Typography>
-										</Box>
+										<Typography variant="subtitle1">
+											{preorder.expectedArrival ?? "Неизвестно"}
+										</Typography>
 									</Box>
+								</Box>
+							</div>
+						)}
+
+						<div className="section">
+							<Typography variant="h5">
+								{orderItems.length} {getRuGoodsWord(orderItems.length)}
+							</Typography>
+							{itemsCreditAvailable.length > 0 && (
+								<div className="gap-1 d-f fd-c">
+									<Typography variant="h4">Доступна рассрочка</Typography>
+									<Stack divider={<Divider />} direction={"column"}>
+										{itemsCreditAvailable.map((item) => (
+											<ShopOrderItemCardCredit
+												key={item.id}
+												imgUrl={getImageUrl(item.product.images.at(0)?.url ?? "", "small")}
+												title={item.product.title}
+												price={item.price}
+												quantity={item.quantity}
+												creditInfo={item.creditInfo as CreditInfo}
+												isCredit={itemsCredit.some((creditItem) => creditItem.id === item.id)}
+												onCreditChange={(isCredit) => {
+													const newItemsCredit = [...itemsCredit];
+													const creditItem = newItemsCredit.find(
+														(creditItem) => creditItem.id === item.id
+													);
+													if (!creditItem) return;
+													creditItem.isCredit = isCredit;
+													setItemsCredit(newItemsCredit);
+												}}
+											/>
+										))}
+									</Stack>
 								</div>
 							)}
-
-							<div className="section">
-								<Typography variant="h5">
-									{orderItems.length} {getRuGoodsWord(orderItems.length)}
-								</Typography>
-								{itemsCreditAvailable.length > 0 && (
-									<div className="gap-1 d-f fd-c">
-										<Typography variant="h4">Доступна рассрочка</Typography>
-										<Stack divider={<Divider />} direction={"column"}>
-											{itemsCreditAvailable.map((item) => (
-												<ShopOrderItemCardCredit
-													key={item.id}
-													imgUrl={getImageUrl(item.product.images.at(0)?.url ?? "", "small")}
-													title={item.product.title}
-													price={item.price}
-													quantity={item.quantity}
-													creditInfo={item.creditInfo as CreditInfo}
-													isCredit={itemsCredit.some(
-														(creditItem) => creditItem.id === item.id
-													)}
-													onCreditChange={(isCredit) => {
-														const newItemsCredit = [...itemsCredit];
-														const creditItem = newItemsCredit.find(
-															(creditItem) => creditItem.id === item.id
-														);
-														if (!creditItem) return;
-														creditItem.isCredit = isCredit;
-														setItemsCredit(newItemsCredit);
-													}}
-												/>
-											))}
-										</Stack>
-									</div>
-								)}
-								{itemsCreditUnavailable.length > 0 && (
-									<div className="gap-1 d-f fd-c">
-										<Stack divider={<Divider />} direction={"column"}>
-											{itemsCreditUnavailable.map((item) => (
-												<ShopOrderItemCard
-													key={item.id}
-													imgUrl={getImageUrl(item.product.images.at(0)?.url ?? "", "small")}
-													title={item.product.title}
-													price={item.price}
-													quantity={item.quantity}
-												/>
-											))}
-										</Stack>
-									</div>
-								)}
-							</div>
-						</Box>
-						<Box
-							position={"sticky"}
-							top={8}
-							display="flex"
-							flexDirection="column"
-							flexShrink={0}
-							gap={2} // assuming the theme's spacing unit is 8px, otherwise adjust accordingly
-							p={2}
-							bgcolor="white"
-							borderRadius={3}
-							width={isMobile ? "100%" : 360}
-							height="fit-content"
-						>
-							<Box display="flex" flexDirection="column" gap={1}>
-								{totalDiscount > 0 ? (
-									<Stack direction={"column"} gap={1} divider={<Divider flexItem />}>
-										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
-											<Typography variant="body1">Цена без скидки:</Typography>
-											<Typography variant="h4" sx={{ color: "typography.secondary" }}>
-												{totalPrice} ₽
-											</Typography>
-										</div>
-										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
-											<Typography variant="body1">Скидка:</Typography>
-											<Typography variant="h4" color="warning">
-												{totalDiscount} ₽
-											</Typography>
-										</div>
-										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
-											<Typography variant="body1">Итого:</Typography>
-											<Typography variant="h4">{totalPrice - totalDiscount} ₽</Typography>
-										</div>
+							{itemsCreditUnavailable.length > 0 && (
+								<div className="gap-1 d-f fd-c">
+									<Stack divider={<Divider />} direction={"column"}>
+										{itemsCreditUnavailable.map((item) => (
+											<ShopOrderItemCard
+												key={item.id}
+												imgUrl={getImageUrl(item.product.images.at(0)?.url ?? "", "small")}
+												title={item.product.title}
+												price={item.price}
+												quantity={item.quantity}
+											/>
+										))}
 									</Stack>
-								) : (
+								</div>
+							)}
+						</div>
+					</Box>
+					<Box
+						position={"sticky"}
+						top={8}
+						display="flex"
+						flexDirection="column"
+						flexShrink={0}
+						gap={2} // assuming the theme's spacing unit is 8px, otherwise adjust accordingly
+						p={2}
+						bgcolor="white"
+						borderRadius={3}
+						width={isMobile ? "100%" : 360}
+						height="fit-content"
+					>
+						<Box display="flex" flexDirection="column" gap={1}>
+							{totalDiscount > 0 ? (
+								<Stack direction={"column"} gap={1} divider={<Divider flexItem />}>
+									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
+										<Typography variant="body1">Цена без скидки:</Typography>
+										<Typography variant="h6" sx={{ color: "typography.secondary" }}>
+											{totalPrice} ₽
+										</Typography>
+									</div>
+									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
+										<Typography variant="body1">Скидка:</Typography>
+										<Typography variant="h6" color="warning">
+											{totalDiscount} ₽
+										</Typography>
+									</div>
 									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 										<Typography variant="body1">Итого:</Typography>
-										<Typography variant="h4">{totalPrice} ₽</Typography>
+										<Typography variant="h6">{totalPrice - totalDiscount} ₽</Typography>
 									</div>
-								)}
-								<Button variant="contained" disabled={orderMakeIsLoading} type="submit">
-									Оплатить
-								</Button>
-							</Box>
+								</Stack>
+							) : (
+								<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
+									<Typography variant="body1">Итого:</Typography>
+									<Typography variant="h6">{totalPrice} ₽</Typography>
+								</div>
+							)}
+							<Button variant="contained" disabled={orderMakeIsLoading} type="submit">
+								Оплатить
+							</Button>
 						</Box>
 					</Box>
 				</form>

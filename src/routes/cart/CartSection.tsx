@@ -231,25 +231,25 @@ export const CartSection = ({
 									<Stack direction={"column"} gap={1} divider={<Divider flexItem />}>
 										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 											<Typography variant="body1">Цена без скидки:</Typography>
-											<Typography variant="h4" sx={{ color: "typography.secondary" }}>
+											<Typography variant="h6" sx={{ color: "typography.secondary" }}>
 												{totalPrice} ₽
 											</Typography>
 										</div>
 										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 											<Typography variant="body1">Скидка:</Typography>
-											<Typography variant="h4" color="warning">
+											<Typography variant="h6" color="warning">
 												{totalDiscount} ₽
 											</Typography>
 										</div>
 										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 											<Typography variant="body1">Итого:</Typography>
-											<Typography variant="h4">{totalPrice - totalDiscount} ₽</Typography>
+											<Typography variant="h6">{totalPrice - totalDiscount} ₽</Typography>
 										</div>
 									</Stack>
 								) : (
 									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
 										<Typography variant="body1">Итого:</Typography>
-										<Typography variant="h4">{totalPrice} ₽</Typography>
+										<Typography variant="h6">{totalPrice} ₽</Typography>
 									</div>
 								)}
 								<Typography color="typography.secondary" variant="body1">
