@@ -29,14 +29,22 @@ const PublicationActionButtons: React.FC<ActionButtonsProps> = ({
 					<CircularProgress />
 				) : isAvailable ? (
 					isInCart ? (
-						<ShoppingCart sx={{ color: "icon.primary" }} />
+						<>
+							<ShoppingCart sx={{ color: "icon.primary" }} />
+							<Typography>Перейти в корзину</Typography>
+						</>
 					) : (
-						<AddShoppingCart sx={{ color: "icon.primary" }} />
+						<>
+							<AddShoppingCart sx={{ color: "icon.primary" }} />
+							<Typography>Добавить в корзину</Typography>
+						</>
 					)
 				) : (
-					<NotificationAdd />
+					<>
+						<NotificationAdd />
+						<Typography>Уведомить при поступлении</Typography>
+					</>
 				)}
-				<Typography>{isInCart ? "Перейти" : "Добавить"} в корзину</Typography>
 			</Button>
 			<IconButton onClick={onFavoriteClick} disabled={isFavorite === undefined}>
 				{favoritesIsLoading ? (
