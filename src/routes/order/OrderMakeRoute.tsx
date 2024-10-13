@@ -172,8 +172,6 @@ export function Component() {
 		);
 	}, [catalog, checkoutItemList]);
 
-	console.log({orderItems})
-
 	const packages: DeliveryPackage[] = useMemo(
 		() =>
 			orderItems
@@ -191,55 +189,30 @@ export function Component() {
 		[orderItems]
 	);
 
-	console.log({packages})
-
 	const itemsCreditAvailable = useMemo(() => orderItems.filter((item) => item.creditInfo !== null), [orderItems]);
 	const itemsCreditUnavailable = useMemo(() => orderItems.filter((item) => item.creditInfo === null), [orderItems]);
 
-	console.log({itemsCreditAvailable})
-	console.log({itemsCreditUnavailable})
-
 	const preorder = useMemo(() => orderItems.at(0)?.preorder || null, [orderItems]);
-
-	console.log({preorder})
 
 	const [itemsCredit, setItemsCredit] = useState<{ id: string; isCredit: boolean }[]>(
 		orderItems.map((item) => ({ id: item.id, isCredit: false }))
 	);
 
-	console.log({itemsCredit})
+	const totalPrice = useMemo(() => orderItems.map((orderItem) => {
+		if (itemsCredit.some((creditItem) => orderItem.id === creditItem.id)) {
+			return (orderItem.creditInfo?.payments[0].sum || 0) * orderItem.quantity;
+		} else {
+			return orderItem.price * orderItem.quantity;
+		}
+	}).reduce((a, b) => a + b, 0), [orderItems, itemsCredit]);
 
-	const totalNonCreditPrice = useMemo(
-		() =>
-			orderItems
-				.filter((cartItem) => !itemsCredit.some((creditItem) => cartItem.id === creditItem.id))
-				.map((checkoutItem) => checkoutItem.price * checkoutItem.quantity)
-				.reduce((a, b) => a + b, 0),
-		[orderItems, itemsCredit]
-	);
-
-	console.log({totalNonCreditPrice})
-
-	const totalCreditPrice = useMemo(
-		() =>
-			orderItems
-				.filter((cartItem) => itemsCredit.some((creditItem) => cartItem.id === creditItem.id))
-				.map((checkoutItem) => (checkoutItem.creditInfo?.payments[0].sum || 0) * checkoutItem.quantity)
-				.reduce((a, b) => a + b, 0),
-		[orderItems, itemsCredit]
-	);
-
-	console.log({totalCreditPrice})
-
-	const totalPrice = useMemo(() => totalNonCreditPrice + totalCreditPrice, [totalNonCreditPrice, totalCreditPrice]);
-
-	console.log({totalPrice})
+	useEffect(() => console.log(orderItems), [orderItems]);
+	useEffect(() => console.log(itemsCredit), [itemsCredit]);
+	useEffect(() => console.log(totalPrice), [totalPrice]);
 
 	const totalDiscount = orderItems
 		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
 		.reduce((a, b) => a + b, 0);
-
-	console.log({totalDiscount})
 
 	const handleCreateOrder = async (data: DeliveryFormData) => {
 		const delivery = DeliverySchema.parse(data);
