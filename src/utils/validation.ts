@@ -7,6 +7,6 @@ export const validateData = <T extends ZodSchema>(schema: T, data: unknown): z.i
 		if (error instanceof ZodError) {
 			console.error("Validation error", { schema: schema.description, issues: error.issues });
 		}
-		throw error;
+		return
 	}
 };
