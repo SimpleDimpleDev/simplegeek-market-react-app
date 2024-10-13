@@ -200,20 +200,16 @@ export function Component() {
 		orderItems.map((item) => ({ id: item.id, isCredit: false }))
 	);
 
-	const totalPrice = useMemo(
-		() =>
-			orderItems
-				.map((orderItem) => {
-					if (itemsCredit.some((creditItem) => orderItem.id === creditItem.id)) {
-						return (orderItem.creditInfo?.payments[0].sum || 0) * orderItem.quantity;
-					} else {
-						console.log({ id: orderItem.id, price: orderItem.price, quantity: orderItem.quantity });
-						return orderItem.price * orderItem.quantity;
-					}
-				})
-				.reduce((a, b) => a + b, 0),
-		[orderItems, itemsCredit]
-	);
+	const totalPrice = orderItems
+		.map((orderItem) => {
+			if (itemsCredit.some((creditItem) => orderItem.id === creditItem.id)) {
+				return (orderItem.creditInfo?.payments[0].sum || 0) * orderItem.quantity;
+			} else {
+				console.log({ id: orderItem.id, price: orderItem.price, quantity: orderItem.quantity });
+				return orderItem.price * orderItem.quantity;
+			}
+		})
+		.reduce((a, b) => a + b, 0);
 
 	useEffect(() => console.log({ orderItems }), [orderItems]);
 	useEffect(() => console.log({ itemsCredit }), [itemsCredit]);
