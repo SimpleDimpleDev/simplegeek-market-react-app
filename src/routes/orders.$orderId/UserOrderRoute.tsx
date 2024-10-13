@@ -318,7 +318,7 @@ export function Component() {
 												variant="contained"
 												sx={{ width: "fit-content", display: "flex", gap: 1 }}
 											>
-												Оплатить <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
+												{"Оплатить "} <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
 											</Button>
 										</div>
 									)}
