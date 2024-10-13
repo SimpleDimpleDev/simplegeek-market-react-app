@@ -72,7 +72,9 @@ export function Component() {
 
 	const user = useSelector((state: RootState) => state.user.identity);
 
-	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
+	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+	});
 	const { data: checkoutItemList, isLoading: checkoutItemListIsLoading } = useGetCheckoutItemsQuery();
 	const { data: userSavedDelivery, isLoading: userSavedDeliveryIsLoading } = useGetSavedDeliveryQuery();
 	const [
@@ -170,6 +172,8 @@ export function Component() {
 		);
 	}, [catalog, checkoutItemList]);
 
+	console.log({orderItems})
+
 	const packages: DeliveryPackage[] = useMemo(
 		() =>
 			orderItems
@@ -187,14 +191,23 @@ export function Component() {
 		[orderItems]
 	);
 
+	console.log({packages})
+
 	const itemsCreditAvailable = useMemo(() => orderItems.filter((item) => item.creditInfo !== null), [orderItems]);
 	const itemsCreditUnavailable = useMemo(() => orderItems.filter((item) => item.creditInfo === null), [orderItems]);
 
+	console.log({itemsCreditAvailable})
+	console.log({itemsCreditUnavailable})
+
 	const preorder = useMemo(() => orderItems.at(0)?.preorder || null, [orderItems]);
+
+	console.log({preorder})
 
 	const [itemsCredit, setItemsCredit] = useState<{ id: string; isCredit: boolean }[]>(
 		orderItems.map((item) => ({ id: item.id, isCredit: false }))
 	);
+
+	console.log({itemsCredit})
 
 	const totalNonCreditPrice = useMemo(
 		() =>
@@ -205,6 +218,8 @@ export function Component() {
 		[orderItems, itemsCredit]
 	);
 
+	console.log({totalNonCreditPrice})
+
 	const totalCreditPrice = useMemo(
 		() =>
 			orderItems
@@ -214,11 +229,17 @@ export function Component() {
 		[orderItems, itemsCredit]
 	);
 
-	const totalPrice = useMemo(() => totalNonCreditPrice - totalCreditPrice, [totalNonCreditPrice, totalCreditPrice]);
+	console.log({totalCreditPrice})
+
+	const totalPrice = useMemo(() => totalNonCreditPrice + totalCreditPrice, [totalNonCreditPrice, totalCreditPrice]);
+
+	console.log({totalPrice})
 
 	const totalDiscount = orderItems
 		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
 		.reduce((a, b) => a + b, 0);
+
+	console.log({totalDiscount})
 
 	const handleCreateOrder = async (data: DeliveryFormData) => {
 		const delivery = DeliverySchema.parse(data);

@@ -107,7 +107,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 									variant="contained"
 									sx={{ width: "fit-content", display: "flex", gap: 1 }}
 								>
-									Оплатить <CountdownTimer deadline={order.initialInvoice.expiresAt} />
+									Оплатить{" "}<CountdownTimer deadline={order.initialInvoice.expiresAt} />
 								</Button>
 							)}
 							<Button
