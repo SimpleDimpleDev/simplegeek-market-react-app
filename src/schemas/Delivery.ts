@@ -9,6 +9,7 @@ export const DeliveryPointSchema = z.object({
 });
 
 export const RecipientSchema = z.object({
+	email: z.string(),
 	fullName: z.string(),
 	phone: z.string(),
 });

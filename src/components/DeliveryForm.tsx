@@ -23,6 +23,7 @@ type DeliveryFormData = {
 const DeliveryFormResolver = z
 	.object({
 		recipient: z.object({
+			email: z.string({ message: "Укажите почту" }).regex(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/, "Невалидная почта"),
 			fullName: z.string({ message: "Укажите ФИО" }).min(2, "ФИО должно быть не менее 2 символов"),
 			phone: z
 				.string({ message: "Укажите номер телефона" })
@@ -96,7 +97,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onChange, deliver
 	const handleSave = (data: DeliveryFormData) => {
 		onChange(DeliverySchema.parse(data));
 		setIsEditing(false);
-		reset(DeliverySchema.parse(data))
+		reset(DeliverySchema.parse(data));
 	};
 
 	const handleStopEditing = () => {
@@ -219,6 +220,24 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onChange, deliver
 				<div>
 					<Typography variant="h5">Получатель</Typography>
 					<Grid2 container spacing={2}>
+						<Grid2 size={{ xs: 12, sm: 12, md: 6 }}>
+							<Controller
+								name="recipient.email"
+								disabled={!isEditing}
+								control={control}
+								render={({ field, fieldState: { error } }) => (
+									<TextField
+										{...field}
+										label="Электронная почта"
+										variant="outlined"
+										fullWidth
+										margin="normal"
+										error={!!error}
+										helperText={error?.message}
+									/>
+								)}
+							/>
+						</Grid2>
 						<Grid2 size={{ xs: 12, sm: 12, md: 6 }}>
 							<Controller
 								name="recipient.phone"
