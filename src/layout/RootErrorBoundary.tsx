@@ -7,7 +7,7 @@ export default function RootErrorBoundary() {
 
 	return (
 		<div className="w-100v h-100v ai-c d-f fd-c jc-c">
-			<SomethingWentWrong />
+			<SomethingWentWrong showButton={false} />
 		</div>
 	);
 }
