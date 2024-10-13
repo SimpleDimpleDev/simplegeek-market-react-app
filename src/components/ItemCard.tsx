@@ -160,15 +160,21 @@ export default function ItemCard({
 							)}
 						</IconButton>
 						<IconButton
-							disabled={availabilityIsLoading || cartItemListIsLoading || trackedItemListIsLoading}
+							disabled={isAvailable === undefined || isInCart === undefined || isTracked === undefined}
 							onClick={handleAddToCart}
 							style={{
 								width: 48,
 								height: 48,
 								borderRadius: 8,
 							}}
+							sx={{
+								backgroundColor: "primary.main",
+								"&:hover": {
+									backgroundColor: "primary.dark",
+								},
+							}}
 						>
-							{availabilityIsLoading || cartItemListIsLoading ? (
+							{availabilityIsLoading || cartItemListIsLoading || trackedItemListIsLoading ? (
 								<CircularProgress sx={{ color: "icon.primary" }} />
 							) : isAvailable ? (
 								isInCart ? (

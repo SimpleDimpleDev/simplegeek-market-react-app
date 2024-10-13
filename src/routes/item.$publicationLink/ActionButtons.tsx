@@ -43,11 +43,13 @@ const PublicationActionButtons: React.FC<ActionButtonsProps> = ({
 				size="large"
 				fullWidth
 				onClick={onCartClick}
-				disabled={
-					isAvailable === undefined ||
-					isInCart === undefined ||
-					isTracked === undefined
-				}
+				disabled={isAvailable === undefined || isInCart === undefined || isTracked === undefined}
+				sx={{
+					backgroundColor: "primary.main",
+					"&:hover": {
+						backgroundColor: "primary.dark",
+					},
+				}}
 			>
 				{availabilityIsLoading || cartIsLoading || trackedIsLoading ? (
 					<CircularProgress />
