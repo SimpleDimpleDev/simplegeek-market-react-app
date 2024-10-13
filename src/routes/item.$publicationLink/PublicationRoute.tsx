@@ -101,7 +101,7 @@ export function Component() {
 	return (
 		<Loading
 			isLoading={catalogIsLoading}
-			necessaryDataIsPersisted={!!catalog && !!publication && !!selectedVariation}
+			necessaryDataIsPersisted={!!catalog && !!publication && !!selectedVariation && !!availableItemList}
 		>
 			{!publication || !selectedVariation ? null : isMobile ? (
 				<Suspense fallback={<Loading isLoading={true} />}>
