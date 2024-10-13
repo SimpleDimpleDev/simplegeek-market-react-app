@@ -72,9 +72,7 @@ export function Component() {
 
 	const user = useSelector((state: RootState) => state.user.identity);
 
-	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
-		refetchOnMountOrArgChange: true,
-	});
+	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: checkoutItemList, isLoading: checkoutItemListIsLoading } = useGetCheckoutItemsQuery(void 0, {
 		refetchOnMountOrArgChange: true,
 	});
@@ -196,24 +194,26 @@ export function Component() {
 
 	const preorder = useMemo(() => orderItems.at(0)?.preorder || null, [orderItems]);
 
-	const [itemsCredit, setItemsCredit] = useState<{ id: string; isCredit: boolean }[]>(
-		orderItems.map((item) => ({ id: item.id, isCredit: false }))
+	const [itemsCredit, setItemsCredit] = useState<{ id: string; isCredit: boolean }[]>([]);
+
+	useEffect(() => {
+		setItemsCredit(orderItems.map((item) => ({ id: item.id, isCredit: false })));
+	}, [orderItems]);
+
+	const totalPrice = useMemo(
+		() =>
+			orderItems
+				.map((orderItem) => {
+					if (itemsCredit.some((creditItem) => orderItem.id === creditItem.id && creditItem.isCredit)) {
+						return (orderItem.creditInfo?.payments[0].sum || 0) * orderItem.quantity;
+					} else {
+						console.log({ id: orderItem.id, price: orderItem.price, quantity: orderItem.quantity });
+						return orderItem.price * orderItem.quantity;
+					}
+				})
+				.reduce((a, b) => a + b, 0),
+		[orderItems, itemsCredit]
 	);
-
-	const totalPrice = orderItems
-		.map((orderItem) => {
-			if (itemsCredit.some((creditItem) => orderItem.id === creditItem.id)) {
-				return (orderItem.creditInfo?.payments[0].sum || 0) * orderItem.quantity;
-			} else {
-				console.log({ id: orderItem.id, price: orderItem.price, quantity: orderItem.quantity });
-				return orderItem.price * orderItem.quantity;
-			}
-		})
-		.reduce((a, b) => a + b, 0);
-
-	useEffect(() => console.log({ orderItems }), [orderItems]);
-	useEffect(() => console.log({ itemsCredit }), [itemsCredit]);
-	useEffect(() => console.log({ totalPrice }), [totalPrice]);
 
 	const totalDiscount = orderItems
 		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
