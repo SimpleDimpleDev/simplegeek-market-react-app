@@ -1,4 +1,4 @@
-import { Box, Button, Grid2, IconButton, Modal, TextField, Typography } from "@mui/material";
+import { Box, Button, IconButton, Modal, TextField, Typography } from "@mui/material";
 import { CDEKDeliveryInfo, CDEKWidget } from "./widgets/cdek";
 import { Controller, useForm } from "react-hook-form";
 import { Delivery, DeliveryPackage, DeliveryPoint, DeliveryService, Recipient } from "@appTypes/Delivery";
@@ -219,62 +219,54 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onChange, deliver
 
 				<div>
 					<Typography variant="h5">Получатель</Typography>
-					<Grid2 container spacing={2}>
-						<Grid2 size={{ xs: 12, sm: 12, md: 6 }}>
-							<Controller
-								name="recipient.email"
-								disabled={!isEditing}
-								control={control}
-								render={({ field, fieldState: { error } }) => (
-									<TextField
-										{...field}
-										label="Электронная почта"
-										variant="outlined"
-										fullWidth
-										margin="normal"
-										error={!!error}
-										helperText={error?.message}
-									/>
-								)}
-							/>
-						</Grid2>
-						<Grid2 size={{ xs: 12, sm: 12, md: 6 }}>
-							<Controller
-								name="recipient.phone"
-								disabled={!isEditing}
-								control={control}
-								render={({ field, fieldState: { error } }) => (
-									<TextField
-										{...field}
-										label="Номер телефона"
-										variant="outlined"
-										fullWidth
-										margin="normal"
-										error={!!error}
-										helperText={error?.message}
-									/>
-								)}
-							/>
-						</Grid2>
-						<Grid2 size={{ xs: 12, sm: 12, md: 6 }}>
-							<Controller
-								name="recipient.fullName"
-								control={control}
-								disabled={!isEditing}
-								render={({ field, fieldState: { error } }) => (
-									<TextField
-										{...field}
-										label="ФИО"
-										variant="outlined"
-										fullWidth
-										margin="normal"
-										error={!!error}
-										helperText={error?.message}
-									/>
-								)}
-							/>
-						</Grid2>
-					</Grid2>
+					<div className="gap-1 ai-c d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
+						<Controller
+							name="recipient.email"
+							control={control}
+							render={({ field, fieldState: { error } }) => (
+								<TextField
+									{...field}
+									label="Электронная почта"
+									variant="outlined"
+									fullWidth
+									margin="normal"
+									error={!!error}
+									helperText={error?.message}
+								/>
+							)}
+						/>
+						<Controller
+							name="recipient.phone"
+							control={control}
+							render={({ field, fieldState: { error } }) => (
+								<TextField
+									{...field}
+									label="Номер телефона"
+									variant="outlined"
+									fullWidth
+									margin="normal"
+									error={!!error}
+									helperText={error?.message}
+								/>
+							)}
+						/>
+
+						<Controller
+							name="recipient.fullName"
+							control={control}
+							render={({ field, fieldState: { error } }) => (
+								<TextField
+									{...field}
+									label="ФИО"
+									variant="outlined"
+									fullWidth
+									margin="normal"
+									error={!!error}
+									helperText={error?.message}
+								/>
+							)}
+						/>
+					</div>
 				</div>
 
 				{isEditing ? (

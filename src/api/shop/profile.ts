@@ -21,9 +21,9 @@ const profileApi = shopApi.injectEndpoints({
 			}),
 			transformResponse: (response) => validateData(OrderShopSchema, response),
 		}),
-		getDeliveryData: build.query<z.infer<typeof DeliverySchema>, void>({
+		getSavedDelivery: build.query<z.infer<typeof DeliverySchema>, void>({
 			query: () => ({
-				url: "/profile/delivery-data",
+				url: "/profile/saved-delivery",
 				method: "GET",
 			}),
 			transformResponse: (response) => validateData(DeliverySchema, response),
@@ -31,4 +31,4 @@ const profileApi = shopApi.injectEndpoints({
 	}),
 });
 
-export const { useGetOrderListQuery, useGetOrderQuery, useGetDeliveryDataQuery } = profileApi;
+export const { useGetOrderListQuery, useGetOrderQuery, useGetSavedDeliveryQuery } = profileApi;

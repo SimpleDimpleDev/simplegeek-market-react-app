@@ -1,5 +1,5 @@
 import { ChevronLeft, Close } from "@mui/icons-material";
-import { Box, Button, Divider, Grid2, IconButton, Modal, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Divider, IconButton, Modal, Stack, TextField, Typography } from "@mui/material";
 import { useNavigate, useSubmit } from "react-router-dom";
 
 import { getRuGoodsWord } from "@utils/format";
@@ -14,7 +14,7 @@ import { useCreateOrderMutation, useGetCheckoutItemsQuery } from "@api/shop/orde
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { z } from "zod";
 import { CDEKDeliveryData } from "@appTypes/CDEK";
-import { useGetDeliveryDataQuery } from "@api/shop/profile";
+import { useGetSavedDeliveryQuery } from "@api/shop/profile";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DeliverySchema } from "@schemas/Delivery";
@@ -75,7 +75,7 @@ export function Component() {
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: checkoutItemList, isLoading: checkoutItemListIsLoading } = useGetCheckoutItemsQuery();
-	const { data: userSavedDelivery, isLoading: userSavedDeliveryIsLoading } = useGetDeliveryDataQuery();
+	const { data: userSavedDelivery, isLoading: userSavedDeliveryIsLoading } = useGetSavedDeliveryQuery();
 	const [
 		createOrder,
 		{
@@ -364,59 +364,57 @@ export function Component() {
 
 									<div>
 										<Typography variant="h5">Получатель</Typography>
-										<Grid2 container spacing={2}>
-											<Grid2 size={{ xs: 12, sm: 12, md: 6 }}>
-												<Controller
-													name="recipient.email"
-													control={control}
-													render={({ field, fieldState: { error } }) => (
-														<TextField
-															{...field}
-															label="Электронная почта"
-															variant="outlined"
-															fullWidth
-															margin="normal"
-															error={!!error}
-															helperText={error?.message}
-														/>
-													)}
-												/>
-											</Grid2>
-											<Grid2 size={{ xs: 12, sm: 12, md: 6 }}>
-												<Controller
-													name="recipient.phone"
-													control={control}
-													render={({ field, fieldState: { error } }) => (
-														<TextField
-															{...field}
-															label="Номер телефона"
-															variant="outlined"
-															fullWidth
-															margin="normal"
-															error={!!error}
-															helperText={error?.message}
-														/>
-													)}
-												/>
-											</Grid2>
-											<Grid2 size={{ xs: 12, sm: 12, md: 6 }}>
-												<Controller
-													name="recipient.fullName"
-													control={control}
-													render={({ field, fieldState: { error } }) => (
-														<TextField
-															{...field}
-															label="ФИО"
-															variant="outlined"
-															fullWidth
-															margin="normal"
-															error={!!error}
-															helperText={error?.message}
-														/>
-													)}
-												/>
-											</Grid2>
-										</Grid2>
+										<div
+											className="gap-1 ai-c d-f"
+											style={{ flexDirection: isMobile ? "column" : "row" }}
+										>
+											<Controller
+												name="recipient.email"
+												control={control}
+												render={({ field, fieldState: { error } }) => (
+													<TextField
+														{...field}
+														label="Электронная почта"
+														variant="outlined"
+														fullWidth
+														margin="normal"
+														error={!!error}
+														helperText={error?.message}
+													/>
+												)}
+											/>
+											<Controller
+												name="recipient.phone"
+												control={control}
+												render={({ field, fieldState: { error } }) => (
+													<TextField
+														{...field}
+														label="Номер телефона"
+														variant="outlined"
+														fullWidth
+														margin="normal"
+														error={!!error}
+														helperText={error?.message}
+													/>
+												)}
+											/>
+
+											<Controller
+												name="recipient.fullName"
+												control={control}
+												render={({ field, fieldState: { error } }) => (
+													<TextField
+														{...field}
+														label="ФИО"
+														variant="outlined"
+														fullWidth
+														margin="normal"
+														error={!!error}
+														helperText={error?.message}
+													/>
+												)}
+											/>
+										</div>
 									</div>
 								</div>
 							) : (
