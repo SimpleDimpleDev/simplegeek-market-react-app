@@ -20,8 +20,8 @@ const useItemsToRender = ({ items, filterFunction, sorting }: UseItemsToRenderPr
 		if (items === undefined) return undefined;
 		const newItemsToRender = getSortedItems(items.filter(filterFunction), sorting);
 		if (
-			JSON.stringify(newItemsToRender.map((item) => item.id)) ===
-			JSON.stringify(prevItemsToRender.current?.map((item) => item.id))
+			JSON.stringify(newItemsToRender) ===
+			JSON.stringify(prevItemsToRender.current)
 		) {
 			return prevItemsToRender.current;
 		}
