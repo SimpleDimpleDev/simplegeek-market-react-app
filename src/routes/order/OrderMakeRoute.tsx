@@ -206,9 +206,9 @@ export function Component() {
 		}
 	}).reduce((a, b) => a + b, 0), [orderItems, itemsCredit]);
 
-	useEffect(() => console.log(orderItems), [orderItems]);
-	useEffect(() => console.log(itemsCredit), [itemsCredit]);
-	useEffect(() => console.log(totalPrice), [totalPrice]);
+	useEffect(() => console.log({orderItems}), [orderItems]);
+	useEffect(() => console.log({itemsCredit}), [itemsCredit]);
+	useEffect(() => console.log({totalPrice}), [totalPrice]);
 
 	const totalDiscount = orderItems
 		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
