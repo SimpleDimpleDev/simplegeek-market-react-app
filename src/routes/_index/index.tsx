@@ -31,8 +31,18 @@ import SomethingWentWrong from "@components/SomethingWentWrong";
 export function Component() {
 	const isMobile = useIsMobile();
 
-	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
-	const { data: availableItemIds, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery();
+	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+		pollingInterval: 3000,
+		skipPollingIfUnfocused: true,
+		refetchOnFocus: true,
+	});
+	const { data: availableItemIds, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+		pollingInterval: 3000,
+		skipPollingIfUnfocused: true,
+		refetchOnFocus: true,
+	});
 
 	const catalogItems = useMemo(() => catalog?.items, [catalog]);
 	const {
