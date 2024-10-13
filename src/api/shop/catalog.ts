@@ -48,7 +48,7 @@ export const catalogApi = shopApi.injectEndpoints({
 				method: "GET",
 			}),
 			providesTags: ["ItemsAvailability"],
-			transformErrorResponse: (response) => validateData(CatalogItemsAvailabilitySchema, response),
+			transformResponse: (response) => validateData(CatalogItemsAvailabilitySchema, response),
 		}),
 	}),
 });
