@@ -1,4 +1,11 @@
-import { AddShoppingCart, Favorite, FavoriteBorder, NotificationAdd, ShoppingCart } from "@mui/icons-material";
+import {
+	AddShoppingCart,
+	Favorite,
+	FavoriteBorder,
+	NotificationAdd,
+	NotificationsOff,
+	ShoppingCart,
+} from "@mui/icons-material";
 import { CircularProgress, IconButton, Radio, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,6 +15,7 @@ import { CatalogItem } from "@appTypes/CatalogItem";
 import { CreditInfo } from "@appTypes/Credit";
 import { useAddCartItemMutation } from "@api/shop/cart";
 import { useAddFavoriteItemMutation, useRemoveFavoriteItemMutation } from "@api/shop/favorites";
+import { useAddTrackedItemMutation, useRemoveTrackedItemMutation } from "@api/shop/tracked";
 
 interface ItemCardProps {
 	data: CatalogItem;
@@ -20,6 +28,9 @@ interface ItemCardProps {
 
 	isFavorite?: boolean;
 	favoriteItemListIsLoading: boolean;
+
+	isTracked?: boolean;
+	trackedItemListIsLoading: boolean;
 }
 
 export default function ItemCard({
@@ -30,12 +41,18 @@ export default function ItemCard({
 	cartItemListIsLoading,
 	isFavorite,
 	favoriteItemListIsLoading,
+	isTracked,
+	trackedItemListIsLoading,
 }: ItemCardProps) {
 	const navigate = useNavigate();
 
 	const [addCartItem] = useAddCartItemMutation();
+
 	const [addFavoriteItem] = useAddFavoriteItemMutation();
 	const [removeFavoriteItem] = useRemoveFavoriteItemMutation();
+
+	const [addTrackedItem] = useAddTrackedItemMutation();
+	const [removeTrackedItem] = useRemoveTrackedItemMutation();
 
 	function handleToggleFavorite(event: React.MouseEvent<HTMLElement, MouseEvent>) {
 		event.stopPropagation();
@@ -49,14 +66,15 @@ export default function ItemCard({
 
 	const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		event.stopPropagation();
-		if (isAvailable === undefined || isInCart === undefined) return;
+		if (isAvailable === undefined || isInCart === undefined || isTracked === undefined) return;
 		if (isInCart) {
 			navigate("/cart");
 		} else if (isAvailable) {
 			addCartItem({ itemId: data.id });
+		} else if (isTracked) {
+			removeTrackedItem({ itemId: data.id });
 		} else {
-			// TODO: implement tracked items
-			alert("Товар отсутствует в наличии");
+			addTrackedItem({ itemId: data.id });
 		}
 	};
 
@@ -142,19 +160,12 @@ export default function ItemCard({
 							)}
 						</IconButton>
 						<IconButton
-							disabled={availabilityIsLoading || cartItemListIsLoading}
+							disabled={availabilityIsLoading || cartItemListIsLoading || trackedItemListIsLoading}
 							onClick={handleAddToCart}
 							style={{
 								width: 48,
 								height: 48,
 								borderRadius: 8,
-							}}
-							sx={{
-								backgroundColor: isAvailable ? "primary.main" : "surface.tertiary",
-								cursor: isAvailable ? "pointer" : "default",
-								"&:hover": {
-									backgroundColor: isAvailable ? "primary.dark" : "surface.tertiary",
-								},
 							}}
 						>
 							{availabilityIsLoading || cartItemListIsLoading ? (
@@ -165,8 +176,10 @@ export default function ItemCard({
 								) : (
 									<AddShoppingCart sx={{ color: "icon.primary" }} />
 								)
-							) : (
+							) : isTracked ? (
 								<NotificationAdd sx={{ color: "icon.tertiary" }} />
+							) : (
+								<NotificationsOff sx={{ color: "icon.tertiary" }} />
 							)}
 						</IconButton>
 					</div>

@@ -19,4 +19,7 @@ export type PublicationProps = {
 	favoriteItemListIsLoading: boolean;
 	selectedVariationIsFavorite: boolean | undefined;
 	onFavoriteClick: () => void;
+
+	trackedItemListIsLoading: boolean;
+	selectedVariationIsTracked: boolean | undefined;
 };

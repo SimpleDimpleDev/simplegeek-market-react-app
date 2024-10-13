@@ -6,7 +6,7 @@ const shopApi = createApi({
 		baseUrl: import.meta.env.SHOP_API_URL,
 		credentials: "include",
 	}),
-    tagTypes: ["Catalog", "ItemsAvailability", "Cart", "Favorites"],
+    tagTypes: ["Catalog", "ItemsAvailability", "Cart", "Favorites", "Tracked"],
 	endpoints: () => ({}),
 });
 

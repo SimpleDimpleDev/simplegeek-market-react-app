@@ -27,6 +27,9 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 	favoriteItemListIsLoading,
 	selectedVariationIsFavorite,
 	onFavoriteClick,
+
+	trackedItemListIsLoading,
+	selectedVariationIsTracked,
 }) => {
 	const navigate = useNavigate();
 
@@ -78,7 +81,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 						</Box>
 					)}
 					{selectedVariation.product.filterGroups.length !== 0 && (
-						<Box display={"flex"} flexDirection={"column"}  gap={2}>
+						<Box display={"flex"} flexDirection={"column"} gap={2}>
 							<Typography variant="h5">О товаре</Typography>
 							{selectedVariation.product.filterGroups.map((filterGroup) =>
 								filterGroup.filters.map((filter, index) => (
@@ -136,6 +139,8 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 							favoritesIsLoading={favoriteItemListIsLoading}
 							cartIsLoading={cartItemListIsLoading}
 							availabilityIsLoading={availableItemIdsIsLoading}
+							trackedIsLoading={trackedItemListIsLoading}
+							isTracked={selectedVariationIsTracked}
 						/>
 						{publication.preorder && (
 							<Typography variant="body2" color={"typography.secondary"}>

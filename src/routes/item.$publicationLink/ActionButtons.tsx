@@ -1,15 +1,27 @@
-import { ShoppingCart, AddShoppingCart, NotificationAdd, Favorite, FavoriteBorder } from "@mui/icons-material";
+import {
+	ShoppingCart,
+	AddShoppingCart,
+	NotificationAdd,
+	Favorite,
+	FavoriteBorder,
+	NotificationsOff,
+} from "@mui/icons-material";
 import { Box, Button, CircularProgress, Typography, IconButton } from "@mui/material";
 
 interface ActionButtonsProps {
-	isFavorite: boolean | undefined;
-	isInCart: boolean | undefined;
-	isAvailable: boolean | undefined;
-	onFavoriteClick: () => void;
-	onCartClick: () => void;
-	favoritesIsLoading: boolean;
-	cartIsLoading: boolean;
 	availabilityIsLoading: boolean;
+	isAvailable: boolean | undefined;
+
+	cartIsLoading: boolean;
+	isInCart: boolean | undefined;
+	onCartClick: () => void;
+
+	favoritesIsLoading: boolean;
+	isFavorite: boolean | undefined;
+	onFavoriteClick: () => void;
+
+	trackedIsLoading: boolean;
+	isTracked: boolean | undefined;
 }
 
 const PublicationActionButtons: React.FC<ActionButtonsProps> = ({
@@ -21,11 +33,23 @@ const PublicationActionButtons: React.FC<ActionButtonsProps> = ({
 	cartIsLoading,
 	isAvailable,
 	availabilityIsLoading,
+	trackedIsLoading,
+	isTracked,
 }) => {
 	return (
 		<Box display="flex" flexDirection="row" gap={1}>
-			<Button variant="contained" size="large" fullWidth onClick={onCartClick} disabled={isInCart === undefined}>
-				{availabilityIsLoading || cartIsLoading ? (
+			<Button
+				variant="contained"
+				size="large"
+				fullWidth
+				onClick={onCartClick}
+				disabled={
+					isAvailable === undefined ||
+					isInCart === undefined ||
+					isTracked === undefined
+				}
+			>
+				{availabilityIsLoading || cartIsLoading || trackedIsLoading ? (
 					<CircularProgress />
 				) : isAvailable ? (
 					isInCart ? (
@@ -39,6 +63,11 @@ const PublicationActionButtons: React.FC<ActionButtonsProps> = ({
 							<Typography>Добавить в корзину</Typography>
 						</>
 					)
+				) : isTracked ? (
+					<>
+						<NotificationsOff />
+						<Typography>Отключить уведомление</Typography>
+					</>
 				) : (
 					<>
 						<NotificationAdd />

@@ -13,6 +13,7 @@ import { useGetCartItemListQuery } from "@api/shop/cart";
 import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { useMemo } from "react";
 import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
+import { useGetTrackedItemListQuery } from "@api/shop/tracked";
 
 const responsive = {
 	desktop: {
@@ -65,7 +66,7 @@ export default function SuggestedItems() {
 		skipPollingIfUnfocused: true,
 		refetchOnFocus: true,
 	});
-	
+
 	const { data: availableItemList, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery(void 0, {
 		refetchOnMountOrArgChange: true,
 		pollingInterval: availabilityPollingInterval,
@@ -73,26 +74,37 @@ export default function SuggestedItems() {
 		refetchOnFocus: true,
 	});
 
-	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
 	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
+	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
+	const { data: trackedItemList, isLoading: trackedItemListIsLoading } = useGetTrackedItemListQuery();
 
 	const availableItemIds = useMemo(() => {
+		if (!availableItemList) return undefined;
 		const idSet = new Set<string>();
 		availableItemList?.items.forEach((item) => idSet.add(item));
 		return idSet;
 	}, [availableItemList]);
 
+	const cartItemIds = useMemo(() => {
+		if (!cartItemList) return undefined;
+		const idSet = new Set<string>();
+		cartItemList?.items.forEach((item) => idSet.add(item.id));
+		return idSet;
+	}, [cartItemList]);
+
 	const favoriteItemIds = useMemo(() => {
+		if (!favoriteItemList) return undefined;
 		const idSet = new Set<string>();
 		favoriteItemList?.items.forEach((item) => idSet.add(item.id));
 		return idSet;
 	}, [favoriteItemList]);
 
-	const cartItemIds = useMemo(() => {
+	const trackedItemIds = useMemo(() => {
+		if (!trackedItemList) return undefined;
 		const idSet = new Set<string>();
-		cartItemList?.items.forEach((item) => idSet.add(item.id));
+		trackedItemList?.items.forEach((item) => idSet.add(item.id));
 		return idSet;
-	}, [cartItemList]);
+	}, [trackedItemList]);
 
 	return (
 		<Box padding={"40px 0 24px 0"} width={"100%"} gap={3}>
@@ -115,6 +127,8 @@ export default function SuggestedItems() {
 							cartItemListIsLoading={cartItemListIsLoading}
 							isFavorite={favoriteItemIds?.has(item.id)}
 							favoriteItemListIsLoading={favoriteItemListIsLoading}
+							isTracked={trackedItemIds?.has(item.id)}
+							trackedItemListIsLoading={trackedItemListIsLoading}
 						/>
 					))}
 				</Carousel>

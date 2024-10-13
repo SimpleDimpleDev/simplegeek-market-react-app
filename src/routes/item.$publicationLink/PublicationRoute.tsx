@@ -13,6 +13,7 @@ import {
 } from "@api/shop/favorites";
 import { Loading } from "@components/Loading";
 import { useIsMobile } from "src/hooks/useIsMobile";
+import { useAddTrackedItemMutation, useGetTrackedItemListQuery, useRemoveTrackedItemMutation } from "@api/shop/tracked";
 
 const MobilePublication = lazy(() => import("./MobilePublication"));
 const DesktopPublication = lazy(() => import("./DesktopPublication"));
@@ -36,12 +37,18 @@ export function Component() {
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 
 	const { data: availableItemList, isLoading: availableItemListIsLoading } = useGetItemsAvailabilityQuery();
-	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
+
 	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
+	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
+	const { data: trackedItemList, isLoading: trackedItemListIsLoading } = useGetTrackedItemListQuery();
 
 	const [addCartItem] = useAddCartItemMutation();
+
 	const [addFavoriteItem] = useAddFavoriteItemMutation();
 	const [removeFavoriteItem] = useRemoveFavoriteItemMutation();
+
+	const [addTrackedItem] = useAddTrackedItemMutation();
+	const [removeTrackedItem] = useRemoveTrackedItemMutation();
 
 	const publication = useMemo(
 		() => catalog?.publications.find((publication) => publication.link === publicationLink),
@@ -67,6 +74,14 @@ export function Component() {
 				: favoriteItemList?.items.some((favoriteItem) => favoriteItem.id === selectedVariation.id),
 		[favoriteItemList, selectedVariation]
 	);
+	const selectedVariationIsTracked = useMemo(
+		() =>
+			selectedVariation === undefined
+				? undefined
+				: trackedItemList?.items.some((trackedItem) => trackedItem.id === selectedVariation.id),
+		[trackedItemList, selectedVariation]
+	);
+
 	const preparedImageUrls = useMemo(
 		() => selectedVariation?.product.images.map((image) => getImageUrl(image.url, "large")) || [],
 		[selectedVariation]
@@ -83,18 +98,20 @@ export function Component() {
 
 	const handleCartClick = () => {
 		if (
+			selectedVariation === undefined ||
 			selectedVariationIsAvailable === undefined ||
 			selectedVariationIsInCart === undefined ||
-			selectedVariation === undefined
+			selectedVariationIsTracked === undefined
 		)
 			return;
 		if (selectedVariationIsInCart) {
 			navigate("/cart");
 		} else if (selectedVariationIsAvailable) {
 			addCartItem({ itemId: selectedVariation.id });
+		} else if (selectedVariationIsTracked) {
+			removeTrackedItem({ itemId: selectedVariation.id });
 		} else {
-			// TODO: implement tracked items
-			alert("Товар отсутствует в наличии");
+			addTrackedItem({ itemId: selectedVariation.id });
 		}
 	};
 
@@ -119,6 +136,8 @@ export function Component() {
 						favoriteItemListIsLoading={favoriteItemListIsLoading}
 						selectedVariationIsFavorite={selectedVariationIsFavorite}
 						onFavoriteClick={handleToggleFavorite}
+						trackedItemListIsLoading={trackedItemListIsLoading}
+						selectedVariationIsTracked={selectedVariationIsTracked}
 					/>
 				</Suspense>
 			) : (
@@ -137,6 +156,8 @@ export function Component() {
 						favoriteItemListIsLoading={favoriteItemListIsLoading}
 						selectedVariationIsFavorite={selectedVariationIsFavorite}
 						onFavoriteClick={handleToggleFavorite}
+						trackedItemListIsLoading={trackedItemListIsLoading}
+						selectedVariationIsTracked={selectedVariationIsTracked}
 					/>
 				</Suspense>
 			)}

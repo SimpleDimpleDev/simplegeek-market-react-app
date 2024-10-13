@@ -24,6 +24,9 @@ const MobilePublication: React.FC<PublicationProps> = ({
 	favoriteItemListIsLoading,
 	selectedVariationIsFavorite,
 	onFavoriteClick,
+
+	trackedItemListIsLoading,
+	selectedVariationIsTracked,
 }) => {
 	const navigate = useNavigate();
 
@@ -83,6 +86,8 @@ const MobilePublication: React.FC<PublicationProps> = ({
 						favoritesIsLoading={favoriteItemListIsLoading}
 						cartIsLoading={cartItemListIsLoading}
 						availabilityIsLoading={availableItemIdsIsLoading}
+						trackedIsLoading={trackedItemListIsLoading}
+						isTracked={selectedVariationIsTracked}
 					/>
 					{publication.preorder && (
 						<Typography variant="body2" color={"typography.secondary"}>
