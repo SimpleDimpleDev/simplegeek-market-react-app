@@ -4,11 +4,14 @@ import { ArrowProps } from "react-multi-carousel/lib/types";
 
 import ItemCard from "./ItemCard";
 import { Loading } from "./Loading";
-import { useGetCatalogQuery } from "@api/shop/catalog";
+import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/catalog";
 import { useIsMobile } from "src/hooks/useIsMobile";
 
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { useGetCartItemListQuery } from "@api/shop/cart";
+import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
+import { useMemo } from "react";
 
 const responsive = {
 	desktop: {
@@ -20,7 +23,7 @@ const responsive = {
 		items: 3,
 	},
 	wideMobile: {
-		breakpoint: { max: 1024, min: 674,  },
+		breakpoint: { max: 1024, min: 674 },
 		items: 2,
 	},
 	mobile: {
@@ -55,7 +58,24 @@ const RightButton = ({ onClick, ...rest }: ArrowProps) => (
 export default function SuggestedItems() {
 	const isMobile = useIsMobile();
 
-	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
+	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+		pollingInterval: 60000,
+		skipPollingIfUnfocused: true,
+		refetchOnFocus: true,
+	});
+	const { data: availableItemIds, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+		pollingInterval: 5000,
+		skipPollingIfUnfocused: true,
+		refetchOnFocus: true,
+	});
+
+	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
+	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
+
+	const favoriteItemIds = useMemo(() => favoriteItemList?.items.map((item) => item.id), [favoriteItemList]);
+	const cartItemIds = useMemo(() => cartItemList?.items.map((item) => item.id), [cartItemList]);
 
 	return (
 		<Box padding={"40px 0 24px 0"} width={"100%"} gap={3}>
@@ -70,7 +90,15 @@ export default function SuggestedItems() {
 					customRightArrow={<RightButton />}
 				>
 					{catalog?.items.map((item) => (
-						<ItemCard key={item.id} data={item} />
+						<ItemCard
+							data={item}
+							isAvailable={availableItemIds?.includes(item.id)}
+							availabilityIsLoading={availabilityIsLoading}
+							isInCart={cartItemIds?.includes(item.id)}
+							cartItemListIsLoading={cartItemListIsLoading}
+							isFavorite={favoriteItemIds?.includes(item.id)}
+							favoriteItemListIsLoading={favoriteItemListIsLoading}
+						/>
 					))}
 				</Carousel>
 			</Loading>

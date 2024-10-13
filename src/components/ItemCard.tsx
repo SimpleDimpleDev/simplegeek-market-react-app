@@ -6,41 +6,36 @@ import { Link, useNavigate } from "react-router-dom";
 import { getImageUrl } from "@utils/image";
 import { CatalogItem } from "@appTypes/CatalogItem";
 import { CreditInfo } from "@appTypes/Credit";
-import { useAddCartItemMutation, useGetCartItemListQuery } from "@api/shop/cart";
-import {
-	useAddFavoriteItemMutation,
-	useGetFavoriteItemListQuery,
-	useRemoveFavoriteItemMutation,
-} from "@api/shop/favorites";
-import { useGetItemsAvailabilityQuery } from "@api/shop/catalog";
-import { useMemo } from "react";
+import { useAddCartItemMutation } from "@api/shop/cart";
+import { useAddFavoriteItemMutation, useRemoveFavoriteItemMutation } from "@api/shop/favorites";
 
 interface ItemCardProps {
 	data: CatalogItem;
+
+	isAvailable?: boolean;
+	availabilityIsLoading: boolean;
+
+	isInCart?: boolean;
+	cartItemListIsLoading: boolean;
+
+	isFavorite?: boolean;
+	favoriteItemListIsLoading: boolean;
 }
 
-export default function ItemCard({ data }: ItemCardProps) {
+export default function ItemCard({
+	data,
+	isAvailable,
+	availabilityIsLoading,
+	isInCart,
+	cartItemListIsLoading,
+	isFavorite,
+	favoriteItemListIsLoading,
+}: ItemCardProps) {
 	const navigate = useNavigate();
-
-	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
-	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
-	const { data: availableItemIds, isLoading: availableItemIdsIsLoading } = useGetItemsAvailabilityQuery();
 
 	const [addCartItem] = useAddCartItemMutation();
 	const [addFavoriteItem] = useAddFavoriteItemMutation();
 	const [removeFavoriteItem] = useRemoveFavoriteItemMutation();
-
-	const isAvailable = useMemo(() => {
-		return availableItemIds?.includes(data.id) || false;
-	}, [availableItemIds, data.id]);
-
-	const isInCart = useMemo(() => {
-		return cartItemList?.items.some((item) => item.id === data.id);
-	}, [cartItemList, data.id]);
-
-	const isFavorite = useMemo(() => {
-		return favoriteItemList?.items.some((item) => item.id === data.id);
-	}, [favoriteItemList, data.id]);
 
 	function handleToggleFavorite(event: React.MouseEvent<HTMLElement, MouseEvent>) {
 		event.stopPropagation();
@@ -78,7 +73,7 @@ export default function ItemCard({ data }: ItemCardProps) {
 				/>
 			</Link>
 			<div className="gap-1 px-2 d-f fd-c">
-				{availableItemIdsIsLoading ? (
+				{availabilityIsLoading ? (
 					<Typography variant="body2">Загрузка...</Typography>
 				) : isAvailable === undefined ? null : isAvailable ? (
 					data.preorder ? (
@@ -147,7 +142,7 @@ export default function ItemCard({ data }: ItemCardProps) {
 							)}
 						</IconButton>
 						<IconButton
-							disabled={availableItemIdsIsLoading || cartItemListIsLoading}
+							disabled={availabilityIsLoading || cartItemListIsLoading}
 							onClick={handleAddToCart}
 							style={{
 								width: 48,
@@ -162,7 +157,7 @@ export default function ItemCard({ data }: ItemCardProps) {
 								},
 							}}
 						>
-							{availableItemIdsIsLoading || cartItemListIsLoading ? (
+							{availabilityIsLoading || cartItemListIsLoading ? (
 								<CircularProgress sx={{ color: "icon.primary" }} />
 							) : isAvailable ? (
 								isInCart ? (

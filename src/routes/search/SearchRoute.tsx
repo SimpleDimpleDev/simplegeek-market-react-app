@@ -29,6 +29,9 @@ import { Sorting } from "@appTypes/Sorting";
 import { useItemsToRender } from "src/hooks/useItemsToRender";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { ScrollTop } from "@components/ScrollToTopButton";
+import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
+import { useGetCartItemListQuery } from "@api/shop/cart";
+import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -37,8 +40,24 @@ export function Component() {
 	const searchParams = useSearchParams();
 	const query = searchParams[0].get("q") || "";
 
-	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
-	const { data: availableItemIds, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery();
+	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+		pollingInterval: catalogPollingInterval,
+		skipPollingIfUnfocused: true,
+		refetchOnFocus: true,
+	});
+	const { data: availableItemIds, isLoading: availabilityIsLoading } = useGetItemsAvailabilityQuery(void 0, {
+		refetchOnMountOrArgChange: true,
+		pollingInterval: availabilityPollingInterval,
+		skipPollingIfUnfocused: true,
+		refetchOnFocus: true,
+	});
+
+	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
+	const { data: cartItemList, isLoading: cartItemListIsLoading } = useGetCartItemListQuery();
+
+	const favoriteItemIds = useMemo(() => favoriteItemList?.items.map((item) => item.id), [favoriteItemList]);
+	const cartItemIds = useMemo(() => cartItemList?.items.map((item) => item.id), [cartItemList]);
 
 	const searchedItems = useMemo(() => {
 		const searchedItems = catalog?.items.filter((item) => isCatalogItemMatchQuery(item, query));
@@ -236,7 +255,15 @@ export function Component() {
 											>
 												<Grow key={index} in={true} timeout={200}>
 													<div>
-														<ItemCard data={data} />
+														<ItemCard
+															data={data}
+															isAvailable={availableItemIds.includes(data.id)}
+															availabilityIsLoading={availabilityIsLoading}
+															isInCart={cartItemIds?.includes(data.id)}
+															cartItemListIsLoading={cartItemListIsLoading}
+															isFavorite={favoriteItemIds?.includes(data.id)}
+															favoriteItemListIsLoading={favoriteItemListIsLoading}
+														/>
 													</div>
 												</Grow>
 											</LazyLoad>
