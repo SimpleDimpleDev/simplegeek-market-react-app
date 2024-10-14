@@ -1,10 +1,10 @@
-import { ItemCreditInfo } from "@components/CreditTimeline";
 import { Box, Typography, NativeSelect } from "@mui/material";
 import ImageCarousel from "./ImageCarousel";
 import { useNavigate } from "react-router-dom";
 import { PublicationAvailability } from "./Availability";
 import { PublicationActionButtons } from "./ActionButtons";
 import { PublicationProps } from "./types";
+import { ItemCreditInfo } from "@components/ItemCreditInfo";
 
 const MobilePublication: React.FC<PublicationProps> = ({
 	publication,
@@ -97,32 +97,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 					)}
 				</Box>
 
-				{selectedVariation.creditInfo && (
-					<Box
-						display="flex"
-						flexDirection="column"
-						gap={3}
-						p={2}
-						borderRadius={2}
-						sx={{
-							backgroundColor: "surface.primary",
-						}}
-					>
-						<Box display="flex" flexDirection="column" gap={1}>
-							<Typography variant="h6">Есть рассрочка</Typography>
-							<Typography variant="body2" color="typography.secondary">
-								На 4 платежа
-							</Typography>
-						</Box>
-						<Box display="flex" flexDirection="column" gap={1}>
-							<ItemCreditInfo
-								width="235px"
-								lineColor="surface.secondary"
-								payments={selectedVariation.creditInfo.payments}
-							/>
-						</Box>
-					</Box>
-				)}
+				{selectedVariation.creditInfo && <ItemCreditInfo payments={selectedVariation.creditInfo.payments} />}
 
 				{selectedVariation.product.filterGroups.length !== 0 && (
 					<Box display="flex" flexDirection="column" paddingTop={4} gap={2}>

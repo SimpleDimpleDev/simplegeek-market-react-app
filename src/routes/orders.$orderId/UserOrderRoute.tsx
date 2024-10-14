@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 import { orderStatusBadges } from "@components/Badges";
 import CountdownTimer from "@components/CountdownTimer";
-import { OrderItemCredit } from "@components/CreditTimeline";
 import { DeliveryService } from "@appTypes/Delivery";
 import { DateFormatter, getRuGoodsWord } from "@utils/format";
 import { getImageUrl } from "@utils/image";
@@ -191,23 +190,13 @@ export function Component() {
 												</div>
 												{!!item.credit && (
 													<div style={{ paddingBottom: 32 }}>
-														<OrderItemCredit
-															lineColor="#E0E0E0"
-															payments={item.credit.payments}
-															width="90%"
-															lastPayedIndex={item.credit.paidParts - 1}
-															onPayButtonClick={() =>
-																item.credit?.invoice &&
-																!item.credit.invoice.isPaid &&
-																handlePay(item.credit.invoice.id)
-															}
-														/>
+														TODO: IMPLEMENT CREDIT PAYMENT HERE
 													</div>
 												)}
 											</div>
 										))}
 									</Stack>
-								</div>
+								</div>	
 							</div>
 							<div
 								className="top-0 gap-2 bg-primary p-2 h-mc br-3 d-f fd-c fs-0 ps-s"

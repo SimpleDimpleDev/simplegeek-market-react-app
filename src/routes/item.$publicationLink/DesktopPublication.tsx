@@ -1,11 +1,11 @@
 import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
-import { ItemCreditInfo } from "@components/CreditTimeline";
 import { Box, Typography, Select, MenuItem, CircularProgress } from "@mui/material";
 import { PublicationProps } from "./types";
 import { PublicationAvailability } from "./Availability";
 import { PublicationActionButtons } from "./ActionButtons";
 import { useNavigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import { ItemCreditInfo } from "@components/ItemCreditInfo";
 
 const ImageCarousel = lazy(() => import("./ImageCarousel"));
 
@@ -111,71 +111,47 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 				</Box>
 
 				<Box display="flex" flexDirection="column" gap={3} width={360} flexShrink={0}>
-					<Box
-						display="flex"
-						flexDirection="column"
-						position={"sticky"}
-						top={24}
-						gap={2}
-						p={2}
-						borderRadius={2}
-						sx={{
-							backgroundColor: "surface.primary",
-						}}
-					>
-						<PublicationAvailability
-							availabilityIsLoading={availableItemIdsIsLoading}
-							variationIsAvailable={selectedVariationIsAvailable}
-							price={selectedVariation.price}
-							discount={selectedVariation.discount}
-							preorder={publication.preorder}
-						/>
-						<PublicationActionButtons
-							isInCart={selectedVariationIsInCart}
-							isFavorite={selectedVariationIsFavorite}
-							isAvailable={selectedVariationIsAvailable}
-							onFavoriteClick={onFavoriteClick}
-							onCartClick={onCartClick}
-							favoritesIsLoading={favoriteItemListIsLoading}
-							cartIsLoading={cartItemListIsLoading}
-							availabilityIsLoading={availableItemIdsIsLoading}
-							trackedIsLoading={trackedItemListIsLoading}
-							isTracked={selectedVariationIsTracked}
-						/>
-						{publication.preorder && (
-							<Typography variant="body2" color={"typography.secondary"}>
-								В сумме товара не учитывается сумма доставки до склада. Она будет известна только в
-								момент приезда
-							</Typography>
-						)}
-					</Box>
-
-					{selectedVariation.creditInfo && (
+					<Box position={"sticky"} top={24} display={"flex"} flexDirection={"column"} gap={2}>
 						<Box
 							display="flex"
 							flexDirection="column"
-							gap={3}
+							gap={2}
 							p={2}
 							borderRadius={2}
 							sx={{
 								backgroundColor: "surface.primary",
 							}}
 						>
-							<Box display="flex" flexDirection="column" gap={1}>
-								<Typography variant="h6">Есть рассрочка</Typography>
-								<Typography variant="body2" color="typography.secondary">
-									На 4 платежа
+							<PublicationAvailability
+								availabilityIsLoading={availableItemIdsIsLoading}
+								variationIsAvailable={selectedVariationIsAvailable}
+								price={selectedVariation.price}
+								discount={selectedVariation.discount}
+								preorder={publication.preorder}
+							/>
+							<PublicationActionButtons
+								isInCart={selectedVariationIsInCart}
+								isFavorite={selectedVariationIsFavorite}
+								isAvailable={selectedVariationIsAvailable}
+								onFavoriteClick={onFavoriteClick}
+								onCartClick={onCartClick}
+								favoritesIsLoading={favoriteItemListIsLoading}
+								cartIsLoading={cartItemListIsLoading}
+								availabilityIsLoading={availableItemIdsIsLoading}
+								trackedIsLoading={trackedItemListIsLoading}
+								isTracked={selectedVariationIsTracked}
+							/>
+							{publication.shippingCostIncluded && publication.shippingCostIncluded !== "FULL" && (
+								<Typography variant="body1" color="warning">
+									В сумме товара не учитывается сумма доставки до склада. Она будет известна только в
+									момент приезда
 								</Typography>
-							</Box>
-							<Box display="flex" flexDirection="column" gap={1}>
-								<ItemCreditInfo
-									lineColor="surface.secondary"
-									width="260px"
-									payments={selectedVariation.creditInfo.payments}
-								/>
-							</Box>
+							)}
 						</Box>
-					)}
+						{selectedVariation.creditInfo && (
+							<ItemCreditInfo payments={selectedVariation.creditInfo.payments} />
+						)}
+					</Box>
 				</Box>
 			</Box>
 			<Box display="flex" flexDirection="column" paddingTop={3} paddingBottom={3} gap={3}>

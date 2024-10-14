@@ -8,6 +8,16 @@ export const getRuGoodsWord = (count: number) => {
     return "Товаров";
 };
 
+export const getRuPaymentWord = (count: number) => {
+    if (count % 10 === 1 && count % 100 !== 11) {
+        return "Платёж";
+    }
+    if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
+        return "Платежа";
+    }
+    return "Платежей";
+}
+
 export class DateFormatter {
     private static cyrillicMonthNames = [
         'Январь',

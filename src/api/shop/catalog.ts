@@ -22,6 +22,7 @@ export const catalogApi = shopApi.injectEndpoints({
 						...item,
 						preorder: publication.preorder,
 						publicationLink: publication.link,
+						shippingCostIncluded: publication.shippingCostIncluded,
 					}))
 				);
 				const seenIds = new Set();
