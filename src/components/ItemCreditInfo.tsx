@@ -33,8 +33,8 @@ const ItemCreditInfo = ({ payments }: ItemCreditInfoProps) => {
 					{payments.map((part) => {
 						return (
 							<Box display="flex" flexDirection="row" gap={1}>
-								<Typography variant="subtitle1">{`${part.sum} ₽`}</Typography>
-								<Typography variant="body2" color="typography.secondary">
+								<Typography variant="subtitle1" sx={{ width: "100%" }}>{`${part.sum} ₽`}</Typography>
+								<Typography variant="subtitle1" sx={{ width: "100%" }}>
 									{DateFormatter.DDMMYYYY(part.deadline)}
 								</Typography>
 							</Box>

@@ -1,13 +1,14 @@
 import {
 	AddShoppingCart,
+	ExpandMore,
 	Favorite,
 	FavoriteBorder,
 	NotificationAdd,
 	NotificationsOff,
 	ShoppingCart,
 } from "@mui/icons-material";
-import { CircularProgress, IconButton, Radio, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { CircularProgress, Collapse, Divider, IconButton, Radio, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/system";
 import { Link, useNavigate } from "react-router-dom";
 
 import { getImageUrl } from "@utils/image";
@@ -16,6 +17,8 @@ import { CreditInfo } from "@appTypes/Credit";
 import { useAddCartItemMutation } from "@api/shop/cart";
 import { useAddFavoriteItemMutation, useRemoveFavoriteItemMutation } from "@api/shop/favorites";
 import { useAddTrackedItemMutation, useRemoveTrackedItemMutation } from "@api/shop/tracked";
+import { useState } from "react";
+import { DateFormatter } from "@utils/format";
 
 interface ItemCardProps {
 	data: CatalogItem;
@@ -269,12 +272,13 @@ export const ShopOrderItemCardCredit: React.FC<ShopOrderItemCardCreditProps> = (
 	creditInfo,
 	onCreditChange,
 }) => {
+	const [creditInfoExpanded, setCreditInfoExpanded] = useState(false);
 	return (
 		<div className="gap-1 w-100 d-f fd-c">
 			<ShopOrderItemCard imgUrl={imgUrl} title={title} quantity={quantity} price={price} />
 			<div className="gap-1 d-f fd-r">
 				<div className="gap-05 d-f fd-r">
-					<Radio checked={isCredit} onChange={() => onCreditChange(true)} color="warning" />
+					<Radio checked={!isCredit} onChange={() => onCreditChange(false)} color="warning" />
 					<div className="gap-05 d-f fd-c">
 						<Typography variant="body1">Оплатить всю суму сразу</Typography>
 						<Typography variant="body2" sx={{ color: "typography.secondary" }}>
@@ -283,7 +287,7 @@ export const ShopOrderItemCardCredit: React.FC<ShopOrderItemCardCreditProps> = (
 					</div>
 				</div>
 				<div className="gap-05 d-f fd-r">
-					<Radio checked={!isCredit} onChange={() => onCreditChange(false)} color="warning" />
+					<Radio checked={isCredit} onChange={() => onCreditChange(true)} color="warning" />
 					<div className="gap-05 d-f fd-c">
 						<Typography variant="body1">В рассрочку</Typography>
 						<Typography variant="body2" sx={{ color: "typography.secondary" }}>
@@ -291,7 +295,30 @@ export const ShopOrderItemCardCredit: React.FC<ShopOrderItemCardCreditProps> = (
 						</Typography>
 					</div>
 				</div>
+
+				<IconButton sx={{ padding: 0 }} onClick={() => setCreditInfoExpanded(!creditInfoExpanded)}>
+					<ExpandMore
+						sx={{
+							transform: creditInfoExpanded ? "rotate(180deg)" : "rotate(0deg)",
+							transition: "all 0.2s ease-in-out",
+						}}
+					/>
+				</IconButton>
 			</div>
+			<Collapse mountOnEnter unmountOnExit orientation="vertical" in={creditInfoExpanded}>
+				<Stack direction="column" divider={<Divider />} spacing={1}>
+					{creditInfo.payments.map((part) => {
+						return (
+							<Box display="flex" flexDirection="row" gap={1}>
+								<Typography variant="subtitle1" sx={{ width: "100%" }}>{`${part.sum} ₽`}</Typography>
+								<Typography variant="subtitle1" sx={{ width: "100%" }}>
+									{DateFormatter.DDMMYYYY(part.deadline)}
+								</Typography>
+							</Box>
+						);
+					})}
+				</Stack>
+			</Collapse>
 		</div>
 	);
 };
