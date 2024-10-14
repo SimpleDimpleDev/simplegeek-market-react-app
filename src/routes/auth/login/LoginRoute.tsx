@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { SdkError, oryClient } from "@api/auth/client";
 import { useGetCartItemListQuery } from "@api/shop/cart";
 import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
@@ -61,15 +62,14 @@ export function Component() {
 				.getLoginFlow({ id: flowId })
 				.then(({ data: flow }) => setFlow(flow))
 				.catch(sdkErrorHandler),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 
 	// initialize the sdkError for generic handling of errors
-	const sdkErrorHandler = SdkError(getFlow, setFlow, "/auth/login", true);
+	const sdkErrorHandler = SdkError(getFlow, setFlow, "/login", true);
 
 	// Create a new login flow
-	const createFlow = useCallback(async () => {
+	const createFlow = () => {
 		oryClient
 			.createBrowserLoginFlow({
 				refresh: true,
@@ -85,17 +85,21 @@ export function Component() {
 				setFlow(flow);
 			})
 			.catch(sdkErrorHandler);
-	}, [aal2, loginChallenge, returnTo, setFlow, setSearchParams, sdkErrorHandler]);
+	};
 
+	// submit the login form data to Ory
 	const submitFlow = (body: UpdateLoginFlowBody) => {
-		if (!flow) return navigate("/auth/login", { replace: true });
+		// something unexpected went wrong and the flow was not set
+		if (!flow) return navigate("/login", { replace: true });
+
+		// we submit the flow to Ory with the form data
 		oryClient
 			.updateLoginFlow({ flow: flow.id, updateLoginFlowBody: body })
 			.then(() => {
+				// we successfully submitted the login flow, so lets redirect to the dashboard
 				dispatch(fetchUser());
 				refetchCart();
 				refetchFavorite();
-				
 				if (returnTo) {
 					navigate(returnTo, { replace: true });
 				} else {
@@ -108,13 +112,15 @@ export function Component() {
 	useEffect(() => {
 		// we might redirect to this page after the flow is initialized, so we check for the flowId in the URL
 		const flowId = searchParams.get("flow");
+		// the flow already exists
 		if (flowId) {
 			getFlow(flowId).catch(createFlow); // if for some reason the flow has expired, we need to get a new one
 			return;
 		}
+
 		// we assume there was no flow, so we create a new one
 		createFlow();
-	}, [createFlow, getFlow, searchParams]);
+	}, []);
 
 	// we check if the flow is set, if not we show a loading indicator
 	return flow ? (
@@ -132,7 +138,7 @@ export function Component() {
 							if (flow.return_to) search.set("return_to", flow.return_to);
 							navigate(
 								{
-									pathname: "/auth/recovery",
+									pathname: "/recovery",
 									search: search.toString(),
 								},
 								{ replace: true }
@@ -144,9 +150,10 @@ export function Component() {
 							const search = new URLSearchParams();
 							if (flow.return_to) search.set("return_to", flow.return_to);
 							if (flow.oauth2_login_challenge) search.set("login_challenge", flow.oauth2_login_challenge);
+
 							navigate(
 								{
-									pathname: "/auth/registration",
+									pathname: "/registration",
 									search: search.toString(),
 								},
 								{ replace: true }

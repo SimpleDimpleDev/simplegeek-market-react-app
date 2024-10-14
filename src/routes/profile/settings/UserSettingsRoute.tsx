@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { CircularProgress, Typography } from "@mui/material";
 import { SettingsFlow, UpdateSettingsFlowBody } from "@ory/client";
 import { gridStyle, NodeMessages, UserSettingsCard, UserSettingsFlowType } from "@ory/elements";
@@ -19,14 +20,13 @@ export function Component() {
 				.getSettingsFlow({ id: flowId })
 				.then(({ data: flow }) => setFlow(flow))
 				.catch(sdkErrorHandler),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 
 	// initialize the sdkError for generic handling of errors
 	const sdkErrorHandler = SdkError(getFlow, setFlow, "/settings", true);
 
-	const createFlow = useCallback(async () => {
+	const createFlow = () => {
 		oryClient
 			// create a new settings flow
 			// the flow contains the form fields, error messages and csrf token
@@ -39,7 +39,7 @@ export function Component() {
 				setFlow(flow);
 			})
 			.catch(sdkErrorHandler);
-	}, [setSearchParams, sdkErrorHandler]);
+	};
 
 	// submit any of the settings form data to Ory
 	const onSubmit = (body: UpdateSettingsFlowBody) => {
@@ -64,8 +64,9 @@ export function Component() {
 			return;
 		}
 		createFlow();
-	}, [createFlow, getFlow, searchParams]);
+	}, []);
 
+	// if the flow is not set, we show a loading indicator
 	return (
 		<div className="gap-3 w-100 d-f fd-c">
 			<div className="py-2">

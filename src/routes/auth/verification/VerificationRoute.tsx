@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { SdkError, oryClient } from "@api/auth/client";
 import { CircularProgress } from "@mui/material";
 import { UpdateVerificationFlowBody, VerificationFlow } from "@ory/client";
@@ -30,15 +31,14 @@ export function Component() {
 				.getVerificationFlow({ id: flowId })
 				.then(({ data: flow }) => setFlow(flow))
 				.catch(sdkErrorHandler),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 
 	// initialize the sdkError for generic handling of errors
-	const sdkErrorHandler = SdkError(getFlow, setFlow, "/auth/verification", true);
+	const sdkErrorHandler = SdkError(getFlow, setFlow, "/verification", true);
 
 	// create a new verification flow
-	const createFlow = useCallback(async () => {
+	const createFlow = () => {
 		oryClient
 			.createBrowserVerificationFlow({
 				...(returnTo && { returnTo: returnTo }),
@@ -51,12 +51,12 @@ export function Component() {
 				setFlow(flow);
 			})
 			.catch(sdkErrorHandler);
-	}, [returnTo, setFlow, setSearchParams, sdkErrorHandler]);
+	};
 
 	// submit the verification form data to Ory
 	const submitFlow = (body: UpdateVerificationFlowBody) => {
 		// something unexpected went wrong and the flow was not set
-		if (!flow) return navigate("/auth/verification", { replace: true });
+		if (!flow) return navigate("/verification", { replace: true });
 
 		oryClient
 			.updateVerificationFlow({
@@ -77,7 +77,7 @@ export function Component() {
 			return;
 		}
 		createFlow();
-	}, [flowId, getFlow, createFlow]);
+	}, []);
 
 	// if the flow is not set, we show a loading indicator
 	return flow ? (
@@ -91,7 +91,7 @@ export function Component() {
 				additionalProps={{
 					signupURL: {
 						handler: () => {
-							navigate({ pathname: "/auth/registration" }, { replace: true });
+							navigate({ pathname: "/registration" }, { replace: true });
 						},
 					},
 				}}

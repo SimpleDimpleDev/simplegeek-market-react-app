@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { SdkError, oryClient } from "@api/auth/client";
 import { CircularProgress } from "@mui/material";
 import { RecoveryFlow, UpdateRecoveryFlowBody } from "@ory/client";
@@ -17,15 +18,14 @@ export function Component() {
 				.getRecoveryFlow({ id: flowId })
 				.then(({ data: flow }) => setFlow(flow))
 				.catch(sdkErrorHandler),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 
 	// initialize the sdkError for generic handling of errors
-	const sdkErrorHandler = SdkError(getFlow, setFlow, "/auth/recovery");
+	const sdkErrorHandler = SdkError(getFlow, setFlow, "/recovery");
 
 	// create a new recovery flow
-	const createFlow = useCallback(async () => {
+	const createFlow = () => {
 		oryClient
 			.createBrowserRecoveryFlow()
 			// flow contains the form fields, error messages and csrf token
@@ -36,11 +36,11 @@ export function Component() {
 				setFlow(flow);
 			})
 			.catch(sdkErrorHandler);
-	}, [setSearchParams, setFlow, sdkErrorHandler]);
+	};
 
 	const submitFlow = (body: UpdateRecoveryFlowBody) => {
 		// something unexpected went wrong and the flow was not set
-		if (!flow) return navigate("/auth/login", { replace: true });
+		if (!flow) return navigate("/login", { replace: true });
 
 		oryClient
 			.updateRecoveryFlow({ flow: flow.id, updateRecoveryFlowBody: body })
@@ -61,7 +61,7 @@ export function Component() {
 		}
 		// we assume there was no flow, so we create a new one
 		createFlow();
-	}, [createFlow, getFlow, searchParams]);
+	}, []);
 
 	// we check if the flow is set, if not we show a loading indicator
 	return flow ? (
@@ -77,7 +77,7 @@ export function Component() {
 						handler: () => {
 							navigate(
 								{
-									pathname: "/auth/login",
+									pathname: "/login",
 								},
 								{ replace: true }
 							);
