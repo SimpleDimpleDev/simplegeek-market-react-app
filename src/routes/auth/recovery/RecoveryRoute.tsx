@@ -22,7 +22,7 @@ export function Component() {
 	);
 
 	// initialize the sdkError for generic handling of errors
-	const sdkErrorHandler = SdkError(getFlow, setFlow, "/recovery");
+	const sdkErrorHandler = SdkError(getFlow, setFlow, "/auth/recovery");
 
 	// create a new recovery flow
 	const createFlow = () => {
@@ -40,7 +40,7 @@ export function Component() {
 
 	const submitFlow = (body: UpdateRecoveryFlowBody) => {
 		// something unexpected went wrong and the flow was not set
-		if (!flow) return navigate("/login", { replace: true });
+		if (!flow) return navigate("/auth/login", { replace: true });
 
 		oryClient
 			.updateRecoveryFlow({ flow: flow.id, updateRecoveryFlowBody: body })
@@ -77,7 +77,7 @@ export function Component() {
 						handler: () => {
 							navigate(
 								{
-									pathname: "/login",
+									pathname: "/auth/login",
 								},
 								{ replace: true }
 							);

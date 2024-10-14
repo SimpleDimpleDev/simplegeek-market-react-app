@@ -66,7 +66,7 @@ export function Component() {
 	);
 
 	// initialize the sdkError for generic handling of errors
-	const sdkErrorHandler = SdkError(getFlow, setFlow, "/login", true);
+	const sdkErrorHandler = SdkError(getFlow, setFlow, "/auth/login", true);
 
 	// Create a new login flow
 	const createFlow = () => {
@@ -90,7 +90,7 @@ export function Component() {
 	// submit the login form data to Ory
 	const submitFlow = (body: UpdateLoginFlowBody) => {
 		// something unexpected went wrong and the flow was not set
-		if (!flow) return navigate("/login", { replace: true });
+		if (!flow) return navigate("/auth/login", { replace: true });
 
 		// we submit the flow to Ory with the form data
 		oryClient
@@ -138,7 +138,7 @@ export function Component() {
 							if (flow.return_to) search.set("return_to", flow.return_to);
 							navigate(
 								{
-									pathname: "/recovery",
+									pathname: "/auth/recovery",
 									search: search.toString(),
 								},
 								{ replace: true }
@@ -153,7 +153,7 @@ export function Component() {
 
 							navigate(
 								{
-									pathname: "/registration",
+									pathname: "/auth/registration",
 									search: search.toString(),
 								},
 								{ replace: true }

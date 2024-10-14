@@ -35,7 +35,7 @@ export function Component() {
 	);
 
 	// initialize the sdkError for generic handling of errors
-	const sdkErrorHandler = SdkError(getFlow, setFlow, "/verification", true);
+	const sdkErrorHandler = SdkError(getFlow, setFlow, "/auth/verification", true);
 
 	// create a new verification flow
 	const createFlow = () => {
@@ -56,7 +56,7 @@ export function Component() {
 	// submit the verification form data to Ory
 	const submitFlow = (body: UpdateVerificationFlowBody) => {
 		// something unexpected went wrong and the flow was not set
-		if (!flow) return navigate("/verification", { replace: true });
+		if (!flow) return navigate("/auth/verification", { replace: true });
 
 		oryClient
 			.updateVerificationFlow({
@@ -91,7 +91,7 @@ export function Component() {
 				additionalProps={{
 					signupURL: {
 						handler: () => {
-							navigate({ pathname: "/registration" }, { replace: true });
+							navigate({ pathname: "/auth/registration" }, { replace: true });
 						},
 					},
 				}}

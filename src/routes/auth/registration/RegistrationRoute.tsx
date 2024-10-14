@@ -50,7 +50,7 @@ export function Component() {
 	);
 
 	// initialize the sdkError for generic handling of errors
-	const sdkErrorHandler = SdkError(getFlow, setFlow, "/registration", true);
+	const sdkErrorHandler = SdkError(getFlow, setFlow, "/auth/registration", true);
 
 	// create a new registration flow
 	const createFlow = () => {
@@ -72,7 +72,7 @@ export function Component() {
 	// submit the registration form data to Ory
 	const submitFlow = (body: UpdateRegistrationFlowBody) => {
 		// something unexpected went wrong and the flow was not set
-		if (!flow) return navigate("/registration", { replace: true });
+		if (!flow) return navigate("/auth/registration", { replace: true });
 
 		oryClient
 			.updateRegistrationFlow({
@@ -87,7 +87,7 @@ export function Component() {
 							search.set("flow", cw.flow.id);
 							navigate(
 								{
-									pathname: "/verification",
+									pathname: "/auth/verification",
 									search: search.toString(),
 								},
 								{ replace: true }

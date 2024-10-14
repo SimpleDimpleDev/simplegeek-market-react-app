@@ -24,7 +24,7 @@ export function Component() {
 	);
 
 	// initialize the sdkError for generic handling of errors
-	const sdkErrorHandler = SdkError(getFlow, setFlow, "/settings", true);
+	const sdkErrorHandler = SdkError(getFlow, setFlow, "/auth/settings", true);
 
 	const createFlow = () => {
 		oryClient
@@ -44,7 +44,7 @@ export function Component() {
 	// submit any of the settings form data to Ory
 	const onSubmit = (body: UpdateSettingsFlowBody) => {
 		// something unexpected went wrong and the flow was not set
-		if (!flow) return navigate("/settings", { replace: true });
+		if (!flow) return navigate("/auth/settings", { replace: true });
 
 		oryClient
 			// submit the form data the user provided to Ory

@@ -112,7 +112,7 @@ export function Component() {
 
 	const createOrder = async (items: UserCartItem[]) => {
 		if (!user) {
-			navigate("/auth/login?return_to=cart");
+			navigate("/auth/login?return_to=https://simplegeek.ru/cart");
 		} else {
 			checkout({ items });
 		}
