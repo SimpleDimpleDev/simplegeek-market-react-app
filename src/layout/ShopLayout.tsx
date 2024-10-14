@@ -27,7 +27,12 @@ export default function ShopLayout() {
 						<Modal open={showWarning} onClose={() => setShowWarning(false)}>
 							<div className="bg-primary w-100 h-100 ai-c br-2 d-f jc-c">
 								<Typography variant="h2">Сайт в разработке</Typography>
-								<Button onClick={() => setShowWarning(false)}>Закрыть</Button>
+								<Button
+									sx={{ position: "absolute", top: 16, right: 16, opacity: 0 }}
+									onClick={() => setShowWarning(false)}
+								>
+									AHOI
+								</Button>
 							</div>
 						</Modal>
 					)}
