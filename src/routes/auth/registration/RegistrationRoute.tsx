@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { SdkError, oryClient } from "@api/auth/client";
 import { CircularProgress } from "@mui/material";
 import { RegistrationFlow, UpdateRegistrationFlowBody } from "@ory/client";
@@ -45,15 +46,14 @@ export function Component() {
 				.getRegistrationFlow({ id: flowId })
 				.then(({ data: flow }) => setFlow(flow))
 				.catch(sdkErrorHandler),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 
 	// initialize the sdkError for generic handling of errors
-	const sdkErrorHandler = SdkError(getFlow, setFlow, "/auth/registration", true);
+	const sdkErrorHandler = SdkError(getFlow, setFlow, "/registration", true);
 
 	// create a new registration flow
-	const createFlow = useCallback(async () => {
+	const createFlow = () => {
 		oryClient
 			// we don't need to specify the return_to here since we are building an SPA. In server-side browser flows we would need to specify the return_to
 			.createBrowserRegistrationFlow({
@@ -67,12 +67,12 @@ export function Component() {
 				setFlow(flow);
 			})
 			.catch(sdkErrorHandler);
-	}, [loginChallenge, returnTo, setSearchParams, setFlow, sdkErrorHandler]);
+	};
 
 	// submit the registration form data to Ory
 	const submitFlow = (body: UpdateRegistrationFlowBody) => {
 		// something unexpected went wrong and the flow was not set
-		if (!flow) return navigate("/auth/registration", { replace: true });
+		if (!flow) return navigate("/registration", { replace: true });
 
 		oryClient
 			.updateRegistrationFlow({
@@ -87,7 +87,7 @@ export function Component() {
 							search.set("flow", cw.flow.id);
 							navigate(
 								{
-									pathname: "/auth/verification",
+									pathname: "/verification",
 									search: search.toString(),
 								},
 								{ replace: true }
@@ -97,7 +97,6 @@ export function Component() {
 					}
 				}
 
-				// we successfully submitted the login flow, so lets redirect to the dashboard
 				dispatch(fetchUser());
 				if (returnTo) {
 					navigate(returnTo, { replace: true });
@@ -118,33 +117,31 @@ export function Component() {
 		}
 		// we assume there was no flow, so we create a new one
 		createFlow();
-	}, [createFlow, getFlow, searchParams]);
+	}, [navigate]);
 
 	// the flow is not set yet, so we show a loading indicator
 	return flow ? (
 		// create a registration form that dynamically renders based on the flow data using Ory Elements
-		<div className="gap-5 bg-primary p-3 pt-2 br-3 d-f fd-c">
-			<UserAuthCard
-				flowType={"registration"}
-				// we always need to pass the flow to the card since it contains the form fields, error messages and csrf token
-				flow={flow}
-				// the registration card needs a way to navigate to the login page
-				additionalProps={{
-					loginURL: {
-						handler: () => {
-							const search = new URLSearchParams();
-							if (flow.return_to) search.set("return_to", flow.return_to);
-							if (flow.oauth2_login_challenge) search.set("login_challenge", flow.oauth2_login_challenge);
-							navigate({ pathname: "/auth/login", search: search.toString() }, { replace: true });
-						},
+		<UserAuthCard
+			flowType={"registration"}
+			// we always need to pass the flow to the card since it contains the form fields, error messages and csrf token
+			flow={flow}
+			// the registration card needs a way to navigate to the login page
+			additionalProps={{
+				loginURL: {
+					handler: () => {
+						const search = new URLSearchParams();
+						if (flow.return_to) search.set("return_to", flow.return_to);
+						if (flow.oauth2_login_challenge) search.set("login_challenge", flow.oauth2_login_challenge);
+						navigate({ pathname: "/login", search: search.toString() }, { replace: true });
 					},
-				}}
-				// include the necessary scripts for webauthn to work
-				includeScripts={true}
-				// submit the registration form data to Ory
-				onSubmit={({ body }) => submitFlow(body as UpdateRegistrationFlowBody)}
-			/>
-		</div>
+				},
+			}}
+			// include the necessary scripts for webauthn to work
+			includeScripts={true}
+			// submit the registration form data to Ory
+			onSubmit={({ body }) => submitFlow(body as UpdateRegistrationFlowBody)}
+		/>
 	) : (
 		<div className="w-100 h-100 ai-c d-f jc-c">
 			<CircularProgress />
