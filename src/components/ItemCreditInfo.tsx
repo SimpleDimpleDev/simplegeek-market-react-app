@@ -1,6 +1,6 @@
 import { CreditInfo } from "@appTypes/Credit";
 import { ExpandMore } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Stack, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Stack, Typography } from "@mui/material";
 import { DateFormatter, getRuPaymentWord } from "@utils/format";
 
 interface ItemCreditInfoProps {
@@ -9,7 +9,17 @@ interface ItemCreditInfoProps {
 
 const ItemCreditInfo = ({ payments }: ItemCreditInfoProps) => {
 	return (
-		<Accordion sx={{ width: "100%" }}>
+		<Accordion
+			sx={{
+				width: "100%",
+				borderTop: "none",
+				"&:before": {
+					display: "none",
+				},
+				boxShadow: "none",
+			}}
+			disableGutters
+		>
 			<AccordionSummary expandIcon={<ExpandMore />}>
 				<Box display="flex" flexDirection="column" gap={1}>
 					<Typography variant="h6">Есть рассрочка</Typography>
@@ -19,10 +29,10 @@ const ItemCreditInfo = ({ payments }: ItemCreditInfoProps) => {
 				</Box>
 			</AccordionSummary>
 			<AccordionDetails>
-				<Stack direction="column" spacing={1}>
+				<Stack direction="column" divider={<Divider />} spacing={1}>
 					{payments.map((part) => {
 						return (
-							<Box display="flex" flexDirection="column" gap={1}>
+							<Box display="flex" flexDirection="row" gap={1}>
 								<Typography variant="subtitle1">{`${part.sum} ₽`}</Typography>
 								<Typography variant="body2" color="typography.secondary">
 									{DateFormatter.DDMMYYYY(part.deadline)}

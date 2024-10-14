@@ -194,17 +194,13 @@ export function Component() {
 
 	const preorder = useMemo(() => orderItems.at(0)?.preorder || null, [orderItems]);
 
-	const [itemsCredit, setItemsCredit] = useState<{ id: string; isCredit: boolean }[]>([]);
-
-	useEffect(() => {
-		setItemsCredit(orderItems.map((item) => ({ id: item.id, isCredit: false })));
-	}, [orderItems]);
+	const [creditItemsIds, setCreditItemIts] = useState<Set<string>>(new Set());
 
 	const totalPrice = useMemo(
 		() =>
 			orderItems
 				.map((orderItem) => {
-					if (itemsCredit.some((creditItem) => orderItem.id === creditItem.id && creditItem.isCredit)) {
+					if (creditItemsIds.has(orderItem.id)) {
 						return (orderItem.creditInfo?.payments[0].sum || 0) * orderItem.quantity;
 					} else {
 						console.log({ id: orderItem.id, price: orderItem.price, quantity: orderItem.quantity });
@@ -212,7 +208,7 @@ export function Component() {
 					}
 				})
 				.reduce((a, b) => a + b, 0),
-		[orderItems, itemsCredit]
+		[orderItems, creditItemsIds]
 	);
 
 	const totalDiscount = orderItems
@@ -222,7 +218,7 @@ export function Component() {
 	const handleCreateOrder = async (data: DeliveryFormData) => {
 		const delivery = DeliverySchema.parse(data);
 		createOrder({
-			creditIds: itemsCredit.filter((item) => item.isCredit).map((item) => item.id),
+			creditIds: Array.from(creditItemsIds),
 			delivery,
 		});
 	};
@@ -420,53 +416,43 @@ export function Component() {
 							</div>
 						)}
 
-						<div className="section">
-							<Typography variant="h5">
-								{orderItems.length} {getRuGoodsWord(orderItems.length)}
-							</Typography>
-							{itemsCreditAvailable.length > 0 && (
-								<div className="gap-1 d-f fd-c">
-									<Typography variant="h4">Доступна рассрочка</Typography>
-									<Stack divider={<Divider />} direction={"column"}>
-										{itemsCreditAvailable.map((item) => (
-											<ShopOrderItemCardCredit
-												key={item.id}
-												imgUrl={getImageUrl(item.product.images.at(0)?.url ?? "", "small")}
-												title={item.product.title}
-												price={item.price}
-												quantity={item.quantity}
-												creditInfo={item.creditInfo as CreditInfo}
-												isCredit={itemsCredit.some((creditItem) => creditItem.id === item.id)}
-												onCreditChange={(isCredit) => {
-													const newItemsCredit = [...itemsCredit];
-													const creditItem = newItemsCredit.find(
-														(creditItem) => creditItem.id === item.id
-													);
-													if (!creditItem) return;
-													creditItem.isCredit = isCredit;
-													setItemsCredit(newItemsCredit);
-												}}
-											/>
-										))}
-									</Stack>
-								</div>
-							)}
-							{itemsCreditUnavailable.length > 0 && (
-								<div className="gap-1 d-f fd-c">
-									<Stack divider={<Divider />} direction={"column"}>
-										{itemsCreditUnavailable.map((item) => (
-											<ShopOrderItemCard
-												key={item.id}
-												imgUrl={getImageUrl(item.product.images.at(0)?.url ?? "", "small")}
-												title={item.product.title}
-												price={item.price}
-												quantity={item.quantity}
-											/>
-										))}
-									</Stack>
-								</div>
-							)}
-						</div>
+						<Typography variant="h5">
+							{orderItems.length} {getRuGoodsWord(orderItems.length)}
+						</Typography>
+
+						{itemsCreditUnavailable.map((item) => (
+							<div className="section">
+								<ShopOrderItemCard
+									key={item.id}
+									imgUrl={getImageUrl(item.product.images.at(0)?.url ?? "", "small")}
+									title={item.product.title}
+									price={item.price}
+									quantity={item.quantity}
+								/>
+							</div>
+						))}
+						{itemsCreditAvailable.map((item) => (
+							<div className="section">
+								<ShopOrderItemCardCredit
+									key={item.id}
+									imgUrl={getImageUrl(item.product.images.at(0)?.url ?? "", "small")}
+									title={item.product.title}
+									price={item.price}
+									quantity={item.quantity}
+									creditInfo={item.creditInfo as CreditInfo}
+									isCredit={creditItemsIds.has(item.id)}
+									onCreditChange={(isCredit) => {
+										const newItemsCredit = new Set(creditItemsIds);
+										if (isCredit) {
+											newItemsCredit.add(item.id);
+										} else {
+											newItemsCredit.delete(item.id);
+										}
+										setCreditItemIts(newItemsCredit);
+									}}
+								/>
+							</div>
+						))}
 					</Box>
 					<Box
 						position={"sticky"}
