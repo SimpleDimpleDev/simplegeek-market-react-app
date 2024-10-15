@@ -101,7 +101,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		const existingPreorderList: PreorderShop[] = [];
 		for (const item of items) {
 			const itemPreorder = item.preorder;
-			if (itemPreorder !== null && !existingPreorderList.includes(itemPreorder)) {
+			if (itemPreorder !== null && !existingPreorderList.some((preorder) => preorder.id === itemPreorder.id)) {
 				existingPreorderList.push(itemPreorder);
 			}
 		}

@@ -305,7 +305,7 @@ export const ShopOrderItemCardCredit: React.FC<ShopOrderItemCardCreditProps> = (
 					/>
 				</IconButton>
 			</div>
-			<Collapse mountOnEnter unmountOnExit orientation="vertical" in={creditInfoExpanded}>
+			<Collapse orientation="vertical" in={creditInfoExpanded}>
 				<Stack direction="column" divider={<Divider />} spacing={1}>
 					{creditInfo.payments.map((part) => {
 						return (
