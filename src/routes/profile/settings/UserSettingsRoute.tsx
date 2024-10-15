@@ -5,8 +5,10 @@ import { gridStyle, NodeMessages, UserSettingsCard, UserSettingsFlowType } from 
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { SdkError, oryClient } from "@api/auth/client";
+import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
+	const isMobile = useIsMobile();
 	const [flow, setFlow] = useState<SettingsFlow | null>(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -70,7 +72,7 @@ export function Component() {
 	return (
 		<div className="gap-3 w-100 d-f fd-c">
 			<div className="py-2">
-				<Typography variant="h3">Мои данные</Typography>
+				<Typography variant={isMobile ? "h4" : "h3"}>Мои данные</Typography>
 			</div>
 
 			<div className="gap-5 bg-primary p-3 pt-2 br-3 d-f fd-c">

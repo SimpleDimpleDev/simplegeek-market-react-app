@@ -37,7 +37,6 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 		<>
 			<BreadcrumbsPageHeader
 				isMobile={false}
-				isBig={false}
 				path={[
 					{
 						title: "Главная",
