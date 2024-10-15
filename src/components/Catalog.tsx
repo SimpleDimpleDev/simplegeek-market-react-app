@@ -34,9 +34,11 @@ import SomethingWentWrong from "./SomethingWentWrong";
 
 interface CatalogProps {
 	sectionFilter: (item: CatalogItem) => boolean;
+	current: string;
+	path?: { title: string; link: string }[];
 }
 
-const Catalog: React.FC<CatalogProps> = ({ sectionFilter }) => {
+const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path }) => {
 	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
@@ -174,7 +176,7 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter }) => {
 							/>
 						</div>
 					</Modal>
-					<BreadcrumbsPageHeader isMobile={isMobile} current={"Каталог"} />
+					<BreadcrumbsPageHeader isMobile={isMobile} current={current} path={path} />
 
 					<div className="gap-2 d-f fd-r">
 						{!isMobile && (

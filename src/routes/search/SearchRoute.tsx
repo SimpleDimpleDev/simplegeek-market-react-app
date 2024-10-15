@@ -178,7 +178,13 @@ export function Component() {
 							/>
 						</div>
 					</Modal>
-					<BreadcrumbsPageHeader isMobile={isMobile} current={"Каталог"} />
+					<BreadcrumbsPageHeader
+						isMobile={isMobile}
+						path={[
+							{ title: "Каталог", link: "/" },
+						]}
+						current={`Поиск: ${query}`}
+					/>
 
 					<div className="gap-2 d-f fd-r">
 						{!isMobile && (
