@@ -1,20 +1,25 @@
 import Catalog from "@components/Catalog";
 import { CatalogItem } from "@appTypes/CatalogItem";
 import { useParams } from "react-router-dom";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useGetCatalogQuery } from "@api/shop/catalog";
 
 export function Component() {
 	const params = useParams();
 
-	const { data: catalog } = useGetCatalogQuery(void 0);
-	const categoryTitle = useMemo(() => {
-		if (!catalog || !params.categoryLink) return "";
-		const category = catalog.categories.find(
-			(category) => category.link === params.categoryLink
-		)
-		return category?.title || ""
+	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0);
+	const category = useMemo(() => {
+		if (!catalog || !params.categoryLink) return undefined;
+		return catalog.categories.find((category) => category.link === params.categoryLink);
 	}, [catalog, params.categoryLink]);
+
+	useEffect(() => {
+		if (!catalogIsLoading && catalog) {
+			if (!category) {
+				throw new Response("", { status: 404 });
+			}
+		}
+	}, [catalog, catalogIsLoading, category]);
 
 	const sectionFilter = useCallback(
 		(item: CatalogItem) => {
@@ -30,7 +35,7 @@ export function Component() {
 				{ title: "Каталог", link: "/" },
 				{ title: "Категории", link: "/category" },
 			]}
-			current={categoryTitle}
+			current={category?.title ?? ""}
 		/>
 	);
 }

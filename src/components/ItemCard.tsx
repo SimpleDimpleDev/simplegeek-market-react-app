@@ -18,7 +18,7 @@ import { useAddCartItemMutation } from "@api/shop/cart";
 import { useAddFavoriteItemMutation, useRemoveFavoriteItemMutation } from "@api/shop/favorites";
 import { useAddTrackedItemMutation, useRemoveTrackedItemMutation } from "@api/shop/tracked";
 import { useState } from "react";
-import { DateFormatter } from "@utils/format";
+import { DateFormatter, getRuPaymentWord } from "@utils/format";
 
 interface ItemCardProps {
 	data: CatalogItem;
@@ -291,7 +291,8 @@ export const ShopOrderItemCardCredit: React.FC<ShopOrderItemCardCreditProps> = (
 					<div className="gap-05 d-f fd-c">
 						<Typography variant="body1">В рассрочку</Typography>
 						<Typography variant="body2" sx={{ color: "typography.secondary" }}>
-							{creditInfo.payments.length} платежа от {creditInfo.payments[0].sum} ₽
+							{creditInfo.payments.length} {getRuPaymentWord(creditInfo.payments.length)} от{" "}
+							{creditInfo.payments[0].sum} ₽
 						</Typography>
 					</div>
 				</div>
