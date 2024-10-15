@@ -34,7 +34,7 @@ export function Component() {
 						{catalog?.categories.map((category) => (
 							<Grid2 key={category.link} size={{ xs: 12, sm: 12, md: 12, lg: 6 }}>
 								<Link
-									to={`/catalog/${category.link}`}
+									to={`/category/${category.link}`}
 									title={category.title}
 									style={{
 										width: isMobile ? "100%" : 696,
@@ -50,7 +50,7 @@ export function Component() {
 									}}
 								>
 									<img
-										style={{ height: 300, width: 696 }}
+										style={isMobile ? { width: "100%" } : { height: 300, width: 696 }}
 										src={getImageUrl(category.banner.url, "large")}
 										alt={category.title}
 									/>
