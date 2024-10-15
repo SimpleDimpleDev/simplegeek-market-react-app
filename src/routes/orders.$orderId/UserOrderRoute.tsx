@@ -1,7 +1,7 @@
 import { ChevronLeft } from "@mui/icons-material";
 import { Button, Divider, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { orderStatusBadges } from "@components/Badges";
 import CountdownTimer from "@components/CountdownTimer";
 import { DeliveryService } from "@appTypes/Delivery";
@@ -13,10 +13,53 @@ import { Loading } from "@components/Loading";
 import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { useIsMobile } from "src/hooks/useIsMobile";
+import { OrderCredit } from "@appTypes/Credit";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЕК",
 	SELF_PICKUP: "Самовывоз",
+};
+
+interface OrderItemCreditProps {
+	credit: OrderCredit;
+	onPayClick: (invoiceId: string) => void;
+}
+
+const OrderItemCredit: React.FC<OrderItemCreditProps> = ({ credit, onPayClick }) => {
+	const currentInvoice = credit.invoice;
+	return (
+		<div style={{ paddingBottom: 32 }}>
+			<Stack direction="column" divider={<Divider />}>
+				{credit.payments.map((payment, index) => (
+					<div className="d-f fd-r">
+						<div className="w-100">
+							<Typography variant="body2" sx={{ color: "typography.secondary" }}>
+								{payment.sum} ₽
+							</Typography>
+						</div>
+						<div className="w-100">
+							<Typography variant="body2" sx={{ color: "typography.secondary" }}>
+								{DateFormatter.DDMMYYYY(payment.deadline)}
+							</Typography>
+						</div>
+						{credit.paidParts < index ? (
+							<Typography variant="body2" sx={{ color: "typography.success" }}>
+								Оплачено
+							</Typography>
+						) : credit.paidParts === index && currentInvoice ? (
+							<Button onClick={() => onPayClick(currentInvoice.id)} variant="contained">
+								Оплатить
+							</Button>
+						) : (
+							<Typography variant="body2" sx={{ color: "typography.secondary" }}>
+								Не оплачено
+							</Typography>
+						)}
+					</div>
+				))}
+			</Stack>
+		</div>
+	);
 };
 
 export function Component() {
@@ -188,15 +231,13 @@ export function Component() {
 														<Typography variant="subtitle1">{item.sum} ₽</Typography>
 													</div>
 												</div>
-												{!!item.credit && (
-													<div style={{ paddingBottom: 32 }}>
-														TODO: IMPLEMENT CREDIT PAYMENT HERE
-													</div>
+												{item.credit && (
+													<OrderItemCredit onPayClick={handlePay} credit={item.credit} />
 												)}
 											</div>
 										))}
 									</Stack>
-								</div>	
+								</div>
 							</div>
 							<div
 								className="top-0 gap-2 bg-primary p-2 h-mc br-3 d-f fd-c fs-0 ps-s"
@@ -307,7 +348,8 @@ export function Component() {
 												variant="contained"
 												sx={{ width: "fit-content", display: "flex", gap: 1 }}
 											>
-												{"Оплатить "} <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
+												{"Оплатить "}{" "}
+												<CountdownTimer deadline={order.initialInvoice.expiresAt!} />
 											</Button>
 										</div>
 									)}

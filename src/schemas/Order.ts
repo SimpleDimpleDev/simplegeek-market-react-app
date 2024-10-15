@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { CreditShopSchema, InvoiceShopSchema } from "./Payment";
+import { OrderCreditSchema, InvoiceShopSchema } from "./Payment";
 import { IdSchema, ISOToDateSchema } from "./Primitives";
 import { DeliverySchema, DeliveryOrderSchema } from "./Delivery";
 import { PreorderOrderShopSchema } from "./Preorder";
@@ -34,7 +34,7 @@ export const OrderItemShopSchema = z.object(
 		image: z.string(),
 		quantity: z.number(),
 		sum: z.number(),
-		credit: CreditShopSchema.nullable(),
+		credit: OrderCreditSchema.nullable(),
 	},
 	{ description: "OrderItemShop" }
 );

@@ -31,7 +31,7 @@ export const InvoiceShopSchema = z.object(
 	{ description: "Invoice" }
 );
 
-export const CreditShopSchema = CreditInfoSchema.extend({
+export const OrderCreditSchema = CreditInfoSchema.extend({
 	paidParts: z.number(),
 	invoice: InvoiceShopSchema.nullable(),
 });
