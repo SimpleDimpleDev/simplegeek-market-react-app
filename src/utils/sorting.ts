@@ -9,9 +9,6 @@ export const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogI
 		case "new": {
 			return [...items].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 		}
-        case "old": {
-            return [...items].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
-        }
 		case "expensive": {
 			return [...items].sort((a, b) => b.price - a.price);
 		}
