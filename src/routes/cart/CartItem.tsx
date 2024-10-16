@@ -193,7 +193,7 @@ const CartItem = ({
 									<Typography variant="body2">Загрузка...</Typography>
 								) : isAvailable === undefined ? null : isAvailable ? (
 									item.preorder !== null ? (
-										<Typography color="typography.secondary" variant="body2">
+										<Typography color="typography.success" variant="body2">
 											Доступно для предзаказа
 										</Typography>
 									) : (

@@ -1,21 +1,21 @@
 export const getRuGoodsWord = (count: number) => {
     if (count % 10 === 1 && count % 100 !== 11) {
-        return "Товар";
+        return "товар";
     }
     if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
-        return "Товара";
+        return "товара";
     }
-    return "Товаров";
+    return "товаров";
 };
 
 export const getRuPaymentWord = (count: number) => {
     if (count % 10 === 1 && count % 100 !== 11) {
-        return "Платёж";
+        return "платёж";
     }
     if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
-        return "Платежа";
+        return "платежа";
     }
-    return "Платежей";
+    return "платежей";
 }
 
 export class DateFormatter {

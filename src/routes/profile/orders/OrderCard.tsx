@@ -16,7 +16,7 @@ interface OrderCardProps {
 
 const OrderTask = ({ title }: { title: string }) => {
 	return (
-		<div className="gap-1 ai-c d-f fd-r">
+		<div className="ai-c d-f fd-r">
 			<PriorityHigh />
 			<Typography variant="subtitle1">{title}</Typography>
 		</div>
@@ -40,7 +40,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 				{order.status === "UNPAID" && order.initialInvoice?.expiresAt && (
 					<div className="gap-1 d-f fd-c">
 						<Typography variant="subtitle1">
-							В случае неоплаты заказ отменится через 15 минут после оформления
+							В случае неоплаты заказ отменится через 15 минут после оформления.
 						</Typography>
 					</div>
 				)}
@@ -48,13 +48,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 				{order.preorder && (
 					<>
 						{order.preorder.status === "DISPATCH" && order.delivery === null && (
-							<OrderTask title="Необходимо выбрать способ доставки" />
+							<OrderTask title="Необходимо выбрать способ доставки." />
 						)}
-						{!order.preorder.foreignShippingInvoice?.isPaid && (
-							<OrderTask title="Необходимо оплатить доставку до зарубежного склада" />
+						{order.preorder.foreignShippingInvoice && !order.preorder.foreignShippingInvoice.isPaid && (
+							<OrderTask title="Необходимо оплатить доставку до зарубежного склада." />
 						)}
-						{!order.preorder.localShippingInvoice?.isPaid && (
-							<OrderTask title="Необходимо оплатить доставку в Россию" />
+						{order.preorder.localShippingInvoice && !order.preorder.localShippingInvoice.isPaid && (
+							<OrderTask title="Необходимо оплатить доставку в Россию." />
 						)}
 					</>
 				)}
@@ -122,7 +122,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 				</>
 			) : (
 				<div className="d-f fd-r jc-sb">
-					<div className="d-f fd-c jc-sb">
+					<div className="gap-2 d-f fd-c">
 						<OrderInfoSection />
 						<div className="gap-2 d-f fd-r">
 							{order.status === "UNPAID" && order.initialInvoice?.expiresAt && (

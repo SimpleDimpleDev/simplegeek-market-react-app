@@ -91,8 +91,8 @@ const MobilePublication: React.FC<PublicationProps> = ({
 					/>
 					{publication.preorder && (
 						<Typography variant="body2" color={"typography.secondary"}>
-							В сумме товара не учитывается сумма доставки до склада. Она будет известна только в момент
-							приезда
+							В цене товара не учитывается стоимость доставки до склада. Она будет известна только в
+							момент приезда.
 						</Typography>
 					)}
 				</Box>

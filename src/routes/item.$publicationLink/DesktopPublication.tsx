@@ -142,8 +142,8 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 							/>
 							{publication.shippingCostIncluded && publication.shippingCostIncluded !== "FULL" && (
 								<Typography variant="body1" color="warning">
-									В сумме товара не учитывается сумма доставки до склада. Она будет известна только в
-									момент приезда
+									В цене товара не учитывается стоимость доставки до склада. Она будет известна только в
+									момент приезда.
 								</Typography>
 							)}
 						</Box>

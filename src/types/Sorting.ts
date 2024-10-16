@@ -1,1 +1,1 @@
-export type Sorting = "new" | "old" | "popular" | "expensive" | "cheap";
+export type Sorting = "new" | "popular" | "expensive" | "cheap";

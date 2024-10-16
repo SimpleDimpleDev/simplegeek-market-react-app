@@ -28,7 +28,7 @@ const getOrdersByTab = ({ currentTab, orders }: { currentTab: number; orders: Or
 		case 1:
 			return orders.filter((order) => finishedOrderStatuses.includes(order.status));
 		case 2:
-			return orders
+			return orders;
 		default:
 			return orders;
 	}
@@ -66,7 +66,7 @@ export function Component() {
 		<Box display={"flex"} flexDirection={"column"} gap={3} width={"100%"}>
 			<Box display={"flex"} flexDirection={"column"} gap={2}>
 				<Box p={"16px 0"}>
-					<Typography variant={"h3"}>Заказы</Typography>
+					<Typography variant={isMobile ? "h4" : "h3"}>Заказы</Typography>
 				</Box>
 				<Box display={"flex"} flexDirection={"column"}>
 					<Tabs value={currentTab} onChange={handleChangeTab} aria-label="basic tabs example">
@@ -83,18 +83,20 @@ export function Component() {
 						<OrderCard isMobile={isMobile} key={index} order={order} onPay={handlePay} />
 					))
 				) : (
-					<Empty
-						icon={
-							<ShoppingBag
-								sx={{
-									width: 91,
-									height: 91,
-									color: "icon.tertiary",
-								}}
-							/>
-						}
-						title={"Заказы не найдены"}
-					/>
+					<div className="w-100 h-100 ai-c d-f jc-c">
+						<Empty
+							icon={
+								<ShoppingBag
+									sx={{
+										width: 91,
+										height: 91,
+										color: "icon.tertiary",
+									}}
+								/>
+							}
+							title={"Заказы не найдены"}
+						/>
+					</div>
 				)}
 			</Loading>
 		</Box>

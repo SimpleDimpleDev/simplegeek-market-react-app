@@ -183,7 +183,7 @@ export function Component() {
 						path={[
 							{ title: "Каталог", link: "/" },
 						]}
-						current={`Поиск: ${query}`}
+						current={`Поиск по запросу "${query}"`}
 					/>
 
 					<div className="gap-2 d-f fd-r">
@@ -217,7 +217,6 @@ export function Component() {
 											>
 												<option value={"popular"}>Сначала популярные</option>
 												<option value={"new"}>Сначала новые</option>
-												<option value={"old"}>Сначала старые</option>
 												<option value={"expensive"}>Сначала дорогие</option>
 												<option value={"cheap"}>Сначала недорогие</option>
 											</NativeSelect>
@@ -237,7 +236,6 @@ export function Component() {
 											>
 												<MenuItem value={"popular"}>Сначала популярные</MenuItem>
 												<MenuItem value={"new"}>Сначала новые</MenuItem>
-												<MenuItem value={"old"}>Сначала старые</MenuItem>
 												<MenuItem value={"expensive"}>Сначала дорогие</MenuItem>
 												<MenuItem value={"cheap"}>Сначала недорогие</MenuItem>
 											</Select>

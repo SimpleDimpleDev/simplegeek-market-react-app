@@ -209,7 +209,6 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path }) => {
 											>
 												<option value={"popular"}>Сначала популярные</option>
 												<option value={"new"}>Сначала новые</option>
-												<option value={"old"}>Сначала старые</option>
 												<option value={"expensive"}>Сначала дорогие</option>
 												<option value={"cheap"}>Сначала недорогие</option>
 											</NativeSelect>
@@ -229,7 +228,6 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path }) => {
 											>
 												<MenuItem value={"popular"}>Сначала популярные</MenuItem>
 												<MenuItem value={"new"}>Сначала новые</MenuItem>
-												<MenuItem value={"old"}>Сначала старые</MenuItem>
 												<MenuItem value={"expensive"}>Сначала дорогие</MenuItem>
 												<MenuItem value={"cheap"}>Сначала недорогие</MenuItem>
 											</Select>
