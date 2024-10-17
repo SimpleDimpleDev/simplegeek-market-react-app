@@ -1,5 +1,16 @@
 import { ChevronLeft, Close } from "@mui/icons-material";
-import { Box, Button, Divider, IconButton, Modal, Stack, TextField, Typography } from "@mui/material";
+import {
+	Box,
+	Button,
+	Checkbox,
+	Divider,
+	FormControlLabel,
+	IconButton,
+	Modal,
+	Stack,
+	TextField,
+	Typography,
+} from "@mui/material";
 import { useNavigate, useSubmit } from "react-router-dom";
 
 import { getRuGoodsWord } from "@utils/format";
@@ -134,6 +145,8 @@ export function Component() {
 
 	const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
 
+	const [saveDelivery, setSaveDelivery] = useState(true);
+
 	const handleChooseCdekAddress = (data: CDEKDeliveryData) => {
 		setValue("cdekDeliveryData", data);
 		setCdekWidgetOpen(false);
@@ -220,6 +233,7 @@ export function Component() {
 		createOrder({
 			creditIds: Array.from(creditItemsIds),
 			delivery,
+			saveDelivery,
 		});
 	};
 
@@ -396,6 +410,16 @@ export function Component() {
 										/>
 									</div>
 								</div>
+
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={saveDelivery}
+											onChange={(e) => setSaveDelivery(e.target.checked)}
+										/>
+									}
+									label="Сохранить адрес доставки"
+								/>
 							</div>
 						) : (
 							<div className="section">

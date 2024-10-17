@@ -23,7 +23,6 @@ export const OrderCreateSchema = z.object(
 	{
 		creditIds: IdSchema.array(),
 		delivery: DeliverySchema.nullable(),
-		//TODO: add delivery save
 		saveDelivery: z.boolean(),
 	},
 	{ description: "OrderCreate" }
