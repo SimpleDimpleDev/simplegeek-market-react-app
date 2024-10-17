@@ -97,7 +97,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 					)}
 				</Box>
 
-				{selectedVariation.creditInfo && <ItemCreditInfo payments={selectedVariation.creditInfo.payments} />}
+				{selectedVariation.creditInfo && <ItemCreditInfo creditInfo={selectedVariation.creditInfo} />}
 
 				{selectedVariation.product.filterGroups.length !== 0 && (
 					<Box display="flex" flexDirection="column" paddingTop={4} gap={2}>

@@ -6,21 +6,6 @@ export const PaymentUrlSchema = z.object({
 	paymentUrl: z.string().url(),
 });
 
-export const BaseCreditPaymentInfo = z.object(
-	{
-		sum: z.number(),
-		deadline: ISOToDateSchema,
-	},
-	{ description: "BaseCreditPaymentInfo" }
-);
-
-export const CreditInfoSchema = z.object(
-	{
-		payments: BaseCreditPaymentInfo.array(),
-	},
-	{ description: "CreditInfo" }
-);
-
 export const InvoiceShopSchema = z.object(
 	{
 		id: IdSchema,
@@ -31,7 +16,34 @@ export const InvoiceShopSchema = z.object(
 	{ description: "Invoice" }
 );
 
-export const OrderCreditSchema = CreditInfoSchema.extend({
-	paidParts: z.number(),
-	invoice: InvoiceShopSchema.nullable(),
-});
+export const CreditPaymentInfo = z.object(
+	{
+		sum: z.number(),
+		deadline: ISOToDateSchema,
+	},
+	{ description: "CreditPaymentInfo" }
+);
+
+export const CreditInfoSchema = z.object(
+	{
+		deposit: z.number(),
+		payments: CreditPaymentInfo.array(),
+	},
+	{ description: "CreditInfo" }
+);
+
+export const CreditPayment = z.object(
+	{
+		invoice: InvoiceShopSchema,
+		deadline: ISOToDateSchema,
+	},
+	{ description: "CreditPayment" }
+);
+
+export const CreditSchema = z.object(
+	{
+		deposit: z.number(),
+		payments: CreditPayment.array(),
+	},
+	{ description: "OrderCredit" }
+);

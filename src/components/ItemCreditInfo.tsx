@@ -4,10 +4,10 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Stack, Typ
 import { DateFormatter, getRuPaymentWord } from "@utils/format";
 
 interface ItemCreditInfoProps {
-	payments: CreditInfo["payments"];
+	creditInfo: CreditInfo;
 }
 
-const ItemCreditInfo = ({ payments }: ItemCreditInfoProps) => {
+const ItemCreditInfo = ({ creditInfo }: ItemCreditInfoProps) => {
 	return (
 		<Accordion
 			sx={{
@@ -24,13 +24,19 @@ const ItemCreditInfo = ({ payments }: ItemCreditInfoProps) => {
 				<Box display="flex" flexDirection="column" gap={1}>
 					<Typography variant="h6">Есть рассрочка</Typography>
 					<Typography variant="body2" color="typography.secondary">
-						На {payments.length} {getRuPaymentWord(payments.length)}
+						На {creditInfo.payments.length} {getRuPaymentWord(creditInfo.payments.length)}
 					</Typography>
 				</Box>
 			</AccordionSummary>
 			<AccordionDetails>
 				<Stack direction="column" divider={<Divider />} spacing={1}>
-					{payments.map((part) => {
+					<Box display="flex" flexDirection="row" gap={1}>
+						<Typography variant="subtitle1" sx={{ width: "100%" }}>{`${creditInfo.deposit} ₽`}</Typography>
+						<Typography variant="subtitle1" sx={{ width: "100%" }}>
+							Сразу
+						</Typography>
+					</Box>
+					{creditInfo.payments.map((part) => {
 						return (
 							<Box display="flex" flexDirection="row" gap={1}>
 								<Typography variant="subtitle1" sx={{ width: "100%" }}>{`${part.sum} ₽`}</Typography>

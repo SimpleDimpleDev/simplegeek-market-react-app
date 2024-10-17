@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { OrderCreditSchema, InvoiceShopSchema } from "./Payment";
+import { CreditSchema, InvoiceShopSchema } from "./Payment";
 import { IdSchema, ISOToDateSchema } from "./Primitives";
 import { DeliverySchema, DeliveryOrderSchema } from "./Delivery";
 import { PreorderOrderShopSchema } from "./Preorder";
@@ -23,6 +23,8 @@ export const OrderCreateSchema = z.object(
 	{
 		creditIds: IdSchema.array(),
 		delivery: DeliverySchema.nullable(),
+		//TODO: add delivery save
+		saveDelivery: z.boolean(),
 	},
 	{ description: "OrderCreate" }
 );
@@ -34,7 +36,7 @@ export const OrderItemShopSchema = z.object(
 		image: z.string(),
 		quantity: z.number(),
 		sum: z.number(),
-		credit: OrderCreditSchema.nullable(),
+		credit: CreditSchema.nullable(),
 	},
 	{ description: "OrderItemShop" }
 );

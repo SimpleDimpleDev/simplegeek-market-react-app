@@ -26,15 +26,17 @@ interface OrderItemCreditProps {
 }
 
 const OrderItemCredit: React.FC<OrderItemCreditProps> = ({ credit, onPayClick }) => {
-	const currentInvoice = credit.invoice;
+	const paidParts = useMemo(() => {
+		return credit.payments.findIndex((payment) => !payment.invoice.isPaid);
+	}, [credit]);
 	return (
-		<div style={{ paddingBottom: 32 }}>
+		<div>
 			<Stack direction="column" divider={<Divider />}>
 				{credit.payments.map((payment, index) => (
 					<div className="d-f fd-r">
 						<div className="w-100">
 							<Typography variant="body2" sx={{ color: "typography.secondary" }}>
-								{payment.sum} ₽
+								{payment.invoice.amount} ₽
 							</Typography>
 						</div>
 						<div className="w-100">
@@ -42,12 +44,12 @@ const OrderItemCredit: React.FC<OrderItemCreditProps> = ({ credit, onPayClick })
 								{DateFormatter.DDMMYYYY(payment.deadline)}
 							</Typography>
 						</div>
-						{credit.paidParts < index ? (
+						{payment.invoice.isPaid ? (
 							<Typography variant="body2" sx={{ color: "typography.success" }}>
 								Оплачено
 							</Typography>
-						) : credit.paidParts === index && currentInvoice ? (
-							<Button onClick={() => onPayClick(currentInvoice.id)} variant="contained">
+						) : paidParts === index ? (
+							<Button onClick={() => onPayClick(payment.invoice.id)} variant="contained">
 								Оплатить
 							</Button>
 						) : (
@@ -75,17 +77,63 @@ export function Component() {
 
 	const navigate = useNavigate();
 
-	const goodsTotal = useMemo(() => (!order ? 0 : order.items.reduce((acc, item) => acc + item.sum, 0)), [order]);
-	const shippingTotal = useMemo(
-		() =>
-			!order
-				? 0
-				: order.preorder
-				? (order.preorder.foreignShippingInvoice?.amount || 0) +
-				  (order.preorder.localShippingInvoice?.amount || 0)
-				: 0,
-		[order]
-	);
+	const { paidCreditAmount, unpaidCreditAmount, orderHasCredit } = useMemo(() => {
+		if (!order) return { paidCreditAmount: undefined, unpaidCreditAmount: undefined, orderHasCredit: undefined };
+		let paidCreditAmount = 0;
+		let unpaidCreditAmount = 0;
+		let orderHasCredit = false;
+		for (const item of order.items) {
+			const credit = item.credit;
+			if (!credit) continue;
+			orderHasCredit = true;
+			for (const payment of credit.payments) {
+				if (payment.invoice.isPaid) {
+					paidCreditAmount += payment.invoice.amount;
+				} else {
+					unpaidCreditAmount += payment.invoice.amount;
+				}
+			}
+		}
+		return { paidCreditAmount, unpaidCreditAmount, orderHasCredit };
+	}, [order]);
+
+	const foreignShippingInvoice = useMemo(() => {
+		if (!order) return undefined;
+		return order.preorder?.foreignShippingInvoice || null;
+	}, [order]);
+
+	const foreignShippingInvoicePending = useMemo(() => {
+		if (!order) return undefined;
+		if (!order.preorder) return false;
+		return order.preorder.shippingCostIncluded === "NOT";
+	}, [order]);
+
+	const localShippingInvoice = useMemo(() => {
+		if (!order) return undefined;
+		return order.preorder?.localShippingInvoice || null;
+	}, [order]);
+
+	const localShippingInvoicePending = useMemo(() => {
+		if (!order) return undefined;
+		if (!order.preorder) return false;
+		return order.preorder.shippingCostIncluded !== "FULL";
+	}, [order]);
+
+	const showDetailedOrder = useMemo(() => {
+		return (
+			!!orderHasCredit ||
+			!!foreignShippingInvoice ||
+			!!foreignShippingInvoicePending ||
+			!!localShippingInvoice ||
+			!!localShippingInvoicePending
+		);
+	}, [
+		orderHasCredit,
+		foreignShippingInvoice,
+		foreignShippingInvoicePending,
+		localShippingInvoice,
+		localShippingInvoicePending,
+	]);
 
 	useEffect(() => {
 		if (paymentUrlIsSuccess) {
@@ -210,150 +258,197 @@ export function Component() {
 									<Typography variant="h5">
 										{order.items.length} {getRuGoodsWord(order.items.length)}
 									</Typography>
-									<Stack divider={<Divider />}>
+									<div className="gap-2 d-f fd-c">
 										{order.items.map((item) => (
-											<div className="gap-1 pt-1 d-f fd-c" key={item.id}>
-												<div className="w-100 d-f fd-r jc-sb">
-													<div className="gap-1 w-100 d-f fd-r">
-														<div className="br-2" style={{ width: 96, height: 96 }}>
-															<img
-																className="contain"
-																src={getImageUrl(item.image, "small")}
-															/>
-														</div>
+											<div className="section" key={item.id}>
+												<div className="gap-1 d-f fd-c">
+													<div className="w-100 d-f fd-r jc-sb">
+														<div className="gap-1 w-100 d-f fd-r">
+															<div className="br-2" style={{ width: 96, height: 96 }}>
+																<img
+																	className="contain"
+																	src={getImageUrl(item.image, "small")}
+																/>
+															</div>
 
-														<div className="gap-1">
-															<Typography variant="h6">{item.title}</Typography>
-															<Typography variant="body1">{item.quantity} шт.</Typography>
+															<div className="gap-1">
+																<Typography variant="h6">{item.title}</Typography>
+																<Typography variant="body1">
+																	{item.quantity} шт.
+																</Typography>
+															</div>
+														</div>
+														<div className="d-f fd-r fs-0">
+															<Typography variant="subtitle1">{item.sum} ₽</Typography>
 														</div>
 													</div>
-													<div className="d-f fd-r fs-0">
-														<Typography variant="subtitle1">{item.sum} ₽</Typography>
-													</div>
+													{item.credit && (
+														<OrderItemCredit onPayClick={handlePay} credit={item.credit} />
+													)}
 												</div>
-												{item.credit && (
-													<OrderItemCredit onPayClick={handlePay} credit={item.credit} />
-												)}
 											</div>
 										))}
-									</Stack>
+									</div>
 								</div>
 							</div>
 							<div
 								className="top-0 gap-2 bg-primary p-2 h-mc br-3 d-f fd-c fs-0 ps-s"
 								style={{ width: isMobile ? "100%" : 360 }}
 							>
-								<Stack direction="column" divider={<Divider />}>
-									{order.preorder && (
-										<>
-											{order.preorder.foreignShippingInvoice && (
-												<div className="gap-1">
-													<Typography variant="subtitle0">
-														Доставка на зарубежный склад
-													</Typography>
-													<div className="gap-1 d-f fd-r">
-														<Typography
-															variant="subtitle1"
-															sx={{ color: "typography.secondary" }}
-														>
-															Стоимость:
-														</Typography>
-														<Typography variant="subtitle0">
-															{order.preorder.foreignShippingInvoice.amount} ₽
-														</Typography>
-														{order.preorder.foreignShippingInvoice.isPaid ? (
-															<Typography
-																variant="subtitle1"
-																sx={{ color: "success.main" }}
-															>
-																Оплачено
-															</Typography>
-														) : (
-															<Button
-																onClick={() =>
-																	order.preorder?.foreignShippingInvoice &&
-																	!order.preorder.foreignShippingInvoice.isPaid &&
-																	handlePay(order.preorder.foreignShippingInvoice.id)
-																}
-															>
-																Оплатить
-															</Button>
-														)}
-													</div>
-												</div>
-											)}
-											{order.preorder.localShippingInvoice && (
-												<div className="gap-1">
-													<Typography variant="subtitle0">Доставка в Россию</Typography>
-													<div className="gap-1 d-f fd-r">
-														<Typography
-															variant="subtitle1"
-															sx={{ color: "typography.secondary" }}
-														>
-															Стоимость:
-														</Typography>
-														<Typography variant="subtitle0">
-															{order.preorder.localShippingInvoice.amount} ₽
-														</Typography>
-													</div>
-													{order.preorder.localShippingInvoice.isPaid ? (
-														<Typography variant="subtitle1" sx={{ color: "success.main" }}>
-															Оплачено
-														</Typography>
-													) : (
-														<Button
-															onClick={() =>
-																order.preorder?.localShippingInvoice &&
-																!order.preorder.localShippingInvoice.isPaid &&
-																handlePay(order.preorder.localShippingInvoice.id)
-															}
-														>
-															Оплатить
-														</Button>
-													)}
-												</div>
-											)}
-										</>
-									)}
-
-									{order.preorder && (
-										<div className="gap-1">
-											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
-												Товары:
-											</Typography>
-											<Typography variant="subtitle0">{goodsTotal} ₽</Typography>
-										</div>
-									)}
-
-									<div className="gap-1 pt-2">
-										<div className="gap-1">
-											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
-												Итого:
-											</Typography>
-											<Typography variant="subtitle0">{goodsTotal + shippingTotal} ₽</Typography>
-										</div>
+								{order.status === "CANCELLED" ? (
+									<Typography variant="subtitle1">Заказ отменен</Typography>
+								) : order.status === "UNPAID" ? (
+									<div className="gap-1 d-f fd-r">
+										<Typography variant="subtitle1" sx={{ color: "typography.error" }}>
+											Заказ не оплачен
+										</Typography>
+										<Button
+											onClick={() => handlePay(order.initialInvoice.id)}
+											variant="contained"
+											sx={{ width: "fit-content", display: "flex", gap: 1 }}
+										>
+											{"Оплатить "} <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
+										</Button>
 									</div>
-
-									{order.status === "CANCELLED" && (
-										<Typography variant="subtitle1">Заказ отменен</Typography>
-									)}
-
-									{order.status === "UNPAID" && (
-										<div className="gap-1 d-f fd-r">
-											<Typography variant="subtitle1" sx={{ color: "typography.error" }}>
-												Заказ не оплачен
+								) : order.preorder !== null && showDetailedOrder ? (
+									<>
+										<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+											Оплачено
+										</Typography>
+										<Stack direction="column" divider={<Divider />} spacing={1}>
+											<div className="d-f fd-r jc-sb">
+												<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+													Депозит:
+												</Typography>
+												<Typography variant="subtitle0">
+													{order.initialInvoice.amount} ₽
+												</Typography>
+											</div>
+											{paidCreditAmount && (
+												<div className="d-f fd-r jc-sb">
+													<Typography
+														variant="subtitle1"
+														sx={{ color: "typography.secondary" }}
+													>
+														Рассрочка:
+													</Typography>
+													<Typography variant="subtitle0">{paidCreditAmount} ₽</Typography>
+												</div>
+											)}
+											{foreignShippingInvoice && foreignShippingInvoice.isPaid && (
+												<div className="d-f fd-r jc-sb">
+													<Typography
+														variant="subtitle1"
+														sx={{ color: "typography.secondary" }}
+													>
+														Доставка на зарубежный склад:
+													</Typography>
+													<Typography variant="subtitle0">
+														{foreignShippingInvoice.amount} ₽
+													</Typography>
+												</div>
+											)}
+											{localShippingInvoice && localShippingInvoice.isPaid && (
+												<div className="d-f fd-r jc-sb">
+													<Typography
+														variant="subtitle1"
+														sx={{ color: "typography.secondary" }}
+													>
+														Доставка в Россию:
+													</Typography>
+													<Typography variant="subtitle0">
+														{localShippingInvoice.amount} ₽
+													</Typography>
+												</div>
+											)}
+										</Stack>
+										<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+											Доплата
+										</Typography>
+										<Stack direction="column" divider={<Divider />} spacing={1}>
+											{unpaidCreditAmount && (
+												<div className="d-f fd-r jc-sb">
+													<Typography
+														variant="subtitle1"
+														sx={{ color: "typography.secondary" }}
+													>
+														Рассрочка:
+													</Typography>
+													<Typography variant="subtitle0">{unpaidCreditAmount} ₽</Typography>
+												</div>
+											)}
+											{foreignShippingInvoicePending && (
+												<div className="d-f fd-r jc-sb">
+													<Typography
+														variant="subtitle1"
+														sx={{ color: "typography.secondary" }}
+													>
+														Доставка на зарубежный склад:
+													</Typography>
+													<Typography variant="subtitle0">
+														TODO: Стоимость доставки станет известна
+													</Typography>
+												</div>
+											)}
+											{foreignShippingInvoice && !foreignShippingInvoice.isPaid && (
+												<div className="d-f fd-r jc-sb">
+													<Typography
+														variant="subtitle1"
+														sx={{ color: "typography.secondary" }}
+													>
+														Доставка на зарубежный склад:
+													</Typography>
+													<Typography variant="subtitle0">
+														{foreignShippingInvoice.amount} ₽
+													</Typography>
+												</div>
+											)}
+											{localShippingInvoicePending && (
+												<div className="d-f fd-r jc-sb">
+													<Typography
+														variant="subtitle1"
+														sx={{ color: "typography.secondary" }}
+													>
+														Доставка в Россию:
+													</Typography>
+													<Typography variant="subtitle0">
+														TODO: Стоимость доставки станет известна
+													</Typography>
+												</div>
+											)}
+											{localShippingInvoice && !localShippingInvoice.isPaid && (
+												<div className="d-f fd-r jc-sb">
+													<Typography
+														variant="subtitle1"
+														sx={{ color: "typography.secondary" }}
+													>
+														Доставка в Россию:
+													</Typography>
+													<Typography variant="subtitle0">
+														{localShippingInvoice.amount} ₽
+													</Typography>
+												</div>
+											)}
+										</Stack>
+									</>
+								) : (
+									<>
+										<div className="d-f fd-c jc-sb">
+											<div className="gap-1">
+												<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+													Итого:
+												</Typography>
+												<Typography variant="subtitle0">
+													{order.initialInvoice.amount} ₽
+												</Typography>
+											</div>
+											<Divider orientation="horizontal" flexItem />
+											<Typography variant="subtitle1" sx={{ color: "typography.success" }}>
+												Оплачено!
 											</Typography>
-											<Button
-												onClick={() => handlePay(order.initialInvoice.id)}
-												variant="contained"
-												sx={{ width: "fit-content", display: "flex", gap: 1 }}
-											>
-												{"Оплатить "}{" "}
-												<CountdownTimer deadline={order.initialInvoice.expiresAt!} />
-											</Button>
 										</div>
-									)}
-								</Stack>
+									</>
+								)}
 							</div>
 						</div>
 					</>

@@ -148,7 +148,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 							)}
 						</Box>
 						{selectedVariation.creditInfo && (
-							<ItemCreditInfo payments={selectedVariation.creditInfo.payments} />
+							<ItemCreditInfo creditInfo={selectedVariation.creditInfo} />
 						)}
 					</Box>
 				</Box>

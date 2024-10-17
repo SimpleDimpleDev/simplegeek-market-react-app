@@ -308,6 +308,12 @@ export const ShopOrderItemCardCredit: React.FC<ShopOrderItemCardCreditProps> = (
 			</div>
 			<Collapse orientation="vertical" in={creditInfoExpanded}>
 				<Stack direction="column" divider={<Divider />} spacing={1}>
+					<Box display="flex" flexDirection="row" gap={1}>
+						<Typography variant="subtitle1" sx={{ width: "100%" }}>{`${creditInfo.deposit} ₽`}</Typography>
+						<Typography variant="subtitle1" sx={{ width: "100%" }}>
+							Сразу
+						</Typography>
+					</Box>
 					{creditInfo.payments.map((part) => {
 						return (
 							<Box display="flex" flexDirection="row" gap={1}>
