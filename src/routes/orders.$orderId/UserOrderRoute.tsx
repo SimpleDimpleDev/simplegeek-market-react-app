@@ -105,8 +105,8 @@ export function Component() {
 	const foreignShippingInvoicePending = useMemo(() => {
 		if (!order) return undefined;
 		if (!order.preorder) return false;
-		return order.preorder.shippingCostIncluded === "NOT";
-	}, [order]);
+		return !foreignShippingInvoice && order.preorder.shippingCostIncluded === "NOT";
+	}, [order, foreignShippingInvoice]);
 
 	const localShippingInvoice = useMemo(() => {
 		if (!order) return undefined;
@@ -116,8 +116,8 @@ export function Component() {
 	const localShippingInvoicePending = useMemo(() => {
 		if (!order) return undefined;
 		if (!order.preorder) return false;
-		return order.preorder.shippingCostIncluded !== "FULL";
-	}, [order]);
+		return !localShippingInvoice && order.preorder.shippingCostIncluded !== "FULL";
+	}, [order, localShippingInvoice]);
 
 	const showDetailedOrder = useMemo(() => {
 		return (
@@ -312,35 +312,23 @@ export function Component() {
 									</div>
 								) : order.preorder !== null && showDetailedOrder ? (
 									<>
-										<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
-											Оплачено
-										</Typography>
+										<Typography variant="h6">Оплачено</Typography>
 										<Stack direction="column" divider={<Divider />} spacing={1}>
 											<div className="d-f fd-r jc-sb">
-												<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
-													Депозит:
-												</Typography>
+												<Typography variant="body1">Депозит:</Typography>
 												<Typography variant="subtitle0">
 													{order.initialInvoice.amount} ₽
 												</Typography>
 											</div>
 											{paidCreditAmount && (
 												<div className="d-f fd-r jc-sb">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
-														Рассрочка:
-													</Typography>
+													<Typography variant="body1">Рассрочка:</Typography>
 													<Typography variant="subtitle0">{paidCreditAmount} ₽</Typography>
 												</div>
 											)}
 											{foreignShippingInvoice && foreignShippingInvoice.isPaid && (
 												<div className="d-f fd-r jc-sb">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
+													<Typography variant="body1">
 														Доставка на зарубежный склад:
 													</Typography>
 													<Typography variant="subtitle0">
@@ -350,52 +338,34 @@ export function Component() {
 											)}
 											{localShippingInvoice && localShippingInvoice.isPaid && (
 												<div className="d-f fd-r jc-sb">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
-														Доставка в Россию:
-													</Typography>
+													<Typography variant="body1">Доставка в Россию:</Typography>
 													<Typography variant="subtitle0">
 														{localShippingInvoice.amount} ₽
 													</Typography>
 												</div>
 											)}
 										</Stack>
-										<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
-											Доплата
-										</Typography>
+										<Typography variant="h6">Доплата</Typography>
 										<Stack direction="column" divider={<Divider />} spacing={1}>
 											{unpaidCreditAmount && (
 												<div className="d-f fd-r jc-sb">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
-														Рассрочка:
-													</Typography>
+													<Typography variant="body1">Рассрочка:</Typography>
 													<Typography variant="subtitle0">{unpaidCreditAmount} ₽</Typography>
 												</div>
 											)}
 											{foreignShippingInvoicePending && (
-												<div className="d-f fd-r jc-sb">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
+												<div className="gap-05 d-f fd-c">
+													<Typography variant="body1">
 														Доставка на зарубежный склад:
 													</Typography>
-													<Typography variant="subtitle0">
+													<Typography variant="body2">
 														TODO: Стоимость доставки станет известна
 													</Typography>
 												</div>
 											)}
 											{foreignShippingInvoice && !foreignShippingInvoice.isPaid && (
 												<div className="d-f fd-r jc-sb">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
+													<Typography variant="body1">
 														Доставка на зарубежный склад:
 													</Typography>
 													<Typography variant="subtitle0">
@@ -404,26 +374,16 @@ export function Component() {
 												</div>
 											)}
 											{localShippingInvoicePending && (
-												<div className="d-f fd-r jc-sb">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
-														Доставка в Россию:
-													</Typography>
-													<Typography variant="subtitle0">
+												<div className="gap-05 d-f fd-c">
+													<Typography variant="body1">Доставка в Россию:</Typography>
+													<Typography variant="caption">
 														TODO: Стоимость доставки станет известна
 													</Typography>
 												</div>
 											)}
 											{localShippingInvoice && !localShippingInvoice.isPaid && (
 												<div className="d-f fd-r jc-sb">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
-														Доставка в Россию:
-													</Typography>
+													<Typography variant="body1">Доставка в Россию:</Typography>
 													<Typography variant="subtitle0">
 														{localShippingInvoice.amount} ₽
 													</Typography>
