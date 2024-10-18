@@ -1,10 +1,17 @@
 import { z } from "zod";
 
-import { CreditSchema, InvoiceShopSchema } from "./Payment";
+import { CreditGetSchema, InvoiceGetSchema } from "./Credit";
 import { IdSchema, ISOToDateSchema } from "./Primitives";
-import { DeliverySchema, DeliveryOrderSchema } from "./Delivery";
-import { PreorderOrderShopSchema } from "./Preorder";
+import { DeliverySchema } from "./Delivery";
+import { PreorderGetSchema, ShippingCostIncludedSchema } from "./Preorder";
 import { UserCartItemSchema } from "./UserItems";
+import { PhysicalPropertiesSchema } from "./PhysicalProperties";
+
+export const PaymentUrlGetSchema = z
+	.object({
+		paymentUrl: z.string().url(),
+	})
+	.describe("PaymentUrlGet");
 
 export const CheckoutItemListSchema = z.object({
 	items: UserCartItemSchema.array(),
@@ -19,43 +26,56 @@ export const OrderStatusSchema = z.enum([
 	"FINISHED",
 ]);
 
-export const OrderCreateSchema = z.object(
-	{
+export const OrderCreateSchema = z
+	.object({
 		creditIds: IdSchema.array(),
 		delivery: DeliverySchema.nullable(),
 		saveDelivery: z.boolean(),
-	},
-	{ description: "OrderCreate" }
-);
+	})
+	.describe("OrderCreate");
 
-export const OrderItemShopSchema = z.object(
-	{
+export const OrderItemGetSchema = z
+	.object({
 		id: IdSchema,
+		catalogItemLink: z.string().nullable(),
 		title: z.string(),
 		image: z.string(),
 		quantity: z.number(),
 		sum: z.number(),
-		credit: CreditSchema.nullable(),
-	},
-	{ description: "OrderItemShop" }
-);
+		credit: CreditGetSchema.nullable(),
+		physicalProperties: PhysicalPropertiesSchema.nullable(),
+	})
+	.describe("OrderItemGet");
 
-export const OrderShopSchema = z.object(
-	{
+export const OrderDeliveryGetSchema = DeliverySchema.extend({
+	tracking: z
+		.object({
+			code: z.string(),
+			link: z.string(),
+		})
+		.nullable(),
+}).describe("OrderDeliveryGet");
+
+export const OrderPreorderGetSchema = PreorderGetSchema.extend({
+	shippingCostIncluded: ShippingCostIncludedSchema,
+	foreignShippingInvoice: InvoiceGetSchema.nullable(),
+	localShippingInvoice: InvoiceGetSchema.nullable(),
+}).describe("OrderPreorderGet");
+
+export const OrderGetSchema = z
+	.object({
 		id: IdSchema,
 		status: OrderStatusSchema,
 		createdAt: ISOToDateSchema,
-		delivery: DeliveryOrderSchema.nullable(),
-		preorder: PreorderOrderShopSchema.nullable(),
-		items: OrderItemShopSchema.array(),
-		initialInvoice: InvoiceShopSchema,
-	},
-	{ description: "OrderShop" }
-);
+		delivery: OrderDeliveryGetSchema.nullable(),
+		preorder: OrderPreorderGetSchema.nullable(),
+		items: OrderItemGetSchema.array(),
+		initialInvoice: InvoiceGetSchema,
+	})
+	.describe("OrderGet");
 
-export const OrderListSchema = z.object(
-	{
-		items: OrderShopSchema.array(),
-	},
-	{ description: "OrderList" }
-);
+export const OrderListGetSchema = z
+	.object({
+		items: OrderGetSchema.array(),
+	})
+	.describe("OrderGetList");

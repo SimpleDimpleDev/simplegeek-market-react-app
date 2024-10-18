@@ -1,8 +1,8 @@
 import { Catalog } from "@appTypes/Catalog";
 import { shopApi } from "./root";
 import { validateData } from "@utils/validation";
-import { PublicationListSchema } from "@schemas/Publication";
-import { CatalogItemsAvailabilitySchema } from "@schemas/CatalogItem";
+import { PublicationListGetSchema } from "@schemas/Publication";
+import { CatalogItemsAvailabilityGetSchema } from "@schemas/CatalogItem";
 import { z } from "zod";
 
 export const catalogApi = shopApi.injectEndpoints({
@@ -14,7 +14,7 @@ export const catalogApi = shopApi.injectEndpoints({
 			}),
             providesTags: ["Catalog"],
 			transformResponse: (response) => {
-				const publicationList = validateData(PublicationListSchema, response);
+				const publicationList = validateData(PublicationListGetSchema, response);
 				const publications = publicationList.items;
 
 				const items = publications.flatMap((publication) =>
@@ -43,13 +43,13 @@ export const catalogApi = shopApi.injectEndpoints({
 			},
 			
 		}),
-		getItemsAvailability: build.query<z.infer<typeof CatalogItemsAvailabilitySchema>, void>({
+		getItemsAvailability: build.query<z.infer<typeof CatalogItemsAvailabilityGetSchema>, void>({
 			query: () => ({
 				url: "/market/availability",
 				method: "GET",
 			}),
 			providesTags: ["ItemsAvailability"],
-			transformResponse: (response) => validateData(CatalogItemsAvailabilitySchema, response),
+			transformResponse: (response) => validateData(CatalogItemsAvailabilityGetSchema, response),
 		}),
 	}),
 });

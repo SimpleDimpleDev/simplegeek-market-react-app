@@ -153,7 +153,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 							width: pkg.width,
 							height: pkg.height,
 							length: pkg.length,
-							weight: pkg.mass,
+							weight: pkg.weight,
 						})) || []}
 					/>
 				</Box>

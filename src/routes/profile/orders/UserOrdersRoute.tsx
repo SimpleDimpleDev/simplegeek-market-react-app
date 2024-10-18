@@ -6,7 +6,7 @@ import { ShoppingBag } from "@mui/icons-material";
 import { Empty } from "@components/Empty";
 import { OrderCard } from "./OrderCard";
 
-import type { OrderShop } from "@appTypes/Order";
+import type { OrderGet } from "@appTypes/Order";
 import { useGetOrderListQuery } from "@api/shop/profile";
 import { Loading } from "@components/Loading";
 import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
@@ -19,9 +19,9 @@ function tabsProps(index: number) {
 	};
 }
 
-const finishedOrderStatuses: OrderShop["status"][] = ["CANCELLED", "FINISHED"];
+const finishedOrderStatuses: OrderGet["status"][] = ["CANCELLED", "FINISHED"];
 
-const getOrdersByTab = ({ currentTab, orders }: { currentTab: number; orders: OrderShop[] }) => {
+const getOrdersByTab = ({ currentTab, orders }: { currentTab: number; orders: OrderGet[] }) => {
 	switch (currentTab) {
 		case 0:
 			return orders.filter((order) => !finishedOrderStatuses.includes(order.status));

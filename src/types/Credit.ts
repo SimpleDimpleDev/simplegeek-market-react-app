@@ -1,5 +1,5 @@
-import { CreditInfoSchema, CreditSchema } from "../schemas/Payment";
+import { CreditGetSchema, CreditInfoGetSchema } from "@schemas/Credit";
 import { z } from "zod";
 
-export type CreditInfo = z.infer<typeof CreditInfoSchema>;
-export type OrderCredit = z.infer<typeof CreditSchema>;
+export type CreditInfoGet = z.infer<typeof CreditInfoGetSchema>;
+export type CreditGet = z.infer<typeof CreditGetSchema>;

@@ -1,17 +1,16 @@
 import { z } from "zod";
 import { FilterGroupGetSchema } from "./FilterGroup";
 import { PhysicalPropertiesSchema } from "./PhysicalProperties";
-import { CategoryShopSchema } from "./Category";
-import { AttachmentSchema } from "./Attachment";
+import { CategoryGetSchema } from "./Category";
+import { AttachmentGetSchema } from "./Attachment";
 
-export const ProductShopSchema = z.object(
-	{
-		category: CategoryShopSchema,
+export const ProductGetSchema = z
+	.object({
+		category: CategoryGetSchema,
 		title: z.string(),
-		images: AttachmentSchema.array(),
+		images: AttachmentGetSchema.array(),
 		description: z.string().nullable(),
 		filterGroups: FilterGroupGetSchema.array(),
 		physicalProperties: PhysicalPropertiesSchema.nullable(),
-	},
-	{ description: "Product" }
-);
+	})
+	.describe("ProductGet");

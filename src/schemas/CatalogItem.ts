@@ -1,26 +1,24 @@
 import { z } from "zod";
 
-import { CreditInfoSchema } from "./Payment";
+import { CreditInfoGetSchema } from "./Credit";
 import { IdSchema, ISOToDateSchema } from "./Primitives";
-import { ProductShopSchema } from "./Product";
+import { ProductGetSchema } from "./Product";
 
-export const CatalogItemShopSchema = z.object(
-	{
+export const CatalogItemGetSchema = z
+	.object({
 		id: IdSchema,
-		product: ProductShopSchema,
+		product: ProductGetSchema,
 		rating: z.number(),
 		price: z.number(),
 		discount: z.number().nullable(),
 		variationIndex: z.number().nullable(),
-		creditInfo: CreditInfoSchema.nullable(),
+		creditInfo: CreditInfoGetSchema.nullable(),
 		createdAt: ISOToDateSchema,
-	},
-	{ description: "CatalogItem" }
-);
+	})
+	.describe("CatalogItemGet");
 
-export const CatalogItemsAvailabilitySchema = z.object(
-	{
+export const CatalogItemsAvailabilityGetSchema = z
+	.object({
 		items: IdSchema.array(),
-	},
-	{ description: "CatalogItemsAvailability" }
-);
+	})
+	.describe("CatalogItemsAvailabilityGet");

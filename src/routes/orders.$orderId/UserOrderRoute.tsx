@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo } from "react";
 import { orderStatusBadges } from "@components/Badges";
 import CountdownTimer from "@components/CountdownTimer";
-import { DeliveryService } from "@appTypes/Delivery";
+import { DeliveryPackage, DeliveryService } from "@appTypes/Delivery";
 import { DateFormatter, getRuGoodsWord } from "@utils/format";
 import { getImageUrl } from "@utils/image";
 import { useParams } from "react-router-dom";
@@ -13,7 +13,7 @@ import { Loading } from "@components/Loading";
 import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { useIsMobile } from "src/hooks/useIsMobile";
-import { OrderCredit } from "@appTypes/Credit";
+import { CreditGet } from "@appTypes/Credit";
 import { DeliveryForm } from "@components/DeliveryForm";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
@@ -22,7 +22,7 @@ const deliveryServiceMapping: Record<DeliveryService, string> = {
 };
 
 interface OrderItemCreditProps {
-	credit: OrderCredit;
+	credit: CreditGet;
 	onPayClick: (invoiceId: string) => void;
 }
 
@@ -68,6 +68,7 @@ const OrderItemCredit: React.FC<OrderItemCreditProps> = ({ credit, onPayClick })
 export function Component() {
 	const isMobile = useIsMobile();
 
+	const navigate = useNavigate();
 	const params = useParams();
 	const orderId = params.orderId;
 	if (orderId === undefined) {
@@ -76,7 +77,17 @@ export function Component() {
 	const { data: order, isLoading: orderIsLoading } = useGetOrderQuery({ id: orderId });
 	const [fetchPaymentUrl, { data: paymentUrlData, isSuccess: paymentUrlIsSuccess }] = useLazyGetPaymentUrlQuery();
 
-	const navigate = useNavigate();
+	const packages: DeliveryPackage[] = useMemo(() => {
+		if (!order) return [];
+		const packages: DeliveryPackage[] = [];
+		for (const item of order.items) {
+			if (!item.physicalProperties) continue;
+			for (let i = 0; i < item.quantity; i++) {
+				packages.push(item.physicalProperties);
+			}
+		}
+		return packages;
+	}, [order]);
 
 	const { paidCreditAmount, unpaidCreditAmount, orderHasCredit } = useMemo(() => {
 		if (!order) return { paidCreditAmount: undefined, unpaidCreditAmount: undefined, orderHasCredit: undefined };
@@ -136,12 +147,6 @@ export function Component() {
 		localShippingInvoicePending,
 	]);
 
-	const canChangeDelivery = useMemo(() => {
-		if (!order) return undefined;
-		// TODO: implement condition
-		return true;
-	}, [order]);
-
 	useEffect(() => {
 		if (paymentUrlIsSuccess) {
 			window.location.href = paymentUrlData.paymentUrl;
@@ -168,7 +173,7 @@ export function Component() {
 					<>
 						<div className="py-2">
 							<Typography variant="h3">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
-							<Typography variant="subtitle0">ID: {order.id}</Typography>
+							<Typography variant="subtitle0" sx={{ color: "typography.secondary" }}>ID: {order.id}</Typography>
 						</div>
 						<div className="gap-1 pb-4 d-f fd-r">{orderStatusBadges[order.status]}</div>
 						<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
@@ -181,8 +186,7 @@ export function Component() {
 													<DeliveryForm
 														isMobile={isMobile}
 														delivery={order.delivery}
-														// TODO: fetch packages
-														packages={[]}
+														packages={packages}
 														defaultEditing={true}
 														canModify={false}
 														onChange={(data) => {
@@ -212,12 +216,11 @@ export function Component() {
 										) : (
 											<>Ошибка</>
 										)
-									) : canChangeDelivery ? (
+									) : order.delivery.tracking === null ? (
 										<DeliveryForm
 											isMobile={isMobile}
 											delivery={order.delivery}
-											// TODO: fetch packages
-											packages={[]}
+											packages={packages}
 											defaultEditing={false}
 											canModify={true}
 											onChange={(data) => {

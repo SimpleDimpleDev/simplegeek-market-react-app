@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { IdSchema } from "./Primitives";
 
-export const FilterGroupGetSchema = z.object(
-	{
+export const FilterGroupGetSchema = z
+	.object({
 		id: IdSchema,
 		title: z.string(),
 		filters: z
@@ -12,6 +12,5 @@ export const FilterGroupGetSchema = z.object(
 			})
 			.array()
 			.nonempty(),
-	},
-	{ description: "FilterGroup" }
-);
+	})
+	.describe("FilterGroupGet");

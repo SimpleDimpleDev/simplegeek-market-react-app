@@ -1,17 +1,16 @@
 import { z } from "zod";
 import { IdSchema } from "./Primitives";
-import { AttachmentSchema } from "./Attachment";
+import { AttachmentGetSchema } from "./Attachment";
 
-const CategoryBaseSchema = z.object(
-	{
+const CategoryBaseSchema = z
+	.object({
 		title: z.string(),
 		link: z.string(),
-	},
-	{ description: "Category" }
-);
+	})
+	.describe("CategoryBase");
 
-export const CategoryShopSchema = CategoryBaseSchema.extend({
+export const CategoryGetSchema = CategoryBaseSchema.extend({
 	id: IdSchema,
-	icon: AttachmentSchema,
-	banner: AttachmentSchema,
-});
+	icon: AttachmentGetSchema,
+	banner: AttachmentGetSchema,
+}).describe("CategoryGet");

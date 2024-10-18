@@ -1,4 +1,4 @@
 import { z } from "zod";
-import { CategoryShopSchema } from "../schemas/Category";
+import { CategoryGetSchema } from "@schemas/Category";
 
-export type CategoryShop = z.infer<typeof CategoryShopSchema>;
+export type CategoryGet = z.infer<typeof CategoryGetSchema>;

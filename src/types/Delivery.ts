@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DeliveryServiceSchema, DeliveryPointSchema, DeliverySchema, RecipientSchema, DeliveryPackageSchema } from "../schemas/Delivery";
+import { DeliveryServiceSchema, DeliveryPointSchema, DeliverySchema, RecipientSchema, DeliveryPackageSchema } from "@schemas/Delivery";
 
 export type Recipient = z.infer<typeof RecipientSchema>;
 export type DeliveryService = z.infer<typeof DeliveryServiceSchema>;

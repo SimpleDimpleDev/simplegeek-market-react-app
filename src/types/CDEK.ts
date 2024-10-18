@@ -6,7 +6,7 @@ import {
 	CDEKDoorAddressSchema,
 	CDEKOfficeAddressSchema,
 	CDEKTariffSchema,
-} from "../schemas/CDEK";
+} from "@schemas/CDEK";
 
 export type CDEKDeliveryType = z.infer<typeof CDEKDeliveryTypeSchema>;
 export type CDEKDoorAddress = z.infer<typeof CDEKDoorAddressSchema>;

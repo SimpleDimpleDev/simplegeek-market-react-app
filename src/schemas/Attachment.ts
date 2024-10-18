@@ -1,9 +1,8 @@
 import { z } from "zod";
 
-export const AttachmentSchema = z.object(
-	{
+export const AttachmentGetSchema = z
+	.object({
 		index: z.number(),
 		url: z.string(),
-	},
-	{ description: "Attachment" }
-);
+	})
+	.describe("AttachmentGet");

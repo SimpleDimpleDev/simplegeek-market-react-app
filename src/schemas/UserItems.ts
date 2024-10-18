@@ -8,29 +8,26 @@ const BaseUserItemSchema = z.object({
 
 export const UserCartItemSchema = BaseUserItemSchema.extend({
 	quantity: z.number(),
-});
+}).describe("UserCartItem");
 
-export const CartItemListSchema = z.object(
-	{
+export const CartItemListSchema = z
+	.object({
 		items: UserCartItemSchema.array(),
-	},
-	{ description: "CartItemList" }
-);
+	})
+	.describe("CartItemList");
 
-export const UserFavoriteItemSchema = BaseUserItemSchema.extend({});
+export const UserFavoriteItemSchema = BaseUserItemSchema.extend({}).describe("UserFavoriteItem");
 
-export const FavoriteItemListSchema = z.object(
-	{
+export const FavoriteItemListSchema = z
+	.object({
 		items: UserFavoriteItemSchema.array(),
-	},
-	{ description: "FavoriteItemList" }
-);
+	})
+	.describe("FavoriteItemList");
 
-export const UserTrackedItemSchema = BaseUserItemSchema.extend({});
+export const UserTrackedItemSchema = BaseUserItemSchema.extend({}).describe("UserTrackedItem");
 
-export const TrackedItemListSchema = z.object(
-	{
+export const TrackedItemListSchema = z
+	.object({
 		items: UserTrackedItemSchema.array(),
-	},
-	{ description: "TrackedItemList" }
-);
+	})
+	.describe("TrackedItemList");

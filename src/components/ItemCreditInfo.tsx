@@ -1,10 +1,10 @@
-import { CreditInfo } from "@appTypes/Credit";
+import { CreditInfoGet } from "@appTypes/Credit";
 import { ExpandMore } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Stack, Typography } from "@mui/material";
 import { DateFormatter, getRuPaymentWord } from "@utils/format";
 
 interface ItemCreditInfoProps {
-	creditInfo: CreditInfo;
+	creditInfo: CreditInfoGet;
 }
 
 const ItemCreditInfo = ({ creditInfo }: ItemCreditInfoProps) => {

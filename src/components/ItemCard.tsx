@@ -13,7 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { getImageUrl } from "@utils/image";
 import { CatalogItem } from "@appTypes/CatalogItem";
-import { CreditInfo } from "@appTypes/Credit";
+import { CreditInfoGet } from "@appTypes/Credit";
 import { useAddCartItemMutation } from "@api/shop/cart";
 import { useAddFavoriteItemMutation, useRemoveFavoriteItemMutation } from "@api/shop/favorites";
 import { useAddTrackedItemMutation, useRemoveTrackedItemMutation } from "@api/shop/tracked";
@@ -258,7 +258,7 @@ export const ShopOrderItemCard: React.FC<ShopOrderItemCardProps> = ({ imgUrl, ti
 };
 
 type ShopOrderItemCardCreditProps = ShopOrderItemCardProps & {
-	creditInfo: CreditInfo;
+	creditInfo: CreditInfoGet;
 	isCredit: boolean;
 	onCreditChange: (isCredit: boolean) => void;
 };

@@ -1,5 +1,5 @@
 import logo from "@assets/MainLogoBig.png";
-import { CategoryShop } from "@appTypes/Category";
+import { CategoryGet } from "@appTypes/Category";
 import { User } from "@appTypes/User";
 import { ChevronRight, Close, Info, Person } from "@mui/icons-material";
 import { IconButton, ListItem, ListItemButton, MenuItem, Modal, Slide, Typography } from "@mui/material";
@@ -22,7 +22,7 @@ interface MobileMenuProps {
 	user: User | null;
 	onLoginClick: () => void;
 	onLogoutClick: () => void;
-	categories: CategoryShop[];
+	categories: CategoryGet[];
 	isOpened: boolean;
 	onMenuClose: () => void;
 }

@@ -16,7 +16,7 @@ import { useNavigate, useSubmit } from "react-router-dom";
 import { getRuGoodsWord } from "@utils/format";
 import { useEffect, useMemo, useState } from "react";
 import { getImageUrl } from "@utils/image";
-import { CreditInfo } from "@appTypes/Credit";
+import { CreditInfoGet } from "@appTypes/Credit";
 import { DeliveryPackage, DeliveryPoint, DeliveryService, Recipient } from "@appTypes/Delivery";
 import { ShopOrderItemCard, ShopOrderItemCardCredit } from "@components/ItemCard";
 import { useGetCatalogQuery } from "@api/shop/catalog";
@@ -185,22 +185,16 @@ export function Component() {
 		);
 	}, [catalog, checkoutItemList]);
 
-	const packages: DeliveryPackage[] = useMemo(
-		() =>
-			orderItems
-				.map((item) => {
-					const productPhysicalProperties = item.product.physicalProperties;
-					if (!productPhysicalProperties) return null;
-					return {
-						length: productPhysicalProperties.length,
-						width: productPhysicalProperties.width,
-						height: productPhysicalProperties.height,
-						mass: productPhysicalProperties.mass,
-					};
-				})
-				.filter((itemPackage) => itemPackage !== null),
-		[orderItems]
-	);
+	const packages: DeliveryPackage[] = useMemo(() => {
+		const packages: DeliveryPackage[] = [];
+		for (const item of orderItems) {
+			if (!item.product.physicalProperties) continue;
+			for (let i = 0; i < item.quantity; i++) {
+				packages.push(item.product.physicalProperties);
+			}
+		}
+		return packages;
+	}, [orderItems]);
 
 	const itemsCreditAvailable = useMemo(() => orderItems.filter((item) => item.creditInfo !== null), [orderItems]);
 	const itemsCreditUnavailable = useMemo(() => orderItems.filter((item) => item.creditInfo === null), [orderItems]);
@@ -289,7 +283,7 @@ export function Component() {
 							width: pkg.width,
 							height: pkg.height,
 							length: pkg.length,
-							weight: pkg.mass,
+							weight: pkg.weight,
 						}))}
 					/>
 				</Box>
@@ -463,7 +457,7 @@ export function Component() {
 									title={item.product.title}
 									price={item.price}
 									quantity={item.quantity}
-									creditInfo={item.creditInfo as CreditInfo}
+									creditInfo={item.creditInfo as CreditInfoGet}
 									isCredit={creditItemsIds.has(item.id)}
 									onCreditChange={(isCredit) => {
 										const newItemsCredit = new Set(creditItemsIds);

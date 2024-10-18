@@ -1,10 +1,9 @@
 import { OrderCreate } from "@appTypes/Order";
 import { shopApi } from "./root";
 import { z } from "zod";
-import { PaymentUrlSchema } from "@schemas/Payment";
 import { validateData } from "@utils/validation";
 import { UserCartItem } from "@appTypes/UserItems";
-import { CheckoutItemListSchema } from "@schemas/Order";
+import { CheckoutItemListSchema, PaymentUrlGetSchema } from "@schemas/Order";
 
 const orderApi = shopApi.injectEndpoints({
 	endpoints: (build) => ({
@@ -22,24 +21,29 @@ const orderApi = shopApi.injectEndpoints({
 			}),
 			transformResponse: (response) => validateData(CheckoutItemListSchema, response),
 		}),
-		createOrder: build.mutation<z.infer<typeof PaymentUrlSchema>, OrderCreate>({
+		createOrder: build.mutation<z.infer<typeof PaymentUrlGetSchema>, OrderCreate>({
 			query: (body) => ({
 				url: "/order",
 				method: "POST",
 				body,
 			}),
-			transformResponse: (response) => validateData(PaymentUrlSchema, response),
+			transformResponse: (response) => validateData(PaymentUrlGetSchema, response),
 		}),
-		getPaymentUrl: build.query<z.infer<typeof PaymentUrlSchema>, { invoiceId: string }>({
+		getPaymentUrl: build.query<z.infer<typeof PaymentUrlGetSchema>, { invoiceId: string }>({
 			query: ({ invoiceId }) => ({
 				url: `/payment-link`,
 				method: "GET",
 				params: { invoiceId },
 			}),
-			transformResponse: (response) => validateData(PaymentUrlSchema, response),
+			transformResponse: (response) => validateData(PaymentUrlGetSchema, response),
 		}),
 	}),
 });
 
-export const { useCheckoutMutation, useGetCheckoutItemsQuery, useCreateOrderMutation, useGetPaymentUrlQuery, useLazyGetPaymentUrlQuery } =
-	orderApi;
+export const {
+	useCheckoutMutation,
+	useGetCheckoutItemsQuery,
+	useCreateOrderMutation,
+	useGetPaymentUrlQuery,
+	useLazyGetPaymentUrlQuery,
+} = orderApi;

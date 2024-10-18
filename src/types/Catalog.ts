@@ -1,9 +1,9 @@
 import { CatalogItem } from "./CatalogItem";
-import { CategoryShop } from "./Category";
-import { PublicationShop } from "./Publication";
+import { CategoryGet } from "./Category";
+import { PublicationGet } from "./Publication";
 
 export type Catalog = {
-	publications: PublicationShop[];
+	publications: PublicationGet[];
 	items: CatalogItem[];
-	categories: CategoryShop[];
+	categories: CategoryGet[];
 };

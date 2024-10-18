@@ -1,21 +1,19 @@
 import { z } from "zod";
 
-import { CatalogItemShopSchema } from "./CatalogItem";
-import { PreorderShopSchema, ShippingCostIncludedSchema } from "./Preorder";
+import { CatalogItemGetSchema } from "./CatalogItem";
+import { PreorderGetSchema, ShippingCostIncludedSchema } from "./Preorder";
 
-export const PublicationShopSchema = z.object(
-	{
+export const PublicationGetSchema = z
+	.object({
 		link: z.string(),
-		preorder: PreorderShopSchema.nullable(),
-		items: CatalogItemShopSchema.array().nonempty(),
+		preorder: PreorderGetSchema.nullable(),
+		items: CatalogItemGetSchema.array().nonempty(),
 		shippingCostIncluded: ShippingCostIncludedSchema.nullable(),
-	},
-	{ description: "Publication" }
-);
+	})
+	.describe("PublicationGet");
 
-export const PublicationListSchema = z.object(
-	{
-		items: PublicationShopSchema.array(),
-	},
-	{ description: "PublicationList" }
-);
+export const PublicationListGetSchema = z
+	.object({
+		items: PublicationGetSchema.array(),
+	})
+	.describe("PublicationListGet");

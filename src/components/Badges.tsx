@@ -5,7 +5,7 @@ import { StatusBadge } from "./StatusBadge";
 export const orderStatusBadges: Record<OrderStatus, JSX.Element> = {
 	CANCELLED: <StatusBadge color="icon.secondary">Отменен</StatusBadge>,
 	UNPAID: <StatusBadge color="icon.attention">Не оплачен</StatusBadge>,
-	ACCEPTED: <StatusBadge color="primary.main">Оформлен</StatusBadge>,
+	ACCEPTED: <StatusBadge color="typography.success">Оформлен</StatusBadge>,
 	DELIVERY: <StatusBadge color="typography.success">Передан в доставку</StatusBadge>,
 	READY_FOR_PICKUP: <StatusBadge color="typography.success">Готов к выдаче</StatusBadge>,
 	FINISHED: <StatusBadge color="typography.success">Доставлен</StatusBadge>,

@@ -1,9 +1,9 @@
-import { CatalogItemShop } from "@appTypes/CatalogItem";
-import { PublicationShop } from "@appTypes/Publication";
+import { CatalogItemGet } from "@appTypes/CatalogItem";
+import { PublicationGet } from "@appTypes/Publication";
 
 export type PublicationProps = {
-	publication: PublicationShop;
-	selectedVariation: CatalogItemShop;
+	publication: PublicationGet;
+	selectedVariation: CatalogItemGet;
 	imageUrls: string[];
 
 	selectedVariationIndex: number;

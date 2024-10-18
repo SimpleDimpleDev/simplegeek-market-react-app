@@ -21,20 +21,10 @@ export const RecipientSchema = z.object(
 
 export const DeliveryPackageSchema = PhysicalPropertiesSchema;
 
-export const DeliverySchema = z.object(
-	{
+export const DeliverySchema = z
+	.object({
 		recipient: RecipientSchema,
 		service: DeliveryServiceSchema,
 		point: DeliveryPointSchema.nullable(),
-	},
-	{ description: "Delivery" }
-);
-
-export const DeliveryOrderSchema = DeliverySchema.extend({
-	tracking: z
-		.object({
-			code: z.string(),
-			link: z.string(),
-		})
-		.nullable(),
-});
+	})
+	.describe("Delivery");

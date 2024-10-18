@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PublicationShopSchema } from "../schemas/Publication";
+import { PublicationGetSchema } from "@schemas/Publication";
 
-export type PublicationShop = z.infer<typeof PublicationShopSchema>;
+export type PublicationGet = z.infer<typeof PublicationGetSchema>;
 

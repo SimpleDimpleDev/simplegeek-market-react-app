@@ -1,12 +1,14 @@
 import { z } from "zod";
 
-import { IdSchema } from "./Primitives";
+export const FAQItemGetSchema = z
+	.object({
+		question: z.string(),
+		answer: z.string(),
+	})
+	.describe("FAQItemGet");
 
-export const FAQItemSchema = z.object(
-	{
-		id: IdSchema,
-		question: z.string().min(1, { message: "Введите вопрос" }),
-		answer: z.string().min(1, { message: "Введите ответ" }),
-	},
-	{ description: "FAQItem" }
-);
+export const FAQItemListGetSchema = z
+	.object({
+		items: FAQItemGetSchema.array(),
+	})
+	.describe("FAQItemListGet");

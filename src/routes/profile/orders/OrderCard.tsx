@@ -3,13 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { orderStatusBadges, preorderStatusBadges } from "@components/Badges";
 import CountdownTimer from "@components/CountdownTimer";
 import { SmallItemCard } from "@components/ItemCard";
-import { OrderShop } from "@appTypes/Order";
+import { OrderGet } from "@appTypes/Order";
 import { DateFormatter } from "@utils/format";
 import { getImageUrl } from "@utils/image";
 import { PriorityHigh } from "@mui/icons-material";
+import { PreorderStatus } from "@appTypes/Preorder";
+
+const preorderStatusListToRender: PreorderStatus[] = [
+	"WAITING_FOR_RELEASE",
+	"FOREIGN_SHIPPING",
+	"LOCAL_SHIPPING",
+	"DISPATCH",
+];
 
 interface OrderCardProps {
-	order: OrderShop;
+	order: OrderGet;
 	isMobile: boolean;
 	onPay: (invoiceId: string) => void;
 }
@@ -31,11 +39,12 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 		return (
 			<Box display={"flex"} flexDirection={"column"} gap={"12px"}>
 				<Box display={"flex"} flexDirection={"row"} gap={1}>
-					{order.preorder && order.status === "ACCEPTED" ? (
-						<>{preorderStatusBadges[order.preorder.status]}</>
-					) : (
-						<>{orderStatusBadges[order.status]}</>
-					)}
+					{orderStatusBadges[order.status]}
+					{order.preorder &&
+						order.status === "ACCEPTED" &&
+						preorderStatusListToRender.includes(order.preorder.status) && (
+							<>{preorderStatusBadges[order.preorder.status]}</>
+						)}
 				</Box>
 				{order.status === "UNPAID" && order.initialInvoice?.expiresAt && (
 					<div className="gap-1 d-f fd-c">
@@ -107,7 +116,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 									variant="contained"
 									sx={{ width: "fit-content", display: "flex", gap: 1 }}
 								>
-									{"Оплатить "}<CountdownTimer deadline={order.initialInvoice.expiresAt} />
+									{"Оплатить "}
+									<CountdownTimer deadline={order.initialInvoice.expiresAt} />
 								</Button>
 							)}
 							<Button
@@ -131,7 +141,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 									variant="contained"
 									sx={{ width: "fit-content", display: "flex", gap: 1 }}
 								>
-									{"Оплатить "}<CountdownTimer deadline={order.initialInvoice.expiresAt} />
+									{"Оплатить "}
+									<CountdownTimer deadline={order.initialInvoice.expiresAt} />
 								</Button>
 							)}
 							<Button
