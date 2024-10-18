@@ -222,12 +222,20 @@ export function Component() {
 		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
 		.reduce((a, b) => a + b, 0);
 
-	const handleCreateOrder = async (data: DeliveryFormData) => {
+	const handleStockCreateOrder = async (data: DeliveryFormData) => {
 		const delivery = DeliverySchema.parse(data);
 		createOrder({
 			creditIds: Array.from(creditItemsIds),
 			delivery,
 			saveDelivery,
+		});
+	};
+
+	const handleCreatePreorderOrder = () => {
+		createOrder({
+			creditIds: Array.from(creditItemsIds),
+			delivery: null,
+			saveDelivery: false,
 		});
 	};
 
@@ -299,7 +307,7 @@ export function Component() {
 				</Box>
 
 				<form
-					onSubmit={handleSubmit(handleCreateOrder)}
+					onSubmit={handleSubmit(handleStockCreateOrder)}
 					className="gap-2 w-100 d-f"
 					style={{ flexDirection: isMobile ? "column" : "row" }}
 				>
@@ -511,9 +519,19 @@ export function Component() {
 									<Typography variant="h6">{totalPrice} ₽</Typography>
 								</div>
 							)}
-							<Button variant="contained" disabled={orderMakeIsLoading} type="submit">
-								Оплатить
-							</Button>
+							{preorder ? (
+								<Button
+									variant="contained"
+									disabled={orderMakeIsLoading}
+									onClick={handleCreatePreorderOrder}
+								>
+									Оплатить
+								</Button>
+							) : (
+								<Button variant="contained" disabled={orderMakeIsLoading} type="submit">
+									Оплатить
+								</Button>
+							)}
 						</Box>
 					</Box>
 				</form>
