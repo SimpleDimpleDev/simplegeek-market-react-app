@@ -173,7 +173,9 @@ export function Component() {
 					<>
 						<div className="py-2">
 							<Typography variant="h3">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
-							<Typography variant="subtitle0" sx={{ color: "typography.secondary" }}>ID: {order.id}</Typography>
+							<Typography variant="subtitle0" sx={{ color: "typography.secondary" }}>
+								ID: {order.id}
+							</Typography>
 						</div>
 						<div className="gap-1 pb-4 d-f fd-r">{orderStatusBadges[order.status]}</div>
 						<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
@@ -409,13 +411,18 @@ export function Component() {
 												</div>
 											)}
 											{foreignShippingInvoice && !foreignShippingInvoice.isPaid && (
-												<div className="d-f fd-r jc-sb">
-													<Typography variant="body1">
-														Доставка на зарубежный склад:
-													</Typography>
-													<Typography variant="subtitle0">
-														{foreignShippingInvoice.amount} ₽
-													</Typography>
+												<div className="gap-1 d-f fd-c">
+													<div className="d-f fd-r jc-sb">
+														<Typography variant="body1">
+															Доставка на зарубежный склад:
+														</Typography>
+														<Typography variant="subtitle0">
+															{foreignShippingInvoice.amount} ₽
+														</Typography>
+													</div>
+													<Button onClick={() => handlePay(foreignShippingInvoice.id)}>
+														Оплатить
+													</Button>
 												</div>
 											)}
 											{localShippingInvoicePending && (
@@ -427,11 +434,16 @@ export function Component() {
 												</div>
 											)}
 											{localShippingInvoice && !localShippingInvoice.isPaid && (
-												<div className="d-f fd-r jc-sb">
-													<Typography variant="body1">Доставка в Россию:</Typography>
-													<Typography variant="subtitle0">
-														{localShippingInvoice.amount} ₽
-													</Typography>
+												<div className="gap-1 d-f fd-c">
+													<div className="d-f fd-r jc-sb">
+														<Typography variant="body1">Доставка в Россию:</Typography>
+														<Typography variant="subtitle0">
+															{localShippingInvoice.amount} ₽
+														</Typography>
+													</div>
+													<Button onClick={() => handlePay(localShippingInvoice.id)}>
+														Оплатить
+													</Button>
 												</div>
 											)}
 										</Stack>
