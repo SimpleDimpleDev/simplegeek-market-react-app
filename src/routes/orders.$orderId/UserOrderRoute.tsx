@@ -14,6 +14,7 @@ import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { OrderCredit } from "@appTypes/Credit";
+import { DeliveryForm } from "@components/DeliveryForm";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЕК",
@@ -135,6 +136,12 @@ export function Component() {
 		localShippingInvoicePending,
 	]);
 
+	const canChangeDelivery = useMemo(() => {
+		if (!order) return undefined;
+		// TODO: implement condition
+		return true;
+	}, [order]);
+
 	useEffect(() => {
 		if (paymentUrlIsSuccess) {
 			window.location.href = paymentUrlData.paymentUrl;
@@ -167,7 +174,57 @@ export function Component() {
 						<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
 							<div className="gap-2 w-100 d-f fd-c">
 								<div className="section">
-									{order.delivery ? (
+									{order.delivery === null ? (
+										order.preorder ? (
+											order.preorder.status === "DISPATCH" ? (
+												<>
+													<DeliveryForm
+														isMobile={isMobile}
+														delivery={order.delivery}
+														// TODO: fetch packages
+														packages={[]}
+														defaultEditing={true}
+														canModify={false}
+														onChange={(data) => {
+															console.log(data);
+														}}
+													/>
+												</>
+											) : (
+												<div className="gap-1">
+													<Typography variant="subtitle1">
+														Доставка к вам оформляется после полной оплаты товара и приезда
+														его на склад
+													</Typography>
+													<div className="gap-1 d-f fd-r">
+														<Typography
+															variant="subtitle1"
+															sx={{ color: "typography.secondary" }}
+														>
+															На складе ожидается:
+														</Typography>
+														<Typography variant="body1">
+															{order.preorder?.expectedArrival ?? "Неизвестно"}
+														</Typography>
+													</div>
+												</div>
+											)
+										) : (
+											<>Ошибка</>
+										)
+									) : canChangeDelivery ? (
+										<DeliveryForm
+											isMobile={isMobile}
+											delivery={order.delivery}
+											// TODO: fetch packages
+											packages={[]}
+											defaultEditing={false}
+											canModify={true}
+											onChange={(data) => {
+												console.log(data);
+											}}
+										/>
+									) : (
 										<Stack
 											gap={1}
 											direction={"column"}
@@ -236,21 +293,6 @@ export function Component() {
 												</div>
 											</div>
 										</Stack>
-									) : (
-										<div className="gap-1">
-											<Typography variant="subtitle1">
-												Доставка к вам оформляется после полной оплаты товара и приезда его на
-												склад
-											</Typography>
-											<div className="gap-1 d-f fd-r">
-												<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
-													На складе ожидается:
-												</Typography>
-												<Typography variant="body1">
-													{order.preorder?.expectedArrival ?? "Неизвестно"}
-												</Typography>
-											</div>
-										</div>
 									)}
 								</div>
 

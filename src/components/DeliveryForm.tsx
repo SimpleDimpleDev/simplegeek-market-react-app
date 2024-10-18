@@ -53,13 +53,15 @@ const DeliveryFormResolver = z
 	);
 
 interface DeliveryFormProps {
-	delivery?: Delivery;
-	onChange: (data: z.infer<typeof DeliverySchema>) => void;
-	packages: DeliveryPackage[];
 	isMobile?: boolean;
+	delivery: Delivery | null;
+	packages: DeliveryPackage[] | null;
+	defaultEditing: boolean;
+	canModify: boolean;
+	onChange: (data: z.infer<typeof DeliverySchema>) => void;
 }
 
-const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onChange, delivery, isMobile }) => {
+const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, packages, defaultEditing, canModify, onChange }) => {
 	const {
 		control,
 		watch,
@@ -90,12 +92,13 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onChange, deliver
 	const service = watch("service");
 	const cdekDeliveryData = watch("cdekDeliveryData");
 
-	const [isEditing, setIsEditing] = useState(!delivery);
+	const [isEditing, setIsEditing] = useState(defaultEditing);
 	const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
 
 	const handleSave = (data: DeliveryFormData) => {
 		onChange(DeliverySchema.parse(data));
 		setIsEditing(false);
+		// TODO: update externally
 		reset(DeliverySchema.parse(data));
 	};
 
@@ -146,12 +149,12 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onChange, deliver
 						}}
 						onReady={() => {}}
 						// TODO: mass vs weight
-						packages={packages.map((pkg) => ({
+						packages={packages?.map((pkg) => ({
 							width: pkg.width,
 							height: pkg.height,
 							length: pkg.length,
 							weight: pkg.mass,
-						}))}
+						})) || []}
 					/>
 				</Box>
 			</Modal>
@@ -275,7 +278,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ packages, onChange, deliver
 							</Button>
 						)}
 					</div>
-				) : (
+				) : canModify && (
 					<>
 						<Button
 							sx={{ width: "max-content" }}
