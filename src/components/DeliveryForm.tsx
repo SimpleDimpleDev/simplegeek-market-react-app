@@ -228,6 +228,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 							render={({ field, fieldState: { error } }) => (
 								<TextField
 									{...field}
+									disabled={!isEditing}
 									label="Номер телефона"
 									variant="outlined"
 									fullWidth
@@ -244,6 +245,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 							render={({ field, fieldState: { error } }) => (
 								<TextField
 									{...field}
+									disabled={!isEditing}
 									label="ФИО"
 									variant="outlined"
 									fullWidth
