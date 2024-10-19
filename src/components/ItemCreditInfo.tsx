@@ -33,7 +33,7 @@ const ItemCreditInfo = ({ creditInfo }: ItemCreditInfoProps) => {
 					<Box display="flex" flexDirection="row" gap={1}>
 						<Typography variant="subtitle1" sx={{ width: "100%" }}>{`${creditInfo.deposit} ₽`}</Typography>
 						<Typography variant="subtitle1" sx={{ width: "100%" }}>
-							Сразу
+							Депозит
 						</Typography>
 					</Box>
 					{creditInfo.payments.map((part) => {

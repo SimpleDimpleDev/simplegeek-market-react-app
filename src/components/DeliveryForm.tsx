@@ -109,6 +109,10 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 
 	const handleChooseCdekAddress = (data: CDEKDeliveryData) => {
 		setValue("cdekDeliveryData", data);
+		setValue("point", {
+			code: data.address.code,
+			address: `${data.address.city}, ${data.address.address}`,
+		})
 		setCdekWidgetOpen(false);
 	};
 

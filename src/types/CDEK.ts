@@ -1,6 +1,5 @@
 import { z } from "zod";
 import {
-	CDEKAddressSchema,
 	CDEKDeliveryDataFullSchema,
 	CDEKDeliveryTypeSchema,
 	CDEKDoorAddressSchema,
@@ -11,6 +10,5 @@ import {
 export type CDEKDeliveryType = z.infer<typeof CDEKDeliveryTypeSchema>;
 export type CDEKDoorAddress = z.infer<typeof CDEKDoorAddressSchema>;
 export type CDEKOfficeAddress = z.infer<typeof CDEKOfficeAddressSchema>;
-export type CDEKAddress = z.infer<typeof CDEKAddressSchema>;
 export type CDEKTariff = z.infer<typeof CDEKTariffSchema>;
 export type CDEKDeliveryData = z.infer<typeof CDEKDeliveryDataFullSchema>;

@@ -2,10 +2,8 @@ import { Typography } from "@mui/material";
 import { CDEKFromPoint, CDEKWidgetServicePath, YandexMapsApiKey } from "@config/cdek";
 import React from "react";
 import {
-	CDEKAddress,
 	CDEKDeliveryData,
 	CDEKDeliveryType,
-	CDEKDoorAddress,
 	CDEKOfficeAddress,
 	CDEKTariff,
 } from "@appTypes/CDEK";
@@ -58,7 +56,7 @@ type CalculateCDEKAddress = { code?: number; address?: string };
 
 type CalculateCallback = (tariffs: CalculateCDEKTariffs, address: CalculateCDEKAddress) => void;
 
-type ChooseCallback = (deliveryType: CDEKDeliveryType, tariff: CDEKTariff, address: CDEKAddress) => void;
+type ChooseCallback = (deliveryType: CDEKDeliveryType, tariff: CDEKTariff, address: CDEKOfficeAddress) => void;
 
 interface CdekWidgetProps {
 	onReady: () => void;
@@ -119,13 +117,6 @@ const CDEKDeliveryInfo: React.FC<CDEKDeliveryData> = ({ deliveryType, tariff, ad
 					Адрес: {definedAddress.city} {definedAddress.address}
 				</Typography>
 				<Typography variant={"body1"}>Время работы: {definedAddress.work_time}</Typography>
-			</>
-		);
-	} else if (deliveryType === "door") {
-		const definedAddress = address as CDEKDoorAddress;
-		AddressInfo = () => (
-			<>
-				<Typography variant={"body1"}>Адрес: {definedAddress.formatted}</Typography>
 			</>
 		);
 	} else {
