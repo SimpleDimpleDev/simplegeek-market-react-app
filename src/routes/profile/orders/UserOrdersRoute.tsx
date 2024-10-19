@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Box, Divider, Tab, Tabs, Typography } from "@mui/material";
+import { Box, CircularProgress, Divider, Tab, Tabs, Typography } from "@mui/material";
 import { ShoppingBag } from "@mui/icons-material";
 
 import { Empty } from "@components/Empty";
@@ -8,9 +8,9 @@ import { OrderCard } from "./OrderCard";
 
 import type { OrderGet } from "@appTypes/Order";
 import { useGetOrderListQuery } from "@api/shop/profile";
-import { Loading } from "@components/Loading";
 import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
 import { useIsMobile } from "src/hooks/useIsMobile";
+import SomethingWentWrong from "@components/SomethingWentWrong";
 
 function tabsProps(index: number) {
 	return {
@@ -63,42 +63,50 @@ export function Component() {
 	};
 
 	return (
-		<Box display={"flex"} flexDirection={"column"} gap={3} width={"100%"}>
-			<Box display={"flex"} flexDirection={"column"} gap={2}>
-				<Box p={"16px 0"}>
-					<Typography variant={isMobile ? "h4" : "h3"}>Заказы</Typography>
+		<>
+			{orderListIsLoading ? (
+				<div className="w-100 h-100 ai-c d-f jc-c">
+					<CircularProgress />
+				</div>
+			) : !orderList ? (
+				<SomethingWentWrong />
+			) : (
+				<Box display={"flex"} flexDirection={"column"} gap={3} width={"100%"}>
+					<Box display={"flex"} flexDirection={"column"} gap={2}>
+						<Box p={"16px 0"}>
+							<Typography variant={isMobile ? "h4" : "h3"}>Заказы</Typography>
+						</Box>
+						<Box display={"flex"} flexDirection={"column"}>
+							<Tabs value={currentTab} onChange={handleChangeTab} aria-label="basic tabs example">
+								<Tab label="Активные" {...tabsProps(0)} />
+								<Tab label="Завершенные" {...tabsProps(1)} />
+								<Tab label="Все" {...tabsProps(2)} />
+							</Tabs>
+							<Divider />
+						</Box>
+					</Box>
+					{ordersToRender.length > 0 ? (
+						ordersToRender.map((order, index) => (
+							<OrderCard isMobile={isMobile} key={index} order={order} onPay={handlePay} />
+						))
+					) : (
+						<div className="w-100 h-100 ai-c d-f jc-c">
+							<Empty
+								icon={
+									<ShoppingBag
+										sx={{
+											width: 91,
+											height: 91,
+											color: "icon.tertiary",
+										}}
+									/>
+								}
+								title={"Заказы не найдены"}
+							/>
+						</div>
+					)}
 				</Box>
-				<Box display={"flex"} flexDirection={"column"}>
-					<Tabs value={currentTab} onChange={handleChangeTab} aria-label="basic tabs example">
-						<Tab label="Активные" {...tabsProps(0)} />
-						<Tab label="Завершенные" {...tabsProps(1)} />
-						<Tab label="Все" {...tabsProps(2)} />
-					</Tabs>
-					<Divider />
-				</Box>
-			</Box>
-			<Loading isLoading={orderListIsLoading} necessaryDataIsPersisted={!!orderList}>
-				{ordersToRender.length > 0 ? (
-					ordersToRender.map((order, index) => (
-						<OrderCard isMobile={isMobile} key={index} order={order} onPay={handlePay} />
-					))
-				) : (
-					<div className="w-100 h-100 ai-c d-f jc-c">
-						<Empty
-							icon={
-								<ShoppingBag
-									sx={{
-										width: 91,
-										height: 91,
-										color: "icon.tertiary",
-									}}
-								/>
-							}
-							title={"Заказы не найдены"}
-						/>
-					</div>
-				)}
-			</Loading>
-		</Box>
+			)}
+		</>
 	);
 }

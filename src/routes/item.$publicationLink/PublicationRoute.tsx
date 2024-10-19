@@ -11,9 +11,10 @@ import {
 	useGetFavoriteItemListQuery,
 	useRemoveFavoriteItemMutation,
 } from "@api/shop/favorites";
-import { Loading } from "@components/Loading";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { useAddTrackedItemMutation, useGetTrackedItemListQuery, useRemoveTrackedItemMutation } from "@api/shop/tracked";
+import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
+import SomethingWentWrong from "@components/SomethingWentWrong";
 
 const MobilePublication = lazy(() => import("./MobilePublication"));
 const DesktopPublication = lazy(() => import("./DesktopPublication"));
@@ -116,12 +117,21 @@ export function Component() {
 	};
 
 	return (
-		<Loading
-			isLoading={catalogIsLoading}
-			necessaryDataIsPersisted={!!catalog && !!publication && !!selectedVariation && !!availableItemList}
-		>
-			{!publication || !selectedVariation ? null : isMobile ? (
-				<Suspense fallback={<Loading isLoading={true} />}>
+		<>
+			{catalogIsLoading ? (
+				<div className="w-100 h-100 ai-c d-f jc-c">
+					<CircularProgress />
+				</div>
+			) : !catalog || !publication || !selectedVariation ? (
+				<SomethingWentWrong />
+			) : isMobile ? (
+				<Suspense
+					fallback={
+						<div className="w-100 h-100 ai-c d-f jc-c">
+							<CircularProgress />
+						</div>
+					}
+				>
 					<MobilePublication
 						publication={publication}
 						selectedVariation={selectedVariation}
@@ -139,9 +149,16 @@ export function Component() {
 						trackedItemListIsLoading={trackedItemListIsLoading}
 						selectedVariationIsTracked={selectedVariationIsTracked}
 					/>
+					<SuggestedItems />
 				</Suspense>
 			) : (
-				<Suspense fallback={<Loading isLoading={true} />}>
+				<Suspense
+					fallback={
+						<div className="w-100 h-100 ai-c d-f jc-c">
+							<CircularProgress />
+						</div>
+					}
+				>
 					<DesktopPublication
 						publication={publication}
 						selectedVariation={selectedVariation}
@@ -159,9 +176,9 @@ export function Component() {
 						trackedItemListIsLoading={trackedItemListIsLoading}
 						selectedVariationIsTracked={selectedVariationIsTracked}
 					/>
+					<SuggestedItems />
 				</Suspense>
 			)}
-			<SuggestedItems />
-		</Loading>
+		</>
 	);
 }

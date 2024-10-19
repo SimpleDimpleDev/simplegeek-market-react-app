@@ -1,5 +1,5 @@
 import { PriorityHigh, ShoppingCart } from "@mui/icons-material";
-import { Divider, Stack, Typography } from "@mui/material";
+import { CircularProgress, Divider, Stack, Typography } from "@mui/material";
 import { useActionData, useNavigate } from "react-router-dom";
 import { CountPageHeader } from "@components/CountPageHeader";
 import { Empty } from "@components/Empty";
@@ -15,10 +15,10 @@ import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/cata
 import { useGetCartItemListQuery } from "@api/shop/cart";
 import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { useCheckoutMutation } from "@api/shop/order";
-import { Loading } from "@components/Loading";
 import { formCart } from "./utils";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
+import SomethingWentWrong from "@components/SomethingWentWrong";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -120,18 +120,18 @@ export function Component() {
 
 	return (
 		<>
-			<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
-			<Loading
-				isLoading={
-					catalogIsLoading || availabilityIsLoading || cartItemListIsLoading || favoriteItemListIsLoading
-				}
-				necessaryDataIsPersisted={!!catalog && !!availableItemIds && !!cartItemList && !!favoriteItemList}
-			>
+			{catalogIsLoading || availabilityIsLoading || cartItemListIsLoading || favoriteItemListIsLoading ? (
+				<div className="w-100 h-100 ai-c d-f jc-c">
+					<CircularProgress />
+				</div>
+			) : !catalog || !availableItemIds || !cartItemList ? (
+				<SomethingWentWrong />
+			) : (
 				<>
+					<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
 					{orderItemsUnavailableError && (
 						<div className="gap-1 bg-primary p-3 w-100 ai-c br-3 d-f fd-r">
 							<PriorityHigh color="error" />
-
 							<Typography variant="body1">
 								В вашем заказе содержались товары, которые теперь недоступны.
 								<br />
@@ -142,7 +142,7 @@ export function Component() {
 					<Stack direction={"column"} gap={4} divider={<Divider />} p={"24px 0"}>
 						{formedCart.sections.map((section) => {
 							const userSectionItems =
-								cartItemList?.items.filter((item) =>
+								cartItemList.items.filter((item) =>
 									section.items.some((sectionItem) => sectionItem.id === item.id)
 								) || [];
 							return (
@@ -163,7 +163,7 @@ export function Component() {
 							);
 						})}
 					</Stack>
-					{cartItemList?.items.length === 0 && (
+					{cartItemList.items.length === 0 && (
 						<Empty
 							title="В корзине ничего нет"
 							description="Добавьте в корзину что-нибудь"
@@ -180,7 +180,7 @@ export function Component() {
 					)}
 					<SuggestedItems />
 				</>
-			</Loading>
+			)}
 		</>
 	);
 }

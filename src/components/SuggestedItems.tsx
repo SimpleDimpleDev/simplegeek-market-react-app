@@ -1,9 +1,8 @@
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { Box, IconButton, Typography, styled } from "@mui/material";
+import { Box, CircularProgress, IconButton, Typography, styled } from "@mui/material";
 import { ArrowProps } from "react-multi-carousel/lib/types";
 
 import ItemCard from "./ItemCard";
-import { Loading } from "./Loading";
 import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/catalog";
 import { useIsMobile } from "src/hooks/useIsMobile";
 
@@ -14,6 +13,7 @@ import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { useMemo } from "react";
 import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
 import { useGetTrackedItemListQuery } from "@api/shop/tracked";
+import SomethingWentWrong from "./SomethingWentWrong";
 
 const responsive = {
 	desktop: {
@@ -108,31 +108,39 @@ export default function SuggestedItems() {
 
 	return (
 		<Box padding={"40px 0 24px 0"} width={"100%"} gap={3}>
-			<Typography variant="h5">Также может понравится</Typography>
-			<Loading isLoading={catalogIsLoading} necessaryDataIsPersisted={!!catalog}>
-				<Carousel
-					responsive={responsive}
-					swipeable={isMobile}
-					draggable={isMobile}
-					deviceType={isMobile ? "mobile" : "desktop"}
-					customLeftArrow={<LeftButton />}
-					customRightArrow={<RightButton />}
-				>
-					{catalog?.items.map((item) => (
-						<ItemCard
-							data={item}
-							isAvailable={availableItemIds?.has(item.id)}
-							availabilityIsLoading={availabilityIsLoading}
-							isInCart={cartItemIds?.has(item.id)}
-							cartItemListIsLoading={cartItemListIsLoading}
-							isFavorite={favoriteItemIds?.has(item.id)}
-							favoriteItemListIsLoading={favoriteItemListIsLoading}
-							isTracked={trackedItemIds?.has(item.id)}
-							trackedItemListIsLoading={trackedItemListIsLoading}
-						/>
-					))}
-				</Carousel>
-			</Loading>
+			{catalogIsLoading ? (
+				<div className="w-100 h-100 ai-c d-f jc-c">
+					<CircularProgress />
+				</div>
+			) : !catalog ? (
+				<SomethingWentWrong />
+			) : (
+				<>
+					<Typography variant="h5">Также может понравится</Typography>
+					<Carousel
+						responsive={responsive}
+						swipeable={isMobile}
+						draggable={isMobile}
+						deviceType={isMobile ? "mobile" : "desktop"}
+						customLeftArrow={<LeftButton />}
+						customRightArrow={<RightButton />}
+					>
+						{catalog.items.map((item) => (
+							<ItemCard
+								data={item}
+								isAvailable={availableItemIds?.has(item.id)}
+								availabilityIsLoading={availabilityIsLoading}
+								isInCart={cartItemIds?.has(item.id)}
+								cartItemListIsLoading={cartItemListIsLoading}
+								isFavorite={favoriteItemIds?.has(item.id)}
+								favoriteItemListIsLoading={favoriteItemListIsLoading}
+								isTracked={trackedItemIds?.has(item.id)}
+								trackedItemListIsLoading={trackedItemListIsLoading}
+							/>
+						))}
+					</Carousel>
+				</>
+			)}
 		</Box>
 	);
 }
