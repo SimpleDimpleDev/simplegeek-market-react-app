@@ -149,6 +149,7 @@ export function Component() {
 	const [saveDelivery, setSaveDelivery] = useState(true);
 
 	const handleChooseCdekAddress = (data: CDEKDeliveryData) => {
+		console.log({cdekOnChooseData: data});
 		setValue("cdekDeliveryData", data);
 		setCdekWidgetOpen(false);
 	};
