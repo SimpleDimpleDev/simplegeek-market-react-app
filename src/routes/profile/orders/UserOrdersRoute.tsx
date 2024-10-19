@@ -28,9 +28,9 @@ const getOrdersByTab = ({ currentTab, orders }: { currentTab: number; orders: Or
 		case 1:
 			return orders.filter((order) => finishedOrderStatuses.includes(order.status));
 		case 2:
-			return orders;
+			return [...orders];
 		default:
-			return orders;
+			return [...orders];
 	}
 };
 
