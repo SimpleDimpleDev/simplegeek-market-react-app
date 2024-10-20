@@ -24,7 +24,7 @@ const ItemCreditInfo = ({ creditInfo }: ItemCreditInfoProps) => {
 				<Box display="flex" flexDirection="column" gap={1}>
 					<Typography variant="h6">Есть рассрочка</Typography>
 					<Typography variant="body2" color="typography.secondary">
-						На {creditInfo.payments.length} {getRuPaymentWord(creditInfo.payments.length)}
+						На {creditInfo.payments.length + 1} {getRuPaymentWord(creditInfo.payments.length + 1)}
 					</Typography>
 				</Box>
 			</AccordionSummary>

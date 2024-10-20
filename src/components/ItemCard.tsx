@@ -290,7 +290,7 @@ export const ShopOrderItemCardCredit: React.FC<ShopOrderItemCardCreditProps> = (
 					<div className="gap-05 d-f fd-c">
 						<Typography variant="body1">В рассрочку</Typography>
 						<Typography variant="body2" sx={{ color: "typography.secondary" }}>
-							{creditInfo.payments.length} {getRuPaymentWord(creditInfo.payments.length)} от{" "}
+							{creditInfo.payments.length + 1} {getRuPaymentWord(creditInfo.payments.length + 1)} от{" "}
 							{creditInfo.payments[0].sum} ₽
 						</Typography>
 					</div>

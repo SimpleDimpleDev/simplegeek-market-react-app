@@ -91,6 +91,7 @@ export function Component() {
 			navigate("/order");
 		}
 		if (checkoutIsError) {
+			// TODO: parse server error and render messages
 			setOrderItemsUnavailableError(true);
 		}
 	}, [checkoutIsSuccess, navigate, checkoutIsError]);

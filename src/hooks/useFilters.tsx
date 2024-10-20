@@ -120,8 +120,15 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		(preorderId: string | null) => {
 			setSearchParams(
 				(prevSearchParams) => {
+					const { preorderIdFilter: prevPreorderIdFilter } = parseFilterParams(prevSearchParams);
+
 					const newSearchParams = new URLSearchParams(prevSearchParams);
-					setPreorderFilterParam(newSearchParams, preorderId);
+
+					if (prevPreorderIdFilter === preorderId) {
+						setPreorderFilterParam(newSearchParams, null);
+					} else {
+						setPreorderFilterParam(newSearchParams, preorderId);
+					}
 					return newSearchParams;
 				},
 				{ replace: true }

@@ -144,6 +144,12 @@ export function Component() {
 
 	const [saveDelivery, setSaveDelivery] = useState(true);
 
+	useEffect(() => {
+		if (userSavedDelivery) {
+			setSaveDelivery(false);
+		}
+	}, [userSavedDelivery])
+
 	const handleChooseCdekAddress = (data: CDEKDeliveryData) => {
 		setValue("cdekDeliveryData", data);
 		setValue("point", {
