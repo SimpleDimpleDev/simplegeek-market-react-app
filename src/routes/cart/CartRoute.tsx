@@ -1,5 +1,14 @@
-import { PriorityHigh, ShoppingCart } from "@mui/icons-material";
-import { CircularProgress, Divider, Stack, Typography } from "@mui/material";
+import { ExpandMore, PriorityHigh, ShoppingCart } from "@mui/icons-material";
+import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	Box,
+	CircularProgress,
+	Divider,
+	Stack,
+	Typography,
+} from "@mui/material";
 import { useActionData, useNavigate } from "react-router-dom";
 import { CountPageHeader } from "@components/CountPageHeader";
 import { Empty } from "@components/Empty";
@@ -19,13 +28,15 @@ import { formCart } from "./utils";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
 import SomethingWentWrong from "@components/SomethingWentWrong";
+import { isExpectedApiError } from "@utils/api";
 
 export function Component() {
 	const isMobile = useIsMobile();
 	const navigate = useNavigate();
 
-	const actionData = useActionData() as { orderItemsUnavailableError: boolean } | undefined;
-	const actionOrderItemsUnavailableError = actionData?.orderItemsUnavailableError;
+	const actionData = useActionData() as
+		| { orderError: { message: string; details: string[] | null } | null | undefined }
+		| undefined;
 
 	const user = useSelector((state: RootState) => state.user.identity);
 
@@ -80,10 +91,11 @@ export function Component() {
 		return idSet;
 	}, [cartItemList]);
 
-	const [checkout, { isSuccess: checkoutIsSuccess, isError: checkoutIsError }] = useCheckoutMutation();
+	const [checkout, { isSuccess: checkoutIsSuccess, isError: checkoutIsError, error: checkoutError }] =
+		useCheckoutMutation();
 
-	const [orderItemsUnavailableError, setOrderItemsUnavailableError] = useState<boolean>(
-		actionOrderItemsUnavailableError ?? false
+	const [orderError, setOrderError] = useState<{ message: string; details: string[] | null } | null>(
+		actionData?.orderError || null
 	);
 
 	useEffect(() => {
@@ -91,17 +103,24 @@ export function Component() {
 			navigate("/order");
 		}
 		if (checkoutIsError) {
-			// TODO: parse server error and render messages
-			setOrderItemsUnavailableError(true);
+			let message = "Что-то пошло не так";
+			let details = null;
+			if (isExpectedApiError(checkoutError)) {
+				if (checkoutError.data.details) {
+					details = checkoutError.data.details;
+				}
+				message = checkoutError.data.message;
+			}
+			setOrderError({ message: message, details });
 		}
-	}, [checkoutIsSuccess, navigate, checkoutIsError]);
+	}, [checkoutIsSuccess, navigate, checkoutIsError, checkoutError]);
 
 	useEffect(() => {
-		if (orderItemsUnavailableError) {
+		if (orderError) {
 			refetchCart();
 			refetchAvailability();
 		}
-	}, [orderItemsUnavailableError, refetchCart, refetchAvailability]);
+	}, [orderError, refetchCart, refetchAvailability]);
 
 	const formedCart = useMemo(
 		() =>
@@ -130,16 +149,43 @@ export function Component() {
 			) : (
 				<>
 					<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
-					{orderItemsUnavailableError && (
-						<div className="gap-1 bg-primary p-3 w-100 ai-c br-3 d-f fd-r">
-							<PriorityHigh color="error" />
-							<Typography variant="body1">
-								В вашем заказе содержались товары, которые теперь недоступны.
-								<br />
-								Корзина была скорректирована.
-							</Typography>
-						</div>
-					)}
+					{orderError &&
+						(!orderError.details ? (
+							<div className="section">
+								<Box display="flex" flexDirection="row" gap={1}>
+									<PriorityHigh color="error" />
+									<Typography variant="body1">{orderError.message}</Typography>
+								</Box>
+							</div>
+						) : (
+							<Accordion
+								sx={{
+									width: "100%",
+									borderTop: "none",
+									"&:before": {
+										display: "none",
+									},
+									boxShadow: "none",
+								}}
+								disableGutters
+							>
+								<AccordionSummary expandIcon={<ExpandMore />}>
+									<Box display="flex" flexDirection="row" gap={1}>
+										<PriorityHigh color="error" />
+										<Typography variant="body1">{orderError.message}</Typography>
+									</Box>
+								</AccordionSummary>
+								<AccordionDetails>
+									<Stack direction="column" divider={<Divider />} spacing={1}>
+										{orderError.details?.map((error) => (
+											<Typography key={error} variant="body2">
+												{error}
+											</Typography>
+										))}
+									</Stack>
+								</AccordionDetails>
+							</Accordion>
+						))}
 					<Stack direction={"column"} gap={4} divider={<Divider />} p={"24px 0"}>
 						{formedCart.sections.map((section) => {
 							const userSectionItems =

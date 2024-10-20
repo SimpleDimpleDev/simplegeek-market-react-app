@@ -1,17 +1,7 @@
 import { AvailabilityFilter, CheckedFilter, FilterGroupGet, PreorderFilter, PriceRangeFilter } from "@appTypes/Filters";
 import { useEffect, useRef, useState } from "react";
 
-import {
-	Typography,
-	List,
-	ListItem,
-	ListItemButton,
-	Checkbox,
-	TextField,
-	Button,
-	Collapse,
-	Radio,
-} from "@mui/material";
+import { Typography, List, ListItem, ListItemButton, Checkbox, TextField, Button, Collapse } from "@mui/material";
 import { PreorderShop } from "@appTypes/Preorder";
 import { handleIntChange } from "@utils/input";
 
@@ -188,21 +178,6 @@ export const CatalogFilters = ({
 					<Typography variant="h6">Предзаказ</Typography>
 					<div>
 						<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper", padding: 0 }}>
-							<ListItem disablePadding>
-								<ListItemButton
-									role={undefined}
-									onClick={() => handleChangePreorderIdFilter(null)}
-									sx={{ height: 42, padding: 0 }}
-								>
-									<Radio
-										checked={preorderIdFilter === null}
-										tabIndex={-1}
-										disableRipple
-										color="warning"
-									/>
-									<Typography variant="body1">Нет</Typography>
-								</ListItemButton>
-							</ListItem>
 							{preorderList.map((preorder) => (
 								<ListItem disablePadding key={preorder.id}>
 									<ListItemButton
@@ -210,7 +185,7 @@ export const CatalogFilters = ({
 										onClick={() => handleChangePreorderIdFilter(preorder.id)}
 										sx={{ height: 42, padding: 0 }}
 									>
-										<Radio
+										<Checkbox
 											checked={preorderIdFilter === preorder.id}
 											tabIndex={-1}
 											disableRipple
