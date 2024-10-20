@@ -1,2 +1,2 @@
-export const catalogPollingInterval = 10 * 1000; // 10 seconds
-export const availabilityPollingInterval = 5 * 1000; // 5 seconds
+export const catalogPollingInterval = parseInt(import.meta.env.CATALOG_POLLING_INTERVAL);
+export const availabilityPollingInterval = parseInt(import.meta.env.AVAILABILITY_POLLING_INTERVAL);

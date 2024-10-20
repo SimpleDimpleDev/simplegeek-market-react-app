@@ -101,6 +101,9 @@ export default function ItemCard({
 							maxWidth: 280,
 							overflow: "hidden",
 							textOverflow: "ellipsis",
+							WebkitLineClamp: 1,
+							display: "-webkit-box",
+							WebkitBoxOrient: "vertical",
 						}}
 					>
 						{data.product.title}

@@ -21,6 +21,8 @@ export default defineConfig({
     define: {
 		"import.meta.env.SHOP_API_URL": JSON.stringify(process.env.SHOP_API_URL || "http://127.0.0.1/api"),
 		"import.meta.env.AUTH_API_URL": JSON.stringify(process.env.AUTH_API_URL || "http://127.0.0.1/auth"),
+        "import.meta.env.CATALOG_POLLING_INTERVAL": JSON.stringify(process.env.CATALOG_POLLING_INTERVAL || 60000),
+        "import.meta.env.AVAILABILITY_POLLING_INTERVAL": JSON.stringify(process.env.AVAILABILITY_POLLING_INTERVAL || 10000),
 	},
 
     build: {
