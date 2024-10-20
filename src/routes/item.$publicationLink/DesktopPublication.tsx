@@ -142,14 +142,14 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 							/>
 							{publication.shippingCostIncluded && publication.shippingCostIncluded !== "FULL" && (
 								<Typography variant="body1" color="warning">
-									В цене товара не учитывается стоимость доставки до склада. Она будет известна только в
-									момент приезда.
+									Доставка НЕ включена в стоимость товара. Отдельно потребуется оплатить доставку
+									{publication.shippingCostIncluded === "NOT" &&
+										"до промежуточного склада форвардера и "}{" "}
+									до склада в РФ(Москва).
 								</Typography>
 							)}
 						</Box>
-						{selectedVariation.creditInfo && (
-							<ItemCreditInfo creditInfo={selectedVariation.creditInfo} />
-						)}
+						{selectedVariation.creditInfo && <ItemCreditInfo creditInfo={selectedVariation.creditInfo} />}
 					</Box>
 				</Box>
 			</Box>

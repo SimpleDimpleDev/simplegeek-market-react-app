@@ -89,10 +89,11 @@ const MobilePublication: React.FC<PublicationProps> = ({
 						trackedIsLoading={trackedItemListIsLoading}
 						isTracked={selectedVariationIsTracked}
 					/>
-					{publication.preorder && (
-						<Typography variant="body2" color={"typography.secondary"}>
-							В цене товара не учитывается стоимость доставки до склада. Она будет известна только в
-							момент приезда.
+					{publication.shippingCostIncluded && publication.shippingCostIncluded !== "FULL" && (
+						<Typography variant="body1" color="warning">
+							Доставка НЕ включена в стоимость товара. Отдельно потребуется оплатить доставку
+							{publication.shippingCostIncluded === "NOT" && "до промежуточного склада форвардера и "} до
+							склада в РФ(Москва).
 						</Typography>
 					)}
 				</Box>

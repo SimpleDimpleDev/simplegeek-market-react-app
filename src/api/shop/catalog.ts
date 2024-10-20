@@ -41,7 +41,6 @@ export const catalogApi = shopApi.injectEndpoints({
 					categories,
 				};
 			},
-			
 		}),
 		getItemsAvailability: build.query<z.infer<typeof CatalogItemsAvailabilityGetSchema>, void>({
 			query: () => ({

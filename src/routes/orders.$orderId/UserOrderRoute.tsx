@@ -88,6 +88,7 @@ export function Component() {
 		return packages;
 	}, [order]);
 
+	// TODO: get from backend
 	const { paidCreditAmount, unpaidCreditAmount, orderHasCredit } = useMemo(() => {
 		if (!order) return { paidCreditAmount: undefined, unpaidCreditAmount: undefined, orderHasCredit: undefined };
 		let paidCreditAmount = 0;
@@ -184,24 +185,24 @@ export function Component() {
 							<div className="section">
 								{order.delivery === null ? (
 									order.preorder ? (
-										order.preorder.status === "DISPATCH" ? (
-											<>
-												<DeliveryForm
-													isMobile={isMobile}
-													delivery={order.delivery}
-													packages={packages}
-													defaultEditing={true}
-													canModify={false}
-													onChange={(data) => {
-														console.log(data);
-													}}
-												/>
-											</>
+										order.preorder.status === "DISPATCH" &&
+										unpaidCreditAmount === 0 &&
+										!(foreignShippingInvoice && !foreignShippingInvoice.isPaid) &&
+										!(localShippingInvoice && !localShippingInvoice.isPaid) ? (
+											<DeliveryForm
+												isMobile={isMobile}
+												delivery={null}
+												packages={packages}
+												defaultEditing={true}
+												canModify={false}
+												onChange={(data) => {
+													console.log(data);
+												}}
+											/>
 										) : (
 											<div className="gap-1">
 												<Typography variant="subtitle1">
-													Доставка к вам оформляется после полной оплаты товара и приезда его
-													на склад
+													Доставка к вам оформляется после полной оплаты заказа и его прибытия на склад в Москве.
 												</Typography>
 												<div className="gap-1 d-f fd-r">
 													<Typography

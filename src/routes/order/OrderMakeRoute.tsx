@@ -34,8 +34,6 @@ import { CardRadio } from "@components/CardRadio";
 
 import cdekLogo from "@assets/SdekLogo.png";
 import mainLogoSmall from "@assets/MainLogoSmall.png";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/store";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 
 type DeliveryFormData = {
@@ -81,8 +79,6 @@ export function Component() {
 	const isMobile = useIsMobile();
 	const submit = useSubmit();
 	const navigate = useNavigate();
-
-	const user = useSelector((state: RootState) => state.user.identity);
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: checkoutItemList, isLoading: checkoutItemListIsLoading } = useGetCheckoutItemsQuery(void 0, {
@@ -139,7 +135,7 @@ export function Component() {
 				cdekDeliveryData: null,
 			});
 		}
-	}, [userSavedDelivery, user, reset]);
+	}, [userSavedDelivery, reset]);
 
 	const service = watch("service");
 	const cdekDeliveryData = watch("cdekDeliveryData");
@@ -153,7 +149,7 @@ export function Component() {
 		setValue("point", {
 			code: data.address.code,
 			address: `${data.address.city}, ${data.address.address}`,
-		})
+		});
 		setCdekWidgetOpen(false);
 	};
 

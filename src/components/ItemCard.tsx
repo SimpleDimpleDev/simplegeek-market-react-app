@@ -7,7 +7,7 @@ import {
 	NotificationsOff,
 	ShoppingCart,
 } from "@mui/icons-material";
-import { CircularProgress, Collapse, Divider, IconButton, Radio, Typography } from "@mui/material";
+import { CircularProgress, Collapse, Divider, IconButton, Radio, Tooltip, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -93,27 +93,42 @@ export default function ItemCard({
 					src={getImageUrl(data.product.images.at(0)?.url ?? "", "medium")}
 				/>
 			</Link>
-			<div className="gap-1 px-2 d-f fd-c">
-				{availabilityIsLoading ? (
-					<Typography variant="body2">Загрузка...</Typography>
-				) : isAvailable === undefined ? null : isAvailable ? (
-					data.preorder ? (
-						<Typography variant="body2" color="typography.success">
-							Доступно для предзаказа
-						</Typography>
-					) : (
-						<Typography variant="body2" color="typography.success">
-							В наличии
-						</Typography>
-					)
-				) : (
-					<Typography variant="body2" color="typography.attention">
-						Нет в наличии
+			<div className="gap-1 px-1 d-f fd-c">
+				<Tooltip enterDelay={1000} title={data.product.title}>
+					<Typography
+						variant="body1"
+						style={{
+							maxWidth: 280,
+							height: 48,
+							overflow: "hidden",
+							textOverflow: "ellipsis",
+							display: "-webkit-box",
+							WebkitBoxOrient: "vertical",
+							WebkitLineClamp: 2,
+						}}
+					>
+						{data.product.title}
 					</Typography>
-				)}
-
+				</Tooltip>
 				<div className="d-f fd-r jc-sb">
 					<div className="d-f fd-c">
+						{availabilityIsLoading ? (
+							<Typography variant="body2">Загрузка...</Typography>
+						) : isAvailable === undefined ? null : isAvailable ? (
+							data.preorder ? (
+								<Typography variant="body2" color="typography.success">
+									Доступно для предзаказа
+								</Typography>
+							) : (
+								<Typography variant="body2" color="typography.success">
+									В наличии
+								</Typography>
+							)
+						) : (
+							<Typography variant="body2" color="typography.attention">
+								Нет в наличии
+							</Typography>
+						)}
 						<div className="gap-1 d-f fd-r">
 							{data.discount ? (
 								<>
@@ -130,18 +145,6 @@ export default function ItemCard({
 							) : (
 								<Typography variant="h6">{data.price} ₽</Typography>
 							)}
-						</div>
-						<div>
-							<Typography
-								variant="body1"
-								style={{
-									maxWidth: 205.33,
-									overflow: "hidden",
-									textOverflow: "ellipsis",
-								}}
-							>
-								{data.product.title}
-							</Typography>
 						</div>
 					</div>
 					<div className="gap-1 w-mc d-f fd-r" style={{ zIndex: 1 }}>
