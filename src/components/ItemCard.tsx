@@ -94,17 +94,13 @@ export default function ItemCard({
 				/>
 			</Link>
 			<div className="gap-1 px-1 d-f fd-c">
-				<Tooltip enterDelay={1000} title={data.product.title}>
+				<Tooltip enterDelay={500} title={data.product.title}>
 					<Typography
 						variant="body1"
 						style={{
 							maxWidth: 280,
-							height: 48,
 							overflow: "hidden",
 							textOverflow: "ellipsis",
-							display: "-webkit-box",
-							WebkitBoxOrient: "vertical",
-							WebkitLineClamp: 2,
 						}}
 					>
 						{data.product.title}

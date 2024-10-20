@@ -3,6 +3,8 @@ import { CatalogItem } from "@appTypes/CatalogItem";
 import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useMemo } from "react";
 import { useGetCatalogQuery } from "@api/shop/catalog";
+import { Empty } from "@components/Empty";
+import { Search } from "@mui/icons-material";
 
 export function Component() {
 	const params = useParams();
@@ -36,6 +38,13 @@ export function Component() {
 				{ title: "Категории", link: "/category" },
 			]}
 			current={category?.title ?? ""}
+			emptyElement={
+				<Empty
+					title={`Пока нет товаров`}
+					description="Вернитесь позже"
+					icon={<Search sx={{ height: 96, width: 96 }} />}
+				/>
+			}
 		/>
 	);
 }

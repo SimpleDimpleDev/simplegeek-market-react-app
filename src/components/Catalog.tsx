@@ -36,9 +36,10 @@ interface CatalogProps {
 	sectionFilter: (item: CatalogItem) => boolean;
 	current: string;
 	path?: { title: string; link: string }[];
+	emptyElement: React.ReactNode;
 }
 
-const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path }) => {
+const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path, emptyElement }) => {
 	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
@@ -134,11 +135,7 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path }) => {
 	return (
 		<>
 			{sectionItems.length === 0 ? (
-				<Empty
-					title={`Пока нет товаров`}
-					description="Вернитесь позже"
-					icon={<Search sx={{ height: 96, width: 96 }} />}
-				/>
+				emptyElement
 			) : (
 				<>
 					<ScrollTop />
@@ -271,7 +268,7 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path }) => {
 										<Grid2
 											size={{ xl: 4, lg: 6, md: 4, sm: 6, xs: 12 }}
 											width={"100%"}
-											height={420}
+											height={424}
 											display={"flex"}
 											justifyContent={"center"}
 											alignItems={"center"}
@@ -280,7 +277,7 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path }) => {
 											<LazyLoad
 												key={index}
 												width={"100%"}
-												height={420}
+												height={424}
 												observerOptions={{
 													rootMargin: "100px",
 												}}
