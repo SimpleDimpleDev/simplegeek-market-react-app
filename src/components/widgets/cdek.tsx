@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { CDEKFromPoint, CDEKWidgetServicePath, YandexMapsApiKey } from "@config/cdek";
+import { CDEKFromPoint, CDEKWidgetServicePath, YandexMapsApiKey, defaultLocation, tariffs } from "@config/cdek";
 import React from "react";
 import {
 	CDEKDeliveryData,
@@ -70,6 +70,7 @@ const CDEKWidget = ({ onCalculate, onChoose, packages }: CdekWidgetProps) => {
 		const script = document.createElement("script");
 		script.type = "text/javascript";
 		script.async = true;
+		console.log("init widget", {packages});
 		script.onload = () => {
 			new window.CDEKWidget({
 				from: CDEKFromPoint,
@@ -82,13 +83,10 @@ const CDEKWidget = ({ onCalculate, onChoose, packages }: CdekWidgetProps) => {
 				},
 				debug: true,
 				goods: packages,
-				defaultLocation: [37.3855, 55.582],
+				defaultLocation: defaultLocation,
 				lang: "rus",
 				currency: "RUB",
-				tariffs: {
-					office: [136],
-					door: [],
-				},
+				tariffs: tariffs,
 				onReady: console.log("onReady"),
 				onCalculate: onCalculate,
 				onChoose: onChoose,
