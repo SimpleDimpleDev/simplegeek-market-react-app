@@ -215,7 +215,7 @@ export function Component() {
 			orderItems
 				.map((orderItem) => {
 					if (creditItemsIds.has(orderItem.id)) {
-						return (orderItem.creditInfo?.payments[0].sum || 0) * orderItem.quantity;
+						return (orderItem.creditInfo?.deposit || 0) * orderItem.quantity;
 					} else {
 						console.log({ id: orderItem.id, price: orderItem.price, quantity: orderItem.quantity });
 						return orderItem.price * orderItem.quantity;
@@ -229,7 +229,7 @@ export function Component() {
 		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
 		.reduce((a, b) => a + b, 0);
 
-	const handleStockCreateOrder = async (data: DeliveryFormData) => {
+	const handleCreateStockOrder = async (data: DeliveryFormData) => {
 		const delivery = DeliverySchema.parse(data);
 		createOrder({
 			creditIds: Array.from(creditItemsIds),
@@ -313,7 +313,7 @@ export function Component() {
 						</Box>
 
 						<form
-							onSubmit={handleSubmit(handleStockCreateOrder)}
+							onSubmit={handleSubmit(handleCreateStockOrder)}
 							className="gap-2 w-100 d-f"
 							style={{ flexDirection: isMobile ? "column" : "row" }}
 						>
