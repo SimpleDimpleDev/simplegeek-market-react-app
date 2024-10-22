@@ -106,10 +106,12 @@ export function Component() {
 			let message = "Что-то пошло не так";
 			let details = null;
 			if (isExpectedApiError(checkoutError)) {
-				if (checkoutError.data.details) {
-					details = checkoutError.data.details;
+				if (checkoutError.data.title === "OrderItemsError") {
+					if (checkoutError.data.details) {
+						details = checkoutError.data.details;
+					}
+					message = checkoutError.data.message;
 				}
-				message = checkoutError.data.message;
 			}
 			setOrderError({ message: message, details });
 		}

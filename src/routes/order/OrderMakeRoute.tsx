@@ -35,6 +35,7 @@ import { CardRadio } from "@components/CardRadio";
 import cdekLogo from "@assets/SdekLogo.png";
 import mainLogoSmall from "@assets/MainLogoSmall.png";
 import SomethingWentWrong from "@components/SomethingWentWrong";
+import { isExpectedApiError } from "@utils/api";
 
 type DeliveryFormData = {
 	recipient: Recipient;
@@ -148,7 +149,7 @@ export function Component() {
 		if (userSavedDelivery) {
 			setSaveDelivery(false);
 		}
-	}, [userSavedDelivery])
+	}, [userSavedDelivery]);
 
 	const handleChooseCdekAddress = (data: CDEKDeliveryData) => {
 		setValue("cdekDeliveryData", data);
@@ -173,9 +174,32 @@ export function Component() {
 	}, [orderMakeIsSuccess, orderMakeSuccessData]);
 
 	useEffect(() => {
+		let messageString = "Что-то пошло не так";
 		if (orderMakeIsError) {
-			console.error(orderMakeError);
-			submit({ orderItemsUnavailableError: true }, { action: "/cart", method: "post" });
+			if (isExpectedApiError(orderMakeError)) {
+				switch (orderMakeError.data.title) {
+					case "OrderItemsError": {
+						let details = null;
+						if (orderMakeError.data.details) {
+							details = orderMakeError.data.details;
+						}
+						messageString = orderMakeError.data.message;
+						const detailsJSON = JSON.stringify(details);
+						console.log("OrderItemsError", { messageString, detailsJSON });
+						submit({ message: messageString, details: detailsJSON }, { action: "/cart", method: "post" });
+						break;
+					}
+					case "PaymentInitError": {
+						let orderId: string | undefined;
+						const message = orderMakeError.data.message;
+						if (orderMakeError.data.details) {
+							orderId = orderMakeError.data.details[0];
+						}
+						console.log("PaymentInitError", { message, orderId });
+						break;
+					}
+				}
+			}
 		}
 	}, [orderMakeIsError, orderMakeError, submit]);
 
