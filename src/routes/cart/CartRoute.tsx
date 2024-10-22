@@ -3,8 +3,15 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Alert,
 	Box,
+	Button,
 	CircularProgress,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 	Divider,
 	Stack,
 	Typography,
@@ -97,6 +104,7 @@ export function Component() {
 	const [orderError, setOrderError] = useState<{ message: string; details: string[] | null } | null>(
 		actionData?.orderError || null
 	);
+	const [errorDialogOpen, setErrorDialogOpen] = useState(false);
 
 	useEffect(() => {
 		if (checkoutIsSuccess) {
@@ -150,6 +158,26 @@ export function Component() {
 				<SomethingWentWrong />
 			) : (
 				<>
+					<Dialog
+						open={errorDialogOpen}
+						onClose={() => setErrorDialogOpen(false)}
+						aria-labelledby="error-dialog-title"
+						aria-describedby="error-dialog-description"
+					>
+						<DialogTitle id="error-dialog-title">{orderError?.message}</DialogTitle>
+						<DialogContent>
+							<DialogContentText id="error-dialog-description">
+								{orderError?.details?.map((detail, index) => (
+									<Alert severity="error" key={index}>
+										{detail}
+									</Alert>
+								))}
+							</DialogContentText>
+						</DialogContent>
+						<DialogActions>
+							<Button onClick={() => setErrorDialogOpen(false)}>Понятно</Button>
+						</DialogActions>
+					</Dialog>
 					<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
 					{orderError &&
 						(!orderError.details ? (
