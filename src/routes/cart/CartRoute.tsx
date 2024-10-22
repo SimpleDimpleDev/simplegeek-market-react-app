@@ -1,10 +1,6 @@
-import { ExpandMore, PriorityHigh, ShoppingCart } from "@mui/icons-material";
+import { ShoppingCart } from "@mui/icons-material";
 import {
-	Accordion,
-	AccordionDetails,
-	AccordionSummary,
 	Alert,
-	Box,
 	Button,
 	CircularProgress,
 	Dialog,
@@ -14,7 +10,6 @@ import {
 	DialogTitle,
 	Divider,
 	Stack,
-	Typography,
 } from "@mui/material";
 import { useActionData, useNavigate } from "react-router-dom";
 import { CountPageHeader } from "@components/CountPageHeader";
@@ -122,6 +117,7 @@ export function Component() {
 				}
 			}
 			setOrderError({ message: message, details });
+			setErrorDialogOpen(true);
 		}
 	}, [checkoutIsSuccess, navigate, checkoutIsError, checkoutError]);
 
@@ -179,7 +175,7 @@ export function Component() {
 						</DialogActions>
 					</Dialog>
 					<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
-					{orderError &&
+					{/* {orderError &&
 						(!orderError.details ? (
 							<div className="section">
 								<Box display="flex" flexDirection="row" gap={1}>
@@ -215,7 +211,7 @@ export function Component() {
 									</Stack>
 								</AccordionDetails>
 							</Accordion>
-						))}
+						))} */}
 					<Stack direction={"column"} gap={4} divider={<Divider />} p={"24px 0"}>
 						{formedCart.sections.map((section) => {
 							const userSectionItems =
