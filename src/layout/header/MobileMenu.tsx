@@ -1,4 +1,4 @@
-import logo from "@assets/MainLogoBig.png";
+import logo from "@assets/MainLogoBig.webp";
 import { CategoryGet } from "@appTypes/Category";
 import { User } from "@appTypes/User";
 import { ChevronRight, Close, Info, Person } from "@mui/icons-material";

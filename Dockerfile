@@ -21,4 +21,3 @@ COPY ./nginx.conf /etc/nginx
 COPY --from=frontend-build ./app/dist /usr/share/nginx/html
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
-

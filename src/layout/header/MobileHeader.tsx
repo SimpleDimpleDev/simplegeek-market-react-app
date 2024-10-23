@@ -5,7 +5,7 @@ import { CatalogSearch } from "./CatalogSearch";
 import { HeaderButtons } from "./HeaderButtons";
 import { MobileMenu } from "./MobileMenu";
 
-import logo from "@assets/MainLogoBig.png";
+import logo from "@assets/MainLogoBig.webp";
 import { oryClient } from "@api/auth/client";
 import { fetchUser } from "@state/user/thunks";
 import { useDispatch, useSelector } from "react-redux";

@@ -32,8 +32,8 @@ import { DeliverySchema } from "@schemas/Delivery";
 import { CDEKDeliveryInfo, CDEKWidget } from "@components/widgets/cdek";
 import { CardRadio } from "@components/CardRadio";
 
-import cdekLogo from "@assets/SdekLogo.png";
-import mainLogoSmall from "@assets/MainLogoSmall.png";
+import cdekLogo from "@assets/SdekLogo.webp";
+import mainLogoSmall from "@assets/MainLogoSmall.webp";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { isExpectedApiError } from "@utils/api";
 

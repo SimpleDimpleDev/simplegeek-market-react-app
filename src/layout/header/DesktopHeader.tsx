@@ -21,7 +21,7 @@ import { fetchUser } from "@state/user/thunks";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@state/store";
 
-import logo from "@assets/MainLogoBig.png";
+import logo from "@assets/MainLogoBig.webp";
 import { useState } from "react";
 import { useGetCartItemListQuery } from "@api/shop/cart";
 import { useGetCatalogQuery } from "@api/shop/catalog";
