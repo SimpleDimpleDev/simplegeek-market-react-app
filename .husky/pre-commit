@@ -1,0 +1,6 @@
+#!/bin/sh
+
+
+# Call the PowerShell script
+
+powershell -ExecutionPolicy Bypass -File .husky/pre-commit.ps1
