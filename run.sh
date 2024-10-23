@@ -1,2 +1,0 @@
-docker run -d --name simplegeek-react-app-server --network intranet --network-alias simplegeek-react-app-server -p 3030:3030 simplegeek-react-app-server
-# docker service create --name simplegeek-react-app-server --replicas 1 --network name=intranet,alias=simplegeek-react-app-server simplegeek-react-app-server:latest
