@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json .
 RUN npm install
 COPY . .
-ARG SHOP_API_URL=https://api.simplegeek.ru
+ARG SHOP_API_URL=https://api.simplegeek.ru/api
 ARG AUTH_API_URL=https://auth.simplegeek.ru
 RUN npm run build
 
