@@ -132,7 +132,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 				</>
 			) : (
 				<div className="d-f fd-r jc-sb">
-					<div className="gap-2 d-f fd-c">
+					<div className="d-f fd-c jc-sb">
 						<OrderInfoSection />
 						<div className="gap-2 d-f fd-r">
 							{order.status === "UNPAID" && order.initialInvoice?.expiresAt && (
