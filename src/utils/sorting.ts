@@ -1,22 +1,33 @@
 import { CatalogItem } from "@appTypes/CatalogItem";
 import { Sorting } from "@appTypes/Sorting";
 
-export const getSortedItems = (items: CatalogItem[], sorting: Sorting): CatalogItem[] => {
+// Sort both sections based on the sorting criteria
+
+const sortFunction = (a: CatalogItem, b: CatalogItem, sorting: Sorting) => {
 	switch (sorting) {
-		case "popular": {
-			return [...items].sort((a, b) => b.rating - a.rating);
-		}
-		case "new": {
-			return [...items].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-		}
-		case "expensive": {
-			return [...items].sort((a, b) => b.price - a.price);
-		}
-		case "cheap": {
-			return [...items].sort((a, b) => a.price - b.price);
-		}
-		default: {
+		case "popular":
+			return b.rating - a.rating;
+		case "new":
+			return b.createdAt.getTime() - a.createdAt.getTime();
+		case "expensive":
+			return b.price - a.price;
+		case "cheap":
+			return a.price - b.price;
+		default:
 			throw new Error(`Unknown sorting: ${sorting}`);
-		}
 	}
+};
+
+export const getSortedItems = (
+	items: CatalogItem[],
+	availableItemIds: Set<string>,
+	sorting: Sorting
+): CatalogItem[] => {
+	const availableItems = [...items].filter((item) => availableItemIds.has(item.id));
+	const unavailableItems = [...items].filter((item) => !availableItemIds.has(item.id));
+
+	const sortedAvailableItems = availableItems.sort((a, b) => sortFunction(a, b, sorting));
+	const sortedUnavailableItems = unavailableItems.sort((a, b) => sortFunction(a, b, sorting));
+
+	return [...sortedAvailableItems, ...sortedUnavailableItems];
 };

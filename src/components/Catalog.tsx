@@ -114,7 +114,7 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path, emptyEl
 
 	const [sorting, setSorting] = useState<Sorting>("popular");
 
-	const { itemsToRender } = useItemsToRender({ items: sectionItems, filterFunction, sorting });
+	const { itemsToRender } = useItemsToRender({ items: sectionItems, availableItemIds, filterFunction, sorting });
 
 	if (catalogIsLoading || availabilityIsLoading) {
 		return (

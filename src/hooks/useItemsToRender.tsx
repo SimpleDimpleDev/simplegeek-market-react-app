@@ -5,6 +5,7 @@ import { useMemo, useRef } from "react";
 
 type UseItemsToRenderProps = {
 	items: CatalogItem[] | undefined;
+	availableItemIds: Set<string> | undefined;
 	filterFunction: (item: CatalogItem) => boolean;
 	sorting: Sorting;
 };
@@ -13,12 +14,14 @@ type UseItemsToRenderReturn = {
 	itemsToRender: CatalogItem[] | undefined;
 };
 
-const useItemsToRender = ({ items, filterFunction, sorting }: UseItemsToRenderProps): UseItemsToRenderReturn => {
+const useItemsToRender = ({ items, availableItemIds, filterFunction, sorting }: UseItemsToRenderProps): UseItemsToRenderReturn => {
 	const prevItemsToRender = useRef<CatalogItem[] | undefined>(undefined);
 
 	const itemsToRender = useMemo(() => {
 		if (items === undefined) return undefined;
-		const newItemsToRender = getSortedItems(items.filter(filterFunction), sorting);
+		if (availableItemIds === undefined) return undefined;
+		const filteredItems = items.filter(filterFunction);
+		const newItemsToRender = getSortedItems(filteredItems, availableItemIds, sorting);
 		if (
 			JSON.stringify(newItemsToRender) ===
 			JSON.stringify(prevItemsToRender.current)
@@ -27,7 +30,7 @@ const useItemsToRender = ({ items, filterFunction, sorting }: UseItemsToRenderPr
 		}
 		prevItemsToRender.current = newItemsToRender;
 		return newItemsToRender;
-	}, [items, filterFunction, sorting]);
+	}, [items, availableItemIds, filterFunction, sorting]);
 
 	return { itemsToRender };
 };
