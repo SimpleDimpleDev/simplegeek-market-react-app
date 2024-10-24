@@ -139,6 +139,7 @@ export function Component() {
 	}, [userSavedDelivery, reset]);
 
 	const service = watch("service");
+	const deliveryPoint = watch("point");
 	const cdekDeliveryData = watch("cdekDeliveryData");
 
 	const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
@@ -374,7 +375,11 @@ export function Component() {
 
 											{service === "CDEK" && (
 												<Box display={"flex"} flexDirection={"column"} gap={"8px"}>
-													{cdekDeliveryData ? (
+													{deliveryPoint && !cdekDeliveryData ? (
+														<Typography>
+															{deliveryPoint.address} - {deliveryPoint.code}
+														</Typography>
+													) : cdekDeliveryData ? (
 														<CDEKDeliveryInfo {...cdekDeliveryData} />
 													) : (
 														<Typography variant="h6">Адрес не выбран</Typography>

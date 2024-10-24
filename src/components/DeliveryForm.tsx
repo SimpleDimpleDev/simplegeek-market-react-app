@@ -8,7 +8,7 @@ import { CardRadio } from "./CardRadio";
 import { Close } from "@mui/icons-material";
 import cdekLogo from "@assets/SdekLogo.webp";
 import mainLogoSmall from "@assets/MainLogoSmall.webp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DeliverySchema } from "@schemas/Delivery";
@@ -90,16 +90,21 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 	});
 
 	const service = watch("service");
+	const deliveryPoint = watch("point");
 	const cdekDeliveryData = watch("cdekDeliveryData");
 
 	const [isEditing, setIsEditing] = useState(defaultEditing);
 	const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
 
+	useEffect(() => {
+		if (delivery) {
+			reset(delivery);
+		}
+	}, [reset, delivery]);
+
 	const handleSave = (data: DeliveryFormData) => {
 		onChange(DeliverySchema.parse(data));
 		setIsEditing(false);
-		// TODO: update externally
-		reset(DeliverySchema.parse(data));
 	};
 
 	const handleStopEditing = () => {
@@ -193,7 +198,11 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 
 					{service === "CDEK" && (
 						<Box display={"flex"} flexDirection={"column"} gap={"8px"}>
-							{cdekDeliveryData ? (
+							{deliveryPoint && !cdekDeliveryData ? (
+								<Typography>
+									{deliveryPoint.address} - {deliveryPoint.code}
+								</Typography>
+							) : cdekDeliveryData ? (
 								<CDEKDeliveryInfo {...cdekDeliveryData} />
 							) : (
 								<Typography variant="h6">Адрес не выбран</Typography>
