@@ -15,6 +15,7 @@ import { useIsMobile } from "src/hooks/useIsMobile";
 import { useAddTrackedItemMutation, useGetTrackedItemListQuery, useRemoveTrackedItemMutation } from "@api/shop/tracked";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import SomethingWentWrong from "@components/SomethingWentWrong";
+import { Helmet } from "react-helmet";
 
 const MobilePublication = lazy(() => import("./MobilePublication"));
 const DesktopPublication = lazy(() => import("./DesktopPublication"));
@@ -124,60 +125,68 @@ export function Component() {
 				</div>
 			) : !catalog || !publication || !selectedVariation ? (
 				<SomethingWentWrong />
-			) : isMobile ? (
-				<Suspense
-					fallback={
-						<div className="w-100 h-100 ai-c d-f jc-c">
-							<CircularProgress />
-						</div>
-					}
-				>
-					<MobilePublication
-						publication={publication}
-						selectedVariation={selectedVariation}
-						imageUrls={preparedImageUrls}
-						selectedVariationIndex={itemVariationIndex}
-						onChangeSelectedVariationIndex={setItemVariationIndex}
-						availableItemIdsIsLoading={availableItemListIsLoading}
-						selectedVariationIsAvailable={selectedVariationIsAvailable}
-						cartItemListIsLoading={cartItemListIsLoading}
-						selectedVariationIsInCart={selectedVariationIsInCart}
-						onCartClick={handleCartClick}
-						favoriteItemListIsLoading={favoriteItemListIsLoading}
-						selectedVariationIsFavorite={selectedVariationIsFavorite}
-						onFavoriteClick={handleToggleFavorite}
-						trackedItemListIsLoading={trackedItemListIsLoading}
-						selectedVariationIsTracked={selectedVariationIsTracked}
-					/>
-					<SuggestedItems />
-				</Suspense>
 			) : (
-				<Suspense
-					fallback={
-						<div className="w-100 h-100 ai-c d-f jc-c">
-							<CircularProgress />
-						</div>
-					}
-				>
-					<DesktopPublication
-						publication={publication}
-						selectedVariation={selectedVariation}
-						imageUrls={preparedImageUrls}
-						selectedVariationIndex={itemVariationIndex}
-						onChangeSelectedVariationIndex={setItemVariationIndex}
-						availableItemIdsIsLoading={availableItemListIsLoading}
-						selectedVariationIsAvailable={selectedVariationIsAvailable}
-						cartItemListIsLoading={cartItemListIsLoading}
-						selectedVariationIsInCart={selectedVariationIsInCart}
-						onCartClick={handleCartClick}
-						favoriteItemListIsLoading={favoriteItemListIsLoading}
-						selectedVariationIsFavorite={selectedVariationIsFavorite}
-						onFavoriteClick={handleToggleFavorite}
-						trackedItemListIsLoading={trackedItemListIsLoading}
-						selectedVariationIsTracked={selectedVariationIsTracked}
-					/>
-					<SuggestedItems />
-				</Suspense>
+				<>
+					<Helmet>
+						<title>SimpleGeek | {selectedVariation.product.title}</title>
+						<meta name="description" content={selectedVariation.product.description || ""} />
+					</Helmet>
+					{isMobile ? (
+						<Suspense
+							fallback={
+								<div className="w-100 h-100 ai-c d-f jc-c">
+									<CircularProgress />
+								</div>
+							}
+						>
+							<MobilePublication
+								publication={publication}
+								selectedVariation={selectedVariation}
+								imageUrls={preparedImageUrls}
+								selectedVariationIndex={itemVariationIndex}
+								onChangeSelectedVariationIndex={setItemVariationIndex}
+								availableItemIdsIsLoading={availableItemListIsLoading}
+								selectedVariationIsAvailable={selectedVariationIsAvailable}
+								cartItemListIsLoading={cartItemListIsLoading}
+								selectedVariationIsInCart={selectedVariationIsInCart}
+								onCartClick={handleCartClick}
+								favoriteItemListIsLoading={favoriteItemListIsLoading}
+								selectedVariationIsFavorite={selectedVariationIsFavorite}
+								onFavoriteClick={handleToggleFavorite}
+								trackedItemListIsLoading={trackedItemListIsLoading}
+								selectedVariationIsTracked={selectedVariationIsTracked}
+							/>
+							<SuggestedItems />
+						</Suspense>
+					) : (
+						<Suspense
+							fallback={
+								<div className="w-100 h-100 ai-c d-f jc-c">
+									<CircularProgress />
+								</div>
+							}
+						>
+							<DesktopPublication
+								publication={publication}
+								selectedVariation={selectedVariation}
+								imageUrls={preparedImageUrls}
+								selectedVariationIndex={itemVariationIndex}
+								onChangeSelectedVariationIndex={setItemVariationIndex}
+								availableItemIdsIsLoading={availableItemListIsLoading}
+								selectedVariationIsAvailable={selectedVariationIsAvailable}
+								cartItemListIsLoading={cartItemListIsLoading}
+								selectedVariationIsInCart={selectedVariationIsInCart}
+								onCartClick={handleCartClick}
+								favoriteItemListIsLoading={favoriteItemListIsLoading}
+								selectedVariationIsFavorite={selectedVariationIsFavorite}
+								onFavoriteClick={handleToggleFavorite}
+								trackedItemListIsLoading={trackedItemListIsLoading}
+								selectedVariationIsTracked={selectedVariationIsTracked}
+							/>
+							<SuggestedItems />
+						</Suspense>
+					)}
+				</>
 			)}
 		</>
 	);
