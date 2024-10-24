@@ -4,6 +4,11 @@ import {
 	Button,
 	Checkbox,
 	CircularProgress,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 	Divider,
 	FormControlLabel,
 	IconButton,
@@ -146,6 +151,9 @@ export function Component() {
 
 	const [saveDelivery, setSaveDelivery] = useState(true);
 
+	const [errorPaymentErrorDialogOpen, setPaymentErrorDialogOpen] = useState(false);
+	const [paymentError, setPaymentError] = useState<{ message: string; orderId: string } | null>(null);
+
 	useEffect(() => {
 		if (userSavedDelivery) {
 			setSaveDelivery(false);
@@ -186,17 +194,17 @@ export function Component() {
 						}
 						messageString = orderMakeError.data.message;
 						const detailsJSON = JSON.stringify(details);
-						console.log("OrderItemsError", { messageString, detailsJSON });
+						console.debug("OrderItemsError", { messageString, detailsJSON });
 						submit({ message: messageString, details: detailsJSON }, { action: "/cart", method: "post" });
 						break;
 					}
 					case "PaymentInitError": {
-						let orderId: string | undefined;
 						const message = orderMakeError.data.message;
-						if (orderMakeError.data.details) {
-							orderId = orderMakeError.data.details[0];
-						}
-						console.log("PaymentInitError", { message, orderId });
+						const details = orderMakeError.data.details as string[];
+						const orderId = details[0] as string;
+						setPaymentError({ message, orderId });
+						setPaymentErrorDialogOpen(true);
+						console.debug("PaymentInitError", { message, orderId });
 						break;
 					}
 				}
@@ -281,6 +289,29 @@ export function Component() {
 				<SomethingWentWrong />
 			) : (
 				<>
+					<Dialog
+						open={errorPaymentErrorDialogOpen}
+						onClose={() => setPaymentErrorDialogOpen(false)}
+						aria-labelledby="error-dialog-title"
+						aria-describedby="error-dialog-description"
+					>
+						{paymentError && (
+							<>
+								<DialogTitle id="error-dialog-title">Ошибка оплаты</DialogTitle>
+								<DialogContent>
+									<DialogContentText id="error-dialog-description">
+										{paymentError.message}
+										<br/>
+										Повторите оплату на странице заказа.
+										При повторной ошибке свяжитесь с администратором.
+									</DialogContentText>
+								</DialogContent>
+								<DialogActions>
+									<Button onClick={() => navigate(`/profile/orders/${paymentError.orderId}`)}>К заказу</Button>
+								</DialogActions>
+							</>
+						)}
+					</Dialog>
 					<Modal
 						open={cdekWidgetOpen}
 						onClose={() => setCdekWidgetOpen(false)}
