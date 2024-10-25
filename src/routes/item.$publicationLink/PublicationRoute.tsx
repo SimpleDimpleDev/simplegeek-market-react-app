@@ -61,7 +61,8 @@ export function Component() {
 		() => catalog?.publications.find((publication) => publication.link === publicationLink),
 		[catalog, publicationLink]
 	);
-	const selectedVariation = publication?.items.at(itemVariationIndex);
+	
+	const selectedVariation = useMemo(() => publication?.items.at(itemVariationIndex), [publication, itemVariationIndex]);
 
 	const selectedVariationIsAvailable = useMemo(
 		() => (selectedVariation === undefined ? undefined : availableItemList?.items.includes(selectedVariation.id)),
