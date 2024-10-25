@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import SuggestedItems from "@components/SuggestedItems";
 
-import { lazy, Suspense, useMemo } from "react";
+import { lazy, Suspense, useEffect, useMemo } from "react";
 
 import { getImageUrl } from "@utils/image";
 import { useAddCartItemMutation, useGetCartItemListQuery } from "@api/shop/cart";
@@ -16,6 +16,9 @@ import { useAddTrackedItemMutation, useGetTrackedItemListQuery, useRemoveTracked
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { Helmet } from "react-helmet";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@state/store";
+import { addVisit } from "@state/visits/visitsSlice";
 
 const MobilePublication = lazy(() => import("./MobilePublication"));
 const DesktopPublication = lazy(() => import("./DesktopPublication"));
@@ -26,6 +29,8 @@ export function Component() {
 	const params = useParams();
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
+
+	const dispatch = useDispatch<AppDispatch>();
 
 	const publicationLink = params.publicationLink;
 	if (publicationLink === undefined) {
@@ -83,6 +88,12 @@ export function Component() {
 				: trackedItemList?.items.some((trackedItem) => trackedItem.id === selectedVariation.id),
 		[trackedItemList, selectedVariation]
 	);
+
+	useEffect(() => {
+		if (selectedVariation) {
+			dispatch(addVisit({ id: selectedVariation.id }));
+		}
+	}, [dispatch, selectedVariation]);
 
 	const preparedImageUrls = useMemo(
 		() => selectedVariation?.product.images.map((image) => getImageUrl(image.url, "large")) || [],

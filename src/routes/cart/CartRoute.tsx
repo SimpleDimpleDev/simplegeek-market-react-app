@@ -19,7 +19,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import { CartSection } from "./CartSection";
 
-import SuggestedItems from "@components/SuggestedItems";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
 import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/catalog";
@@ -31,6 +30,7 @@ import { useIsMobile } from "src/hooks/useIsMobile";
 import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { isExpectedApiError } from "@utils/api";
+import RecentItems from "@components/RecentItems";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -251,7 +251,7 @@ export function Component() {
 							}
 						/>
 					)}
-					<SuggestedItems />
+					<RecentItems />
 				</>
 			)}
 		</>

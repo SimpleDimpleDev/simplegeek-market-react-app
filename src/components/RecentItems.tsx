@@ -14,7 +14,7 @@ import { useMemo } from "react";
 import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
 import { useGetTrackedItemListQuery } from "@api/shop/tracked";
 import SomethingWentWrong from "./SomethingWentWrong";
-import { useSuggestedItems } from "src/hooks/useSuggestedItems";
+import { useRecentItems } from "src/hooks/useRecentItems";
 
 const responsive = {
 	desktop: {
@@ -58,7 +58,7 @@ const RightButton = ({ onClick, ...rest }: ArrowProps) => (
 	</ScrollButton>
 );
 
-export default function SuggestedItems() {
+export default function RecentItems() {
 	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
@@ -111,9 +111,9 @@ export default function SuggestedItems() {
 		return catalog?.items.filter((item) => availableItemIds?.has(item.id));
 	}, [catalog, availableItemIds]);
 
-	const { suggestedItems } = useSuggestedItems({ catalogItems: availableItems || [] });
+	const { recentItems } = useRecentItems({ catalogItems: availableItems || [] });
 
-	if (!catalogIsLoading && !suggestedItems.length) {
+	if (!catalogIsLoading && !recentItems.length) {
 		return null;
 	}
 
@@ -128,7 +128,7 @@ export default function SuggestedItems() {
 			) : (
 				<>
 					<Typography variant="h5" sx={{ mb: 2 }}>
-						Также может понравится
+						Вы недавно смотрели
 					</Typography>
 					<Carousel
 						responsive={responsive}
@@ -138,7 +138,7 @@ export default function SuggestedItems() {
 						customLeftArrow={<LeftButton />}
 						customRightArrow={<RightButton />}
 					>
-						{suggestedItems.map((item) => (
+						{recentItems.map((item) => (
 							<ItemCard
 								data={item}
 								isAvailable={availableItemIds?.has(item.id)}
