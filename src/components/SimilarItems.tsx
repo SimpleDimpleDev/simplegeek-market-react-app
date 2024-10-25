@@ -14,7 +14,7 @@ import { useMemo } from "react";
 import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
 import { useGetTrackedItemListQuery } from "@api/shop/tracked";
 import SomethingWentWrong from "./SomethingWentWrong";
-import { useRecentItems } from "src/hooks/useRecentItems";
+import { useSimilarItems } from "src/hooks/useSimilarItems";
 
 const responsive = {
 	desktop: {
@@ -58,7 +58,7 @@ const RightButton = ({ onClick, ...rest }: ArrowProps) => (
 	</ScrollButton>
 );
 
-export default function RecentItems() {
+export default function SimilarItems({ itemId }: { itemId: string }) {
 	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
@@ -111,9 +111,9 @@ export default function RecentItems() {
 		return catalog?.items.filter((item) => availableItemIds?.has(item.id));
 	}, [catalog, availableItemIds]);
 
-	const { recentItems } = useRecentItems({ catalogItems: availableItems || [] });
+	const { similarItems } = useSimilarItems({ catalogItems: availableItems || [], itemId });
 
-	if (!catalogIsLoading && !recentItems.length) {
+	if (!catalogIsLoading && !similarItems.length) {
 		return null;
 	}
 
@@ -134,12 +134,12 @@ export default function RecentItems() {
 						responsive={responsive}
 						swipeable={isMobile}
 						draggable={isMobile}
-                        minimumTouchDrag={25}
+						minimumTouchDrag={25}
 						deviceType={isMobile ? "mobile" : "desktop"}
 						customLeftArrow={<LeftButton />}
 						customRightArrow={<RightButton />}
 					>
-						{recentItems.map((item) => (
+						{similarItems.map((item) => (
 							<div className="w-100 h-100 ai-c d-f jc-c" key={item.id}>
 								<ItemCard
 									data={item}

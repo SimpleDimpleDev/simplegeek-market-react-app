@@ -19,6 +19,7 @@ import { Helmet } from "react-helmet";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@state/store";
 import { addVisit } from "@state/visits/visitsSlice";
+import SimilarItems from "@components/SimilarItems";
 
 const MobilePublication = lazy(() => import("./MobilePublication"));
 const DesktopPublication = lazy(() => import("./DesktopPublication"));
@@ -171,7 +172,7 @@ export function Component() {
 								trackedItemListIsLoading={trackedItemListIsLoading}
 								selectedVariationIsTracked={selectedVariationIsTracked}
 							/>
-							<SuggestedItems excludeItemIds={selectedVariation ? [selectedVariation.id] : undefined} />
+							<SimilarItems itemId={selectedVariation.id} />
 						</Suspense>
 					) : (
 						<Suspense

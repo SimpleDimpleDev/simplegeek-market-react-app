@@ -141,22 +141,25 @@ export default function SuggestedItems({ excludeItemIds }: SuggestedItemsProps) 
 						responsive={responsive}
 						swipeable={isMobile}
 						draggable={isMobile}
+						minimumTouchDrag={25}
 						deviceType={isMobile ? "mobile" : "desktop"}
 						customLeftArrow={<LeftButton />}
 						customRightArrow={<RightButton />}
 					>
 						{suggestedItems.map((item) => (
-							<ItemCard
-								data={item}
-								isAvailable={availableItemIds?.has(item.id)}
-								availabilityIsLoading={availabilityIsLoading}
-								isInCart={cartItemIds?.has(item.id)}
-								cartItemListIsLoading={cartItemListIsLoading}
-								isFavorite={favoriteItemIds?.has(item.id)}
-								favoriteItemListIsLoading={favoriteItemListIsLoading}
-								isTracked={trackedItemIds?.has(item.id)}
-								trackedItemListIsLoading={trackedItemListIsLoading}
-							/>
+							<div className="w-100 h-100 ai-c d-f jc-c" key={item.id}>
+								<ItemCard
+									data={item}
+									isAvailable={availableItemIds?.has(item.id)}
+									availabilityIsLoading={availabilityIsLoading}
+									isInCart={cartItemIds?.has(item.id)}
+									cartItemListIsLoading={cartItemListIsLoading}
+									isFavorite={favoriteItemIds?.has(item.id)}
+									favoriteItemListIsLoading={favoriteItemListIsLoading}
+									isTracked={trackedItemIds?.has(item.id)}
+									trackedItemListIsLoading={trackedItemListIsLoading}
+								/>
+							</div>
 						))}
 					</Carousel>
 				</>

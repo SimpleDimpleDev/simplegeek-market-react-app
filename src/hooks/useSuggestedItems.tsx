@@ -61,6 +61,7 @@ const useSuggestedItems = ({ catalogItems, excludeItemIds }: useSuggestedItemsPr
 		const suggestedItems = sortedWeightedItems
 			.slice(0, SUGGESTED_ITEMS_LIMIT)
 			.map((weightedItem) => weightedItem.item);
+        //TODO: excludeItemIds
 		if (excludeItemIds !== undefined) {
 			return suggestedItems.filter((item) => !excludeItemIds.includes(item.id));
 		}
