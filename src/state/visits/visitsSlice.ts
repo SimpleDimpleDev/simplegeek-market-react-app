@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type CatalogItemVisit = {
 	id: string;
 	visitsCount: number;
+    lastVisit: Date;
 };
 
 interface VisitsState {
@@ -41,8 +42,9 @@ const visitsSlice = createSlice({
 			const existingVisit = state.visits.find((existingVisit) => existingVisit.id === visit.id);
 			if (existingVisit) {
 				existingVisit.visitsCount++;
+                existingVisit.lastVisit = new Date();
 			} else {
-				state.visits.push({ id: visit.id, visitsCount: 1 });
+				state.visits.push({ id: visit.id, visitsCount: 1, lastVisit: new Date() });
 			}
             saveStateToLocalStorage(state);
 		},

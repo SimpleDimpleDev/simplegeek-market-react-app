@@ -17,19 +17,20 @@ type useRecentItemsReturn = {
 const useRecentItems = ({ catalogItems }: useRecentItemsProps): useRecentItemsReturn => {
 	const visits = useSelector((state: RootState) => state.visits.visits);
 	const recentItems = useMemo(() => {
-		const weightedRecentItems: Array<{ item: CatalogItem; weight: number }> = [];
+		const datedRecentItems: Array<{ item: CatalogItem; date: Date }> = [];
 		for (const visit of visits) {
 			const catalogItem = catalogItems.find((catalogItem) => catalogItem.id === visit.id);
 			if (!catalogItem) continue;
-			weightedRecentItems.push({
+			datedRecentItems.push({
 				item: catalogItem,
-				weight: visit.visitsCount,
+				date: visit.lastVisit,
 			});
 		}
-		const recentItems = weightedRecentItems
-			.sort((a, b) => b.weight - a.weight)
-			.map((weightedItem) => weightedItem.item);
-		return recentItems.slice(0, RECENT_ITEMS_LIMIT);
+		const recentItems = datedRecentItems
+			.sort((a, b) => b.date.getTime() - a.date.getTime())
+			.map((weightedItem) => weightedItem.item)
+			.slice(0, RECENT_ITEMS_LIMIT);
+		return recentItems;
 	}, [catalogItems, visits]);
 
 	return { recentItems };
