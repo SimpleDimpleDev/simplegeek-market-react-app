@@ -78,27 +78,45 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 
 	const filterGroupList: FilterGroupGet[] = useMemo(() => {
 		if (!items) return [];
-		const existingGroups: FilterGroupGet[] = [];
-		for (const item of items) {
-			for (const itemFilterGroup of item.product.filterGroups) {
-				const existingGroup = existingGroups.find((group) => group.id === itemFilterGroup.id);
-				if (existingGroup) {
-					const newFilters = [...existingGroup.filters];
-					for (const filter of itemFilterGroup.filters) {
-						if (!newFilters.find((groupFilter) => groupFilter.id === filter.id)) {
-							newFilters.push(filter);
-						}
+
+		// Create a map to track existing filter groups by their IDs
+		const groupMap = new Map<string, FilterGroupGet>();
+
+		items.forEach((item) => {
+			item.product.filterGroups.forEach((itemFilterGroup) => {
+				// Check if the group already exists in the map
+				if (groupMap.has(itemFilterGroup.id)) {
+					// If it exists, merge the filters immutably
+					const existingGroup = groupMap.get(itemFilterGroup.id);
+
+					// Check if existingGroup is defined
+					if (existingGroup) {
+						const existingFilters = new Set(existingGroup.filters.map((filter) => filter.id));
+
+						// Create a new array of filters that includes the existing ones and adds new ones
+						const mergedFilters = [
+							...existingGroup.filters,
+							...itemFilterGroup.filters.filter((filter) => !existingFilters.has(filter.id)),
+						];
+
+						// Update the map with a new object
+						groupMap.set(itemFilterGroup.id, {
+							...existingGroup,
+							filters: mergedFilters as [
+								{ id: string; value: string },
+								...{ id: string; value: string }[]
+							],
+						});
 					}
-					existingGroup.filters = newFilters as [
-						{ id: string; value: string },
-						...{ id: string; value: string }[]
-					];
 				} else {
-					existingGroups.push(itemFilterGroup);
+					// If it doesn't exist, add it to the map
+					groupMap.set(itemFilterGroup.id, { ...itemFilterGroup });
 				}
-			}
-		}
-		return existingGroups;
+			});
+		});
+
+		// Convert the map values back to an array
+		return Array.from(groupMap.values());
 	}, [items]);
 
 	const preorderList: PreorderShop[] = useMemo(() => {
