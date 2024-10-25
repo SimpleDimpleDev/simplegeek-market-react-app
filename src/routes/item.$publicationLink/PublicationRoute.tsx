@@ -1,5 +1,4 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import SuggestedItems from "@components/SuggestedItems";
 
 import { lazy, Suspense, useEffect, useMemo } from "react";
 
@@ -199,7 +198,7 @@ export function Component() {
 								trackedItemListIsLoading={trackedItemListIsLoading}
 								selectedVariationIsTracked={selectedVariationIsTracked}
 							/>
-							<SuggestedItems />
+							<SimilarItems itemId={selectedVariation.id} />
 						</Suspense>
 					)}
 				</>
