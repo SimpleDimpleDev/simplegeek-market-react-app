@@ -58,7 +58,11 @@ const RightButton = ({ onClick, ...rest }: ArrowProps) => (
 	</ScrollButton>
 );
 
-export default function SuggestedItems() {
+type SuggestedItemsProps = {
+	excludeItemIds?: string[];
+};
+
+export default function SuggestedItems({ excludeItemIds }: SuggestedItemsProps) {
 	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
@@ -111,7 +115,10 @@ export default function SuggestedItems() {
 		return catalog?.items.filter((item) => availableItemIds?.has(item.id));
 	}, [catalog, availableItemIds]);
 
-	const { suggestedItems } = useSuggestedItems({ catalogItems: availableItems || [] });
+	const { suggestedItems } = useSuggestedItems({
+		catalogItems: availableItems || [],
+		excludeItemIds: excludeItemIds || [],
+	});
 
 	if (!catalogIsLoading && !suggestedItems.length) {
 		return null;

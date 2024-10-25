@@ -61,8 +61,11 @@ export function Component() {
 		() => catalog?.publications.find((publication) => publication.link === publicationLink),
 		[catalog, publicationLink]
 	);
-	
-	const selectedVariation = useMemo(() => publication?.items.at(itemVariationIndex), [publication, itemVariationIndex]);
+
+	const selectedVariation = useMemo(
+		() => publication?.items.at(itemVariationIndex),
+		[publication, itemVariationIndex]
+	);
 
 	const selectedVariationIsAvailable = useMemo(
 		() => (selectedVariation === undefined ? undefined : availableItemList?.items.includes(selectedVariation.id)),
@@ -168,7 +171,7 @@ export function Component() {
 								trackedItemListIsLoading={trackedItemListIsLoading}
 								selectedVariationIsTracked={selectedVariationIsTracked}
 							/>
-							<SuggestedItems />
+							<SuggestedItems excludeItemIds={selectedVariation ? [selectedVariation.id] : undefined} />
 						</Suspense>
 					) : (
 						<Suspense

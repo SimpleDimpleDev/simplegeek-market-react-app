@@ -8,13 +8,14 @@ const SUGGESTED_ITEMS_LIMIT = 10;
 
 type useSuggestedItemsProps = {
 	catalogItems: CatalogItem[];
+	excludeItemIds?: string[];
 };
 
 type useSuggestedItemsReturn = {
 	suggestedItems: CatalogItem[];
 };
 
-const useSuggestedItems = ({ catalogItems }: useSuggestedItemsProps): useSuggestedItemsReturn => {
+const useSuggestedItems = ({ catalogItems, excludeItemIds }: useSuggestedItemsProps): useSuggestedItemsReturn => {
 	const visits = useSelector((state: RootState) => state.visits.visits);
 
 	const suggestedItems = useMemo(() => {
@@ -36,6 +37,7 @@ const useSuggestedItems = ({ catalogItems }: useSuggestedItemsProps): useSuggest
 				}
 			}
 		}
+		console.log({ weightedFilters });
 		const weightedItems: Array<{ item: CatalogItem; weight: number }> = [];
 		for (const catalogItem of catalogItems) {
 			let weight = 0;
@@ -54,12 +56,16 @@ const useSuggestedItems = ({ catalogItems }: useSuggestedItemsProps): useSuggest
 				weightedItems.push({ item: catalogItem, weight });
 			}
 		}
+		console.log({ weightedItems });
 		const sortedWeightedItems = weightedItems.sort((a, b) => b.weight - a.weight);
-		return sortedWeightedItems
-			.filter((sortedWeightedItem) => !visits.some((visit) => visit.id === sortedWeightedItem.item.id))
+		const suggestedItems = sortedWeightedItems
 			.slice(0, SUGGESTED_ITEMS_LIMIT)
 			.map((weightedItem) => weightedItem.item);
-	}, [catalogItems, visits]);
+		if (excludeItemIds !== undefined) {
+			return suggestedItems.filter((item) => !excludeItemIds.includes(item.id));
+		}
+		return suggestedItems;
+	}, [catalogItems, visits, excludeItemIds]);
 
 	return { suggestedItems };
 };
