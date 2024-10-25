@@ -83,11 +83,16 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 			for (const itemFilterGroup of item.product.filterGroups) {
 				const existingGroup = existingGroups.find((group) => group.id === itemFilterGroup.id);
 				if (existingGroup) {
+					const newFilters = [...existingGroup.filters];
 					for (const filter of itemFilterGroup.filters) {
-						if (!existingGroup.filters.find((groupFilter) => groupFilter.id === filter.id)) {
-							existingGroup.filters.push(filter);
+						if (!newFilters.find((groupFilter) => groupFilter.id === filter.id)) {
+							newFilters.push(filter);
 						}
 					}
+					existingGroup.filters = newFilters as [
+						{ id: string; value: string },
+						...{ id: string; value: string }[]
+					];
 				} else {
 					existingGroups.push(itemFilterGroup);
 				}
