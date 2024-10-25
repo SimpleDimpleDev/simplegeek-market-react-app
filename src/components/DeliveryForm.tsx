@@ -246,7 +246,13 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
 
 				<div>
 					<Typography variant="h5">Получатель</Typography>
-					<div className="gap-1 ai-c d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
+					<div
+						className="gap-1 ai-bl d-f"
+						style={{
+							flexDirection: isMobile ? "column" : "row",
+							paddingTop: isMobile ? "16px" : 0,
+						}}
+					>
 						<Controller
 							name="recipient.phone"
 							control={control}
