@@ -128,7 +128,7 @@ export default function SimilarItems({ itemId }: { itemId: string }) {
 			) : (
 				<>
 					<Typography variant="h5" sx={{ mb: 2 }}>
-						Вы недавно смотрели
+                        Похожие товары
 					</Typography>
 					<Carousel
 						responsive={responsive}
