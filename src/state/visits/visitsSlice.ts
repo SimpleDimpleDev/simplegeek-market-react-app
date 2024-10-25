@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type CatalogItemVisit = {
 	id: string;
 	visitsCount: number;
-    lastVisit: Date;
+	lastVisit: Date;
 };
 
 interface VisitsState {
@@ -14,9 +14,18 @@ interface VisitsState {
 const loadStateFromLocalStorage = (): VisitsState | undefined => {
 	try {
 		const serializedState = localStorage.getItem("visitsState");
-		return serializedState ? JSON.parse(serializedState) : undefined;
+		if (!serializedState) return undefined;
+
+		const state: VisitsState = JSON.parse(serializedState);
+		// Convert lastVisit strings back to Date objects
+		state.visits = state.visits.map((visit) => ({
+			...visit,
+			lastVisit: new Date(visit.lastVisit), // Convert string to Date
+		}));
+
+		return state;
 	} catch (err) {
-        console.error(err);
+		console.error(err);
 		return undefined;
 	}
 };
@@ -42,11 +51,11 @@ const visitsSlice = createSlice({
 			const existingVisit = state.visits.find((existingVisit) => existingVisit.id === visit.id);
 			if (existingVisit) {
 				existingVisit.visitsCount++;
-                existingVisit.lastVisit = new Date();
+				existingVisit.lastVisit = new Date();
 			} else {
 				state.visits.push({ id: visit.id, visitsCount: 1, lastVisit: new Date() });
 			}
-            saveStateToLocalStorage(state);
+			saveStateToLocalStorage(state);
 		},
 	},
 });
