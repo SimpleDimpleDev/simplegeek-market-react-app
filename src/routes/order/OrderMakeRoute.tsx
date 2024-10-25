@@ -42,6 +42,9 @@ import mainLogoSmall from "@assets/MainLogoSmall.webp";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { isExpectedApiError } from "@utils/api";
 
+import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
+import { phoneOnlyCountries } from "@config/phone";
+
 type DeliveryFormData = {
 	recipient: Recipient;
 	service: DeliveryService | null;
@@ -54,11 +57,11 @@ const DeliveryFormResolver = z
 		recipient: z.object({
 			fullName: z.string({ message: "Укажите ФИО" }).min(2, "ФИО должно быть не менее 2 символов"),
 			phone: z
-				.string({ message: "Укажите номер телефона" })
-				.regex(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/, {
+				.string()
+				.min(1, { message: "Укажите номер телефона" })
+				.refine((value) => matchIsValidTel(value, { onlyCountries: phoneOnlyCountries }), {
 					message: "Неверный номер телефона",
-				})
-				.min(10, "Номер телефона должен быть не менее 10 символов"),
+				}),
 		}),
 		service: z.enum(["SELF_PICKUP", "CDEK"], { message: "Укажите способ доставки" }),
 		point: z
@@ -301,13 +304,15 @@ export function Component() {
 								<DialogContent>
 									<DialogContentText id="error-dialog-description">
 										{paymentError.message}
-										<br/>
-										Повторите оплату на странице заказа.
-										При повторной ошибке свяжитесь с администратором.
+										<br />
+										Повторите оплату на странице заказа. При повторной ошибке свяжитесь с
+										администратором.
 									</DialogContentText>
 								</DialogContent>
 								<DialogActions>
-									<Button onClick={() => navigate(`/profile/orders/${paymentError.orderId}`)}>К заказу</Button>
+									<Button onClick={() => navigate(`/profile/orders/${paymentError.orderId}`)}>
+										К заказу
+									</Button>
 								</DialogActions>
 							</>
 						)}
@@ -448,13 +453,18 @@ export function Component() {
 												<Controller
 													name="recipient.phone"
 													control={control}
-													render={({ field, fieldState: { error } }) => (
-														<TextField
-															{...field}
-															label="Номер телефона"
-															variant="outlined"
+													render={({
+														field: { value, ...fieldProps },
+														fieldState: { error },
+													}) => (
+														<MuiTelInput
+															{...fieldProps}
 															fullWidth
-															margin="normal"
+															label="Номер телефона"
+															defaultCountry={"RU"}
+															onlyCountries={phoneOnlyCountries}
+															langOfCountryName="RU"
+															value={value}
 															error={!!error}
 															helperText={error?.message}
 														/>

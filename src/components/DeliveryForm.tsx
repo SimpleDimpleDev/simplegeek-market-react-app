@@ -13,6 +13,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DeliverySchema } from "@schemas/Delivery";
 
+import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
+import { phoneOnlyCountries } from "@config/phone";
+
 type DeliveryFormData = {
 	recipient: Recipient;
 	service: DeliveryService | null;
@@ -25,11 +28,11 @@ const DeliveryFormResolver = z
 		recipient: z.object({
 			fullName: z.string({ message: "Укажите ФИО" }).min(2, "ФИО должно быть не менее 2 символов"),
 			phone: z
-				.string({ message: "Укажите номер телефона" })
-				.regex(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/, {
+				.string()
+				.min(1, { message: "Укажите номер телефона" })
+				.refine((value) => matchIsValidTel(value, { onlyCountries: phoneOnlyCountries }), {
 					message: "Неверный номер телефона",
-				})
-				.min(10, "Номер телефона должен быть не менее 10 символов"),
+				}),
 		}),
 		service: z.enum(["SELF_PICKUP", "CDEK"], { message: "Укажите способ доставки" }),
 		point: z
@@ -61,7 +64,14 @@ interface DeliveryFormProps {
 	onChange: (data: z.infer<typeof DeliverySchema>) => void;
 }
 
-const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, packages, defaultEditing, canModify, onChange }) => {
+const DeliveryForm: React.FC<DeliveryFormProps> = ({
+	isMobile,
+	delivery,
+	packages,
+	defaultEditing,
+	canModify,
+	onChange,
+}) => {
 	const {
 		control,
 		watch,
@@ -117,7 +127,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 		setValue("point", {
 			code: data.address.code,
 			address: `${data.address.city}, ${data.address.address}`,
-		})
+		});
 		setCdekWidgetOpen(false);
 	};
 
@@ -158,12 +168,14 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 						}}
 						onReady={() => {}}
 						// TODO: mass vs weight
-						packages={packages?.map((pkg) => ({
-							width: pkg.width,
-							height: pkg.height,
-							length: pkg.length,
-							weight: pkg.weight,
-						})) || []}
+						packages={
+							packages?.map((pkg) => ({
+								width: pkg.width,
+								height: pkg.height,
+								length: pkg.length,
+								weight: pkg.weight,
+							})) || []
+						}
 					/>
 				</Box>
 			</Modal>
@@ -238,14 +250,15 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 						<Controller
 							name="recipient.phone"
 							control={control}
-							render={({ field, fieldState: { error } }) => (
-								<TextField
-									{...field}
-									disabled={!isEditing}
-									label="Номер телефона"
-									variant="outlined"
+							render={({ field: { value, ...fieldProps }, fieldState: { error } }) => (
+								<MuiTelInput
+									{...fieldProps}
 									fullWidth
-									margin="normal"
+									label="Номер телефона"
+									defaultCountry={"RU"}
+									onlyCountries={phoneOnlyCountries}
+									langOfCountryName="RU"
+									value={value}
 									error={!!error}
 									helperText={error?.message}
 								/>
@@ -293,17 +306,19 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 							</Button>
 						)}
 					</div>
-				) : canModify && (
-					<>
-						<Button
-							sx={{ width: "max-content" }}
-							onClick={() => setIsEditing(true)}
-							variant="contained"
-							color="primary"
-						>
-							Изменить
-						</Button>
-					</>
+				) : (
+					canModify && (
+						<>
+							<Button
+								sx={{ width: "max-content" }}
+								onClick={() => setIsEditing(true)}
+								variant="contained"
+								color="primary"
+							>
+								Изменить
+							</Button>
+						</>
+					)
 				)}
 			</form>
 		</>
