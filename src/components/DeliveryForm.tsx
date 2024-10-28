@@ -259,6 +259,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
 							render={({ field: { value, ...fieldProps }, fieldState: { error } }) => (
 								<MuiTelInput
 									{...fieldProps}
+									disabled={!isEditing}
 									fullWidth
 									label="Номер телефона"
 									defaultCountry={"RU"}
