@@ -168,7 +168,7 @@ export function Component() {
 			) : (
 				<>
 					<div className="gap-2 ai-fs d-f fd-c">
-						<Button variant="text" sx={{ color: "warning.main" }} onClick={() => navigate(-1)}>
+						<Button variant="text" sx={{ color: "warning.main" }} onClick={() => navigate("/profile/orders")}>
 							<ChevronLeft />
 							<Typography color="inherit">Все заказы</Typography>
 						</Button>
