@@ -41,8 +41,8 @@ const FilterGroup = ({ data, checkedFiltersIds, onToggleFilter }: FilterGroupPro
 	const expandedFilters = data.filters.slice(collapsedFilterGroupSize);
 
 	return (
-		<div key={data.title} className="gap-12px d-f fd-c">
-			<Typography variant="h6">{data.title}</Typography>
+		<div key={data.title} className="gap-05 d-f fd-c">
+			<Typography variant="subtitle0">{data.title}</Typography>
 			<div>
 				<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper", padding: 0 }}>
 					<div className="bg-primary ps-r" style={{ zIndex: 2 }}>
@@ -149,14 +149,14 @@ export const CatalogFilters = ({
 
 	return (
 		<div
-			className="gap-3 bg-primary p-2 h-mc d-f fd-c fs-0"
+			className="gap-1 bg-primary p-2 h-mc d-f fd-c fs-0"
 			style={{
 				width: isMobile ? "100%" : 280,
 				borderRadius: 20,
 			}}
 		>
-			<div className="gap-12px d-f fd-c">
-				<Typography variant="h6">Наличие</Typography>
+			<div className="gap-05 d-f fd-c">
+				<Typography variant="subtitle0">Наличие</Typography>
 				<div>
 					<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper", padding: 0 }}>
 						<ListItem disablePadding>
@@ -174,8 +174,8 @@ export const CatalogFilters = ({
 			</div>
 
 			{preorderList.length > 0 && (
-				<div className="gap-12px d-f fd-c">
-					<Typography variant="h6">Предзаказ</Typography>
+				<div className="gap-05 d-f fd-c">
+					<Typography variant="subtitle0">Предзаказ</Typography>
 					<div>
 						<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper", padding: 0 }}>
 							{preorderList.map((preorder) => (
@@ -215,8 +215,8 @@ export const CatalogFilters = ({
 				);
 			})}
 
-			<div className="gap-12px d-f fd-c">
-				<Typography variant="h6">Цена, ₽</Typography>
+			<div className="gap-05 d-f fd-c">
+				<Typography variant="subtitle0">Цена, ₽</Typography>
 				<div className="gap-1 pt-1 d-f fd-r">
 					<TextField
 						variant="outlined"
