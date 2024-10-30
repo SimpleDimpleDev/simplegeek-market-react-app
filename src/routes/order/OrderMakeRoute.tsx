@@ -310,7 +310,7 @@ export function Component() {
 									</DialogContentText>
 								</DialogContent>
 								<DialogActions>
-									<Button onClick={() => navigate(`/profile/orders/${paymentError.orderId}`)}>
+									<Button variant="contained" onClick={() => navigate(`/orders/${paymentError.orderId}`)}>
 										К заказу
 									</Button>
 								</DialogActions>
