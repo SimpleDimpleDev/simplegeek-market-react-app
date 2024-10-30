@@ -1,0 +1,16 @@
+{
+	"name": "SimpleGeek",
+	"short_name": "SimpleGeek",
+	"icons": [
+		{ "src": "/favicon/favicon-16x16.png", "sizes": "16x16", "type": "image/png" },
+		{ "src": "/favicon/favicon-32x32.png", "sizes": "32x32", "type": "image/png" },
+		{ "src": "/favicon/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+		{ "src": "/favicon/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
+	],
+	"start_url": "/",
+	"theme_color": "#ffffff",
+	"background_color": "#ffffff",
+	"display": "standalone",
+	"description": "Коллекционные статуи, фигурки и саундтреки на виниле из любимых игр и вселенных. SimpleGeek — ваш проводник в мир совершенства форм милых сердцу персонажей по ещё более милым сердцу ценам.",
+	"lang": "ru"
+}
