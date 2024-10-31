@@ -88,7 +88,11 @@ export function Component() {
 		return packages;
 	}, [order]);
 
-	// TODO: get from backend
+	const canChangeDelivery = useMemo(() => {
+		// TODO: check if it's possible to change delivery
+		return false
+	}, []);
+
 	const { paidCreditAmount, unpaidCreditAmount, orderHasCredit } = useMemo(() => {
 		if (!order) return { paidCreditAmount: undefined, unpaidCreditAmount: undefined, orderHasCredit: undefined };
 		let paidCreditAmount = 0;
@@ -220,7 +224,7 @@ export function Component() {
 									) : (
 										<>Ошибка</>
 									)
-								) : order.delivery.tracking === null ? (
+								) : canChangeDelivery ? (
 									<DeliveryForm
 										isMobile={isMobile}
 										delivery={order.delivery}
