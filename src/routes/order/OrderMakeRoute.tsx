@@ -150,6 +150,11 @@ export function Component() {
 	const deliveryPoint = watch("point");
 	const cdekDeliveryData = watch("cdekDeliveryData");
 
+	useEffect(() => {
+		setValue("point", null);
+		setValue("cdekDeliveryData", null);
+	}, [service, setValue]);
+
 	const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
 
 	const [saveDelivery, setSaveDelivery] = useState(true);
@@ -310,7 +315,10 @@ export function Component() {
 									</DialogContentText>
 								</DialogContent>
 								<DialogActions>
-									<Button variant="contained" onClick={() => navigate(`/orders/${paymentError.orderId}`)}>
+									<Button
+										variant="contained"
+										onClick={() => navigate(`/orders/${paymentError.orderId}`)}
+									>
 										К заказу
 									</Button>
 								</DialogActions>
