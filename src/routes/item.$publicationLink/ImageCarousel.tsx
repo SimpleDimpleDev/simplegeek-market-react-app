@@ -67,8 +67,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) =>
 	const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 	const selectedImageUrl = imageUrls[selectedImageIndex];
 
-	console.log({ imageUrls });
-
 	return (
 		<Box style={{ width: isMobile ? 345 : 630 }}>
 			<div

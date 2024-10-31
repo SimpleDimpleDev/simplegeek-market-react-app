@@ -331,8 +331,8 @@ export function Component() {
 							{order.status === "CANCELLED" ? (
 								<Typography variant="subtitle1">Заказ отменен</Typography>
 							) : order.status === "UNPAID" ? (
-								<div className="gap-1 d-f fd-r">
-									<Typography variant="subtitle1" sx={{ color: "typography.error" }}>
+								<>
+									<Typography variant="h6" sx={{ color: "typography.error" }}>
 										Заказ не оплачен
 									</Typography>
 									<Button
@@ -342,7 +342,7 @@ export function Component() {
 									>
 										{"Оплатить "} <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
 									</Button>
-								</div>
+								</>
 							) : order.preorder !== null && showDetailedOrder ? (
 								<>
 									<Typography variant="h6">Оплачено</Typography>
@@ -430,9 +430,9 @@ export function Component() {
 								</>
 							) : (
 								<>
-									<div className="d-f fd-c jc-sb">
+									<>
 										<div className="gap-1">
-											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+											<Typography variant="h6" sx={{ color: "typography.secondary" }}>
 												Итого:
 											</Typography>
 											<Typography variant="subtitle0">{order.initialInvoice.amount} ₽</Typography>
@@ -441,7 +441,7 @@ export function Component() {
 										<Typography variant="subtitle1" sx={{ color: "typography.success" }}>
 											Оплачено!
 										</Typography>
-									</div>
+									</>
 								</>
 							)}
 						</div>

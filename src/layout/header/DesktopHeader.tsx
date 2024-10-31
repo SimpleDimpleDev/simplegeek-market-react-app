@@ -200,7 +200,7 @@ const DesktopHeader: React.FC = () => {
 								Выход
 							</Typography>
 						</div>
-						<Logout />
+						<Logout sx={{ color: "error.main" }} />
 					</MenuItem>
 				</Menu>
 			</header>

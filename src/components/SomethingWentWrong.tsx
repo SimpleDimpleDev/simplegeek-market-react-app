@@ -1,9 +1,7 @@
 import { Button, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
 export default function SomethingWentWrong({ showButton = true }: { showButton?: boolean }) {
-	const navigate = useNavigate();
-
+	const handleReloadPage = () => window.location.reload();
 	return (
 		<div
 			style={{
@@ -31,11 +29,11 @@ export default function SomethingWentWrong({ showButton = true }: { showButton?:
 						alignItems: "center",
 					}}
 				>
-					<Typography variant="h6">Повторите попытку позже</Typography>
+					<Typography variant="h6">Попробуйте обновить страницу</Typography>
 				</div>
 				{showButton && (
-					<Button variant="contained" onClick={() => navigate("/")}>
-						На главную
+					<Button variant="contained" onClick={handleReloadPage}>
+						Обновить
 					</Button>
 				)}
 			</div>
