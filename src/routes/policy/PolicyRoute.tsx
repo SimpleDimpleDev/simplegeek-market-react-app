@@ -11,7 +11,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Политика конфиденциальности</title>
+				<title>Политика конфиденциальности - SimpleGeek</title>
 				<meta
 					name="description"
 					content="Коллекционные статуи, фигурки и саундтреки на виниле из любимых игр и вселенных. SimpleGeek — ваш проводник в мир совершенства форм милых сердцу персонажей по ещё более милым сердцу ценам."

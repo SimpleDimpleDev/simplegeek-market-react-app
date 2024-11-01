@@ -291,7 +291,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Оформление заказа</title>
+				<title>Оформление заказа - SimpleGeek</title>
 			</Helmet>
 			{catalogIsLoading || checkoutItemListIsLoading || userSavedDeliveryIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">

@@ -67,7 +67,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Мои заказы</title>
+				<title>Заказы - SimpleGeek</title>
 			</Helmet>
 			{orderListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">

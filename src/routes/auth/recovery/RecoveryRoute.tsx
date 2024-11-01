@@ -68,7 +68,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Восстановление</title>
+				<title>Восстановление - SimpleGeek</title>
 			</Helmet>
 			{flow ? (
 				// We create a dynamic Recovery form based on the flow using Ory Elements

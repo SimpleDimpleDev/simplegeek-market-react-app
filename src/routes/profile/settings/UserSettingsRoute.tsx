@@ -73,7 +73,7 @@ export function Component() {
 	return (
 		<div className="gap-3 w-100 d-f fd-c">
 			<Helmet>
-				<title>SimpleGeek | Мои данные</title>
+				<title>Мои данные - SimpleGeek</title>
 			</Helmet>
 			<div className="py-2">
 				<Typography variant={isMobile ? "h4" : "h3"}>Мои данные</Typography>

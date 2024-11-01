@@ -148,7 +148,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Корзина</title>
+				<title>Корзина - SimpleGeek</title>
 			</Helmet>
 			{catalogIsLoading || availabilityIsLoading || cartItemListIsLoading || favoriteItemListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">

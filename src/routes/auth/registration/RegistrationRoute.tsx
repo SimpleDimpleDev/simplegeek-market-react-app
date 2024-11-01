@@ -124,7 +124,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Регистрация</title>
+				<title>Регистрация - SimpleGeek</title>
 			</Helmet>
 			{flow ? (
 				// create a registration form that dynamically renders based on the flow data using Ory Elements

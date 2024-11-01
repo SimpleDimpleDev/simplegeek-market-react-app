@@ -34,7 +34,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek{category?.title ? ` | ${category.title}` : ""}</title>
+				<title>{category?.title ? `${category.title} - ` : ""}SimpleGeek</title>
 			</Helmet>
 			<Catalog
 				sectionFilter={sectionFilter}

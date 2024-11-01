@@ -14,7 +14,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Категории</title>
+				<title>Категории - SimpleGeek</title>
 			</Helmet>
 			{catalogIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">

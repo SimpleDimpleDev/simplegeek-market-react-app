@@ -143,7 +143,7 @@ export function Component() {
 			) : (
 				<>
 					<Helmet>
-						<title>SimpleGeek | {selectedVariation.product.title}</title>
+						<title>{selectedVariation.product.title} - SimpleGeek</title>
 						<meta name="description" content={selectedVariation.product.description || ""} />
 					</Helmet>
 					{isMobile ? (

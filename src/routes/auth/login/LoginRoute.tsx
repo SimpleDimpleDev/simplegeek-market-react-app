@@ -127,7 +127,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Вход</title>
+				<title>Вход - SimpleGeek</title>
 			</Helmet>
 			{flow ? (
 				// we render the login form using Ory Elements

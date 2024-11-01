@@ -11,7 +11,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | FAQ</title>
+				<title>FAQ - SimpleGeek</title>
 			</Helmet>
 			{FAQItemListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">

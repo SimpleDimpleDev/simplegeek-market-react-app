@@ -38,7 +38,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Избранное</title>
+				<title>Избранное - SimpleGeek</title>
 			</Helmet>
 			{catalogIsLoading || availableItemListIsLoading || favoriteItemListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">

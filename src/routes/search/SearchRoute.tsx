@@ -18,7 +18,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Поиск</title>
+				<title>Поиск - SimpleGeek</title>
 			</Helmet>
 			<Catalog
 				sectionFilter={sectionFilter}

@@ -84,7 +84,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek | Верификация</title>
+				<title>Верификация - SimpleGeek</title>
 			</Helmet>
 			{flow ? (
 				// create a new verification form with the flow data using Ory Elements

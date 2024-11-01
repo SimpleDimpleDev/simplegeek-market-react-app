@@ -165,7 +165,7 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek{order ? ` | Заказ от ${DateFormatter.DDMMYYYY(order.createdAt)}` : ""}</title>
+				<title>{order ? `Заказ от ${DateFormatter.DDMMYYYY(order.createdAt)} - ` : ""}SimpleGeek</title>
 			</Helmet>
 			{orderIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
