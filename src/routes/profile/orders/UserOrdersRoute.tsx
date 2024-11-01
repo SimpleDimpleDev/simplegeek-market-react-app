@@ -11,6 +11,7 @@ import { useGetOrderListQuery } from "@api/shop/profile";
 import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import SomethingWentWrong from "@components/SomethingWentWrong";
+import { Helmet } from "react-helmet";
 
 function tabsProps(index: number) {
 	return {
@@ -65,6 +66,9 @@ export function Component() {
 
 	return (
 		<>
+			<Helmet>
+				<title>SimpleGeek | Мои заказы</title>
+			</Helmet>
 			{orderListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />

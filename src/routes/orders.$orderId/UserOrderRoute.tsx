@@ -14,6 +14,7 @@ import SomethingWentWrong from "@components/SomethingWentWrong";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { CreditGet } from "@appTypes/Credit";
 import { DeliveryForm } from "@components/DeliveryForm";
+import { Helmet } from "react-helmet";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЕК",
@@ -90,7 +91,7 @@ export function Component() {
 
 	const canChangeDelivery = useMemo(() => {
 		// TODO: check if it's possible to change delivery
-		return false
+		return false;
 	}, []);
 
 	const { paidCreditAmount, unpaidCreditAmount, orderHasCredit } = useMemo(() => {
@@ -163,6 +164,9 @@ export function Component() {
 
 	return (
 		<>
+			<Helmet>
+				<title>SimpleGeek{order ? ` | Заказ от ${DateFormatter.DDMMYYYY(order.createdAt)}` : ""}</title>
+			</Helmet>
 			{orderIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
@@ -172,7 +176,11 @@ export function Component() {
 			) : (
 				<>
 					<div className="gap-2 ai-fs d-f fd-c">
-						<Button variant="text" sx={{ color: "warning.main" }} onClick={() => navigate("/profile/orders")}>
+						<Button
+							variant="text"
+							sx={{ color: "warning.main" }}
+							onClick={() => navigate("/profile/orders")}
+						>
 							<ChevronLeft />
 							<Typography color="inherit">Все заказы</Typography>
 						</Button>
@@ -206,7 +214,8 @@ export function Component() {
 										) : (
 											<div className="gap-1">
 												<Typography variant="subtitle1">
-													Доставка к вам оформляется после полной оплаты заказа и его прибытия на склад в Москве.
+													Доставка к вам оформляется после полной оплаты заказа и его прибытия
+													на склад в Москве.
 												</Typography>
 												<div className="gap-1 d-f fd-r">
 													<Typography

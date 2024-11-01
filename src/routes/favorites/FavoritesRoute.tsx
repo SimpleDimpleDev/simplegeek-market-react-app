@@ -8,6 +8,7 @@ import { useGetItemsAvailabilityQuery, useGetCatalogQuery } from "@api/shop/cata
 import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import SomethingWentWrong from "@components/SomethingWentWrong";
+import { Helmet } from "react-helmet";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -36,6 +37,9 @@ export function Component() {
 
 	return (
 		<>
+			<Helmet>
+				<title>SimpleGeek | Избранное</title>
+			</Helmet>
 			{catalogIsLoading || availableItemListIsLoading || favoriteItemListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />

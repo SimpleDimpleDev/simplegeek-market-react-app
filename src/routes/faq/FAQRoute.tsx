@@ -2,6 +2,7 @@ import { useGetFAQItemListQuery } from "@api/shop/faq";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { ExpandMore } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, CircularProgress, Typography } from "@mui/material";
+import { Helmet } from "react-helmet";
 import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
@@ -9,6 +10,9 @@ export function Component() {
 	const { data: FAQItemList, isLoading: FAQItemListIsLoading } = useGetFAQItemListQuery();
 	return (
 		<>
+			<Helmet>
+				<title>SimpleGeek | FAQ</title>
+			</Helmet>
 			{FAQItemListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />

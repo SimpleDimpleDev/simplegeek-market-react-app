@@ -6,6 +6,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { SdkError, oryClient } from "@api/auth/client";
 import { useIsMobile } from "src/hooks/useIsMobile";
+import { Helmet } from "react-helmet";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -71,6 +72,9 @@ export function Component() {
 	// if the flow is not set, we show a loading indicator
 	return (
 		<div className="gap-3 w-100 d-f fd-c">
+			<Helmet>
+				<title>SimpleGeek | Мои данные</title>
+			</Helmet>
 			<div className="py-2">
 				<Typography variant={isMobile ? "h4" : "h3"}>Мои данные</Typography>
 			</div>

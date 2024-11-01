@@ -31,6 +31,7 @@ import { availabilityPollingInterval, catalogPollingInterval } from "@config/pol
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { isExpectedApiError } from "@utils/api";
 import RecentItems from "@components/RecentItems";
+import { Helmet } from "react-helmet";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -146,6 +147,9 @@ export function Component() {
 
 	return (
 		<>
+			<Helmet>
+				<title>SimpleGeek | Корзина</title>
+			</Helmet>
 			{catalogIsLoading || availabilityIsLoading || cartItemListIsLoading || favoriteItemListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />

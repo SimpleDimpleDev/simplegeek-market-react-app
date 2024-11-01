@@ -44,6 +44,7 @@ import { isExpectedApiError } from "@utils/api";
 
 import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
 import { phoneOnlyCountries } from "@config/phone";
+import { Helmet } from "react-helmet";
 
 type DeliveryFormData = {
 	recipient: Recipient;
@@ -289,6 +290,9 @@ export function Component() {
 
 	return (
 		<>
+			<Helmet>
+				<title>SimpleGeek | Оформление заказа</title>
+			</Helmet>
 			{catalogIsLoading || checkoutItemListIsLoading || userSavedDeliveryIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />

@@ -6,6 +6,7 @@ import { UserAuthCard } from "@ory/elements";
 import { AppDispatch } from "@state/store";
 import { fetchUser } from "@state/user/thunks";
 import { useCallback, useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -120,33 +121,41 @@ export function Component() {
 	}, [navigate]);
 
 	// the flow is not set yet, so we show a loading indicator
-	return flow ? (
-		// create a registration form that dynamically renders based on the flow data using Ory Elements
-		<div className="gap-5 bg-primary p-3 pt-2 br-3 d-f fd-c">
-			<UserAuthCard
-				flowType={"registration"}
-				// we always need to pass the flow to the card since it contains the form fields, error messages and csrf token
-				flow={flow}
-				// the registration card needs a way to navigate to the login page
-				additionalProps={{
-					loginURL: {
-						handler: () => {
-							const search = new URLSearchParams();
-							if (flow.return_to) search.set("return_to", flow.return_to);
-							if (flow.oauth2_login_challenge) search.set("login_challenge", flow.oauth2_login_challenge);
-							navigate({ pathname: "/login", search: search.toString() }, { replace: true });
-						},
-					},
-				}}
-				// include the necessary scripts for webauthn to work
-				includeScripts={true}
-				// submit the registration form data to Ory
-				onSubmit={({ body }) => submitFlow(body as UpdateRegistrationFlowBody)}
-			/>
-		</div>
-	) : (
-		<div className="w-100 h-100 ai-c d-f jc-c">
-			<CircularProgress />
-		</div>
+	return (
+		<>
+			<Helmet>
+				<title>SimpleGeek | Регистрация</title>
+			</Helmet>
+			{flow ? (
+				// create a registration form that dynamically renders based on the flow data using Ory Elements
+				<div className="gap-5 bg-primary p-3 pt-2 br-3 d-f fd-c">
+					<UserAuthCard
+						flowType={"registration"}
+						// we always need to pass the flow to the card since it contains the form fields, error messages and csrf token
+						flow={flow}
+						// the registration card needs a way to navigate to the login page
+						additionalProps={{
+							loginURL: {
+								handler: () => {
+									const search = new URLSearchParams();
+									if (flow.return_to) search.set("return_to", flow.return_to);
+									if (flow.oauth2_login_challenge)
+										search.set("login_challenge", flow.oauth2_login_challenge);
+									navigate({ pathname: "/login", search: search.toString() }, { replace: true });
+								},
+							},
+						}}
+						// include the necessary scripts for webauthn to work
+						includeScripts={true}
+						// submit the registration form data to Ory
+						onSubmit={({ body }) => submitFlow(body as UpdateRegistrationFlowBody)}
+					/>
+				</div>
+			) : (
+				<div className="w-100 h-100 ai-c d-f jc-c">
+					<CircularProgress />
+				</div>
+			)}
+		</>
 	);
 }

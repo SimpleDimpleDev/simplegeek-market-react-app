@@ -3,6 +3,7 @@ import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { CircularProgress, Grid2, Typography } from "@mui/material";
 import { getImageUrl } from "@utils/image";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "src/hooks/useIsMobile";
 
@@ -12,6 +13,9 @@ export function Component() {
 
 	return (
 		<>
+			<Helmet>
+				<title>SimpleGeek | Категории</title>
+			</Helmet>
 			{catalogIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
