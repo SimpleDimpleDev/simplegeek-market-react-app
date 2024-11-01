@@ -5,6 +5,7 @@ import { cartRouteAction } from "./cart/action";
 const routes = createRoutesFromElements(
 	<>
 		<Route index lazy={() => import("@routes/_index/index")} />
+		<Route path="policy" lazy={() => import("@routes/policy/PolicyRoute")} />
 		<Route path="auth" lazy={() => import("@routes/auth/layout/AuthLayout")}>
 			<Route path="login" lazy={() => import("@routes/auth/login/LoginRoute")} />
 			<Route path="registration" lazy={() => import("@routes/auth/registration/RegistrationRoute")} />
