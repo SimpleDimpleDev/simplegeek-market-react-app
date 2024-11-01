@@ -17,7 +17,7 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { useNavigate, useSubmit } from "react-router-dom";
+import { Link, useNavigate, useSubmit } from "react-router-dom";
 
 import { getRuGoodsWord } from "@utils/format";
 import { useEffect, useMemo, useState } from "react";
@@ -414,6 +414,10 @@ export function Component() {
 											{service === "SELF_PICKUP" && (
 												<Box display={"flex"} flexDirection={"column"} gap={"8px"}>
 													<Typography variant="h6">Самовывоз</Typography>
+													<Typography>
+														г. Москва, м. Красные Ворота, ул. Новая Басманная, д.12, с2
+														(выход из метро №2)
+													</Typography>
 												</Box>
 											)}
 
@@ -620,6 +624,11 @@ export function Component() {
 											Оплатить
 										</Button>
 									)}
+									<Typography variant="caption">
+										Ваши личные данные будут использоваться для обработки заказов, упрощения работы
+										с сайтом и для других целей, описанных в нашей{" "}
+										{<Link to={"/policy"}>политике конфиденциальности.</Link>}
+									</Typography>
 								</Box>
 							</Box>
 						</form>
