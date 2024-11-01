@@ -124,7 +124,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 					</Box>
 				)}
 
-				<Box display="flex" flexDirection="column" paddingTop={4} gap={3}>
+				<Box component={"section"} display="flex" flexDirection="column" paddingTop={4} gap={3}>
 					<Typography variant="h6">Описание</Typography>
 					<Typography variant="body1" color="typography.secondary">
 						{selectedVariation.product.description}

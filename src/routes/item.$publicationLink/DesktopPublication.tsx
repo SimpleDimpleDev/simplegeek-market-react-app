@@ -153,7 +153,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 					</Box>
 				</Box>
 			</Box>
-			<Box display="flex" flexDirection="column" paddingTop={3} paddingBottom={3} gap={3}>
+			<Box component={"section"} display="flex" flexDirection="column" paddingTop={3} paddingBottom={3} gap={3}>
 				<Typography variant="h5">Описание</Typography>
 				<Typography variant="body1" color="typography.secondary">
 					{selectedVariation.product.description}
