@@ -17,7 +17,7 @@ import { DeliveryForm } from "@components/DeliveryForm";
 import { Helmet } from "react-helmet";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
-	CDEK: "СДЕК",
+	CDEK: "СДЭК",
 	SELF_PICKUP: "Самовывоз",
 };
 
