@@ -46,19 +46,24 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 			}}
 			isOptionEqualToValue={(option) => isCatalogItemMatchQuery(option, searchText)}
 			renderOption={(props, option) => (
-				<li className="gap-2 ai-c d-f fd-r" {...props}>
-					<div
-						style={{
-							height: 40,
-							width: 40,
-							borderRadius: 6,
-							overflow: "hidden",
-						}}
-					>
-						<img src={getImageUrl(option.product.images.at(0)?.url ?? "", "small")} className="contain" />
-					</div>
-					<div>
-						<Typography>{option.product.title}</Typography>
+				<li {...props}>
+					<div className="gap-2 w-100 h-100 ai-c d-f fd-r">
+						<div
+							style={{
+								height: 40,
+								width: 40,
+								borderRadius: 6,
+								overflow: "hidden",
+							}}
+						>
+							<img
+								src={getImageUrl(option.product.images.at(0)?.url ?? "", "small")}
+								className="contain"
+							/>
+						</div>
+						<div>
+							<Typography>{option.product.title}</Typography>
+						</div>
 					</div>
 				</li>
 			)}
