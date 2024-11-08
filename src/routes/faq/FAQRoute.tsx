@@ -29,7 +29,16 @@ export function Component() {
 
 					<div className="py-3">
 						{FAQItemList?.items.map((item) => (
-							<Accordion>
+							<Accordion
+								sx={{
+									width: "100%",
+									borderTop: "none",
+									"&:before": {
+										display: "none",
+									},
+								}}
+								disableGutters
+							>
 								<AccordionSummary expandIcon={<ExpandMore />}>
 									<Typography variant="subtitle0">{item.question}</Typography>
 								</AccordionSummary>
