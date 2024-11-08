@@ -1,6 +1,7 @@
 import { CatalogItem } from "@appTypes/CatalogItem";
 import { Search } from "@mui/icons-material";
 import { Autocomplete, TextField, Button } from "@mui/material";
+import { getImageUrl } from "@utils/image";
 import { isCatalogItemMatchQuery } from "@utils/search";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +45,24 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 				navigate(`/item/${item.publicationLink}${variationParam}`);
 			}}
 			isOptionEqualToValue={(option) => isCatalogItemMatchQuery(option, searchText)}
+			renderOption={(props, option) => (
+				<li className="gap-1 d-f fd-r" {...props}>
+					<div
+						style={{
+							height: 40,
+							width: 40,
+							borderRadius: 6,
+							overflow: "hidden",
+						}}
+					>
+						<img
+							src={getImageUrl(option.product.images.at(0)?.url ?? "", "small")}
+							className="contain"
+						/>
+					</div>
+					{option.product.title}
+				</li>
+			)}
 			renderInput={(params) => (
 				<div className="w-100 br-12px ps-r">
 					<TextField
