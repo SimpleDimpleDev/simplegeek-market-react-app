@@ -16,7 +16,12 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 	const [searchText, setSearchText] = React.useState("");
 	const [value, setValue] = React.useState<string | CatalogItem>("");
 
+	const inputRef = React.useRef<HTMLInputElement>(null);
+
 	const performSearch = () => {
+		if (inputRef.current) {
+			inputRef.current.blur();
+		}
 		if (searchText === "") return;
 		setSearchText("");
 		navigate(`/search?q=${searchText}`);
@@ -29,6 +34,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 			freeSolo
 			disableClearable
 			clearOnBlur
+			blurOnSelect
 			sx={!isMobile ? { maxWidth: 440, width: "100%" } : {}}
 			options={catalogItems}
 			getOptionLabel={(item) => (typeof item === "string" ? item : item.product.title)}
@@ -71,6 +77,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 				<div className="w-100 br-12px ps-r">
 					<TextField
 						{...params}
+						inputRef={inputRef}
 						label="Поиск"
 						variant="filled"
 						color="warning"
@@ -88,7 +95,10 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 						}}
 					/>
 					<Button
-						onClick={performSearch}
+						onClick={(e) => {
+							e.stopPropagation();
+							performSearch();
+						}}
 						variant="contained"
 						style={{
 							minWidth: 0,

@@ -1,6 +1,5 @@
 import {
 	Close,
-	ChevronRight,
 	AdminPanelSettings,
 	Info,
 	Favorite,
@@ -9,7 +8,7 @@ import {
 	Logout,
 	Menu as MenuIcon,
 } from "@mui/icons-material";
-import { IconButton, Button, Menu, MenuItem, Typography, CircularProgress } from "@mui/material";
+import { Button, Menu, MenuItem, Typography, CircularProgress } from "@mui/material";
 import { getImageUrl } from "@utils/image";
 import { useNavigate } from "react-router-dom";
 import { CatalogSearch } from "./CatalogSearch";
@@ -70,11 +69,11 @@ const DesktopHeader: React.FC = () => {
 
 	return (
 		<div className="d-f fd-r jc-c" style={{ padding: "0 calc(24/1920 * 100%)", backgroundColor: "white" }}>
-			<header className="gap-3 pt-4 pb-3 ai-c d-f fd-r fg-1 jc-sb" style={{ maxWidth: 1408 }}>
+			<header className="gap-3 ai-c d-f fd-r fg-1 jc-sb" style={{ maxWidth: 1408 }}>
 				<div className="gap-5 w-100 ai-c d-f jc-fs">
-					<IconButton onClick={() => navigate("/")}>
+					<Button onClick={() => navigate("/")}>
 						<img src={logo} height={88} alt="logo" />
-					</IconButton>
+					</Button>
 
 					<div className="gap-3 w-100 h-7 d-f jc-fs" style={{ maxWidth: 810 }}>
 						<Button
@@ -117,7 +116,6 @@ const DesktopHeader: React.FC = () => {
 										</div>
 										<Typography variant="body1">{category.title}</Typography>
 									</div>
-									<ChevronRight />
 								</MenuItem>
 							))}
 						</Menu>
@@ -174,7 +172,6 @@ const DesktopHeader: React.FC = () => {
 						<div className="gap-12px ai-c d-f fd-r">
 							<Typography variant="body1">Заказы</Typography>
 						</div>
-						<ChevronRight />
 					</MenuItem>
 
 					<MenuItem
@@ -186,7 +183,6 @@ const DesktopHeader: React.FC = () => {
 						<div className="gap-12px ai-c d-f fd-r">
 							<Typography variant="body1">Мои данные</Typography>
 						</div>
-						<ChevronRight />
 					</MenuItem>
 
 					<MenuItem
