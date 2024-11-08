@@ -47,7 +47,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 			isOptionEqualToValue={(option) => isCatalogItemMatchQuery(option, searchText)}
 			renderOption={(props, option) => (
 				<li {...props}>
-					<div className="gap-2 w-100 h-100 ai-c d-f fd-r">
+					<div className="gap-1 w-100 h-100 ai-c d-f fd-r">
 						<div
 							style={{
 								height: 40,
