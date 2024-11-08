@@ -445,13 +445,13 @@ export function Component() {
 								<>
 									<>
 										<div className="gap-1">
-											<Typography variant="h6" sx={{ color: "typography.secondary" }}>
+											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
 												Итого:
 											</Typography>
 											<Typography variant="subtitle0">{order.initialInvoice.amount} ₽</Typography>
 										</div>
 										<Divider orientation="horizontal" flexItem />
-										<Typography variant="subtitle1" sx={{ color: "typography.success" }}>
+										<Typography variant="h6" sx={{ color: "typography.success" }}>
 											Оплачено!
 										</Typography>
 									</>
