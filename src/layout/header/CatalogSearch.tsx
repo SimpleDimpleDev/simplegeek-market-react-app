@@ -1,6 +1,6 @@
 import { CatalogItem } from "@appTypes/CatalogItem";
 import { Search } from "@mui/icons-material";
-import { Autocomplete, TextField, Button } from "@mui/material";
+import { Autocomplete, TextField, Button, Typography } from "@mui/material";
 import { getImageUrl } from "@utils/image";
 import { isCatalogItemMatchQuery } from "@utils/search";
 import React from "react";
@@ -46,7 +46,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 			}}
 			isOptionEqualToValue={(option) => isCatalogItemMatchQuery(option, searchText)}
 			renderOption={(props, option) => (
-				<li className="gap-1 d-f fd-r" {...props}>
+				<li className="gap-2 ai-c d-f fd-r" {...props}>
 					<div
 						style={{
 							height: 40,
@@ -55,12 +55,11 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 							overflow: "hidden",
 						}}
 					>
-						<img
-							src={getImageUrl(option.product.images.at(0)?.url ?? "", "small")}
-							className="contain"
-						/>
+						<img src={getImageUrl(option.product.images.at(0)?.url ?? "", "small")} className="contain" />
 					</div>
-					{option.product.title}
+					<div>
+						<Typography>{option.product.title}</Typography>
+					</div>
 				</li>
 			)}
 			renderInput={(params) => (
