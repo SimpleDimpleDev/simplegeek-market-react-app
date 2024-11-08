@@ -129,7 +129,7 @@ const CDEKDeliveryInfo: React.FC<CDEKDeliveryData> = ({ deliveryType, tariff, ad
 	return (
 		<div>
 			<Typography variant={"h6"}>СДЭК {tariff.tariff_name}</Typography>
-			<Typography variant={"body1"}>Стоимость доставки: {tariff.delivery_sum} ₽</Typography>
+			<Typography variant={"body1"}>Примерная стоимость доставки: {tariff.delivery_sum} ₽</Typography>
 			<AddressInfo />
 		</div>
 	);

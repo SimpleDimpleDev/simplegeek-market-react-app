@@ -188,7 +188,6 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
 							disabled={!isEditing}
 							onChange={() => setValue("service", "SELF_PICKUP")}
 							mainText={"Самовывоз"}
-							subText={"Оплата при получении"}
 							imgUrl={mainLogoSmall}
 						/>
 
@@ -197,7 +196,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
 							disabled={!isEditing}
 							onChange={() => setValue("service", "CDEK")}
 							mainText={"СДЭК"}
-							subText={"Оплата доставки при получении"}
+							subText={"Оплата доставки при получении в пункте выдачи."}
 							imgUrl={cdekLogo}
 						/>
 					</Box>

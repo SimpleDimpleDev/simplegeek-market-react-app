@@ -2,10 +2,10 @@ import { Box, FormControlLabel, Radio, Typography } from "@mui/material";
 
 interface CardRadioProps {
 	isChecked: boolean;
-	disabled? : boolean
+	disabled?: boolean;
 	onChange: (event: React.SyntheticEvent) => void;
 	mainText: string;
-	subText: string;
+	subText?: string;
 	imgUrl: string;
 }
 
@@ -28,9 +28,11 @@ const CardRadio = ({ isChecked, disabled, onChange, mainText, subText, imgUrl }:
 				label={
 					<>
 						<Typography variant={"body1"}>{mainText}</Typography>
-						<Typography color={"typography.secondary"} variant={"body2"}>
-							{subText}
-						</Typography>
+						{subText && (
+							<Typography color={"typography.secondary"} variant={"body2"}>
+								{subText}
+							</Typography>
+						)}
 					</>
 				}
 				checked={isChecked}

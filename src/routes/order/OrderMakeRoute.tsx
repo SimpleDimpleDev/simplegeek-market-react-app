@@ -402,7 +402,6 @@ export function Component() {
 													isChecked={service === "SELF_PICKUP"}
 													onChange={() => setValue("service", "SELF_PICKUP")}
 													mainText={"Самовывоз"}
-													subText={"Оплата при получении"}
 													imgUrl={mainLogoSmall}
 												/>
 
@@ -410,7 +409,7 @@ export function Component() {
 													isChecked={service === "CDEK"}
 													onChange={() => setValue("service", "CDEK")}
 													mainText={"СДЭК"}
-													subText={"Оплата доставки при получении"}
+													subText={"Оплата доставки при получении в пункте выдачи."}
 													imgUrl={cdekLogo}
 												/>
 											</Box>
