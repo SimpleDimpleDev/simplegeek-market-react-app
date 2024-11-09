@@ -18,7 +18,7 @@ export function Component() {
 			</Helmet>
 			<Catalog
 				sectionFilter={sectionFilter}
-				current={"Каталог"}
+				title={"Каталог"}
 				emptyElement={
 					<Empty
 						title={`Пока нет товаров`}

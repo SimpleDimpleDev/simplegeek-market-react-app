@@ -22,8 +22,7 @@ export function Component() {
 			</Helmet>
 			<Catalog
 				sectionFilter={sectionFilter}
-				current={`Поиск по запросу "${query}"`}
-				path={[{ title: "Каталог", link: "/" }]}
+				title={`Поиск по запросу "${query}"`}
 				emptyElement={
 					<Empty
 						title={`По запросу "${query}" ничего не найдено.`}

@@ -15,6 +15,7 @@ import { useIsMobile } from "src/hooks/useIsMobile";
 import { CreditGet } from "@appTypes/Credit";
 import { DeliveryForm } from "@components/DeliveryForm";
 import { Helmet } from "react-helmet";
+import { PageHeading } from "@components/PageHeading";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЭК",
@@ -185,12 +186,12 @@ export function Component() {
 							<Typography color="inherit">Все заказы</Typography>
 						</Button>
 					</div>
-					<div className="py-2">
-						<Typography variant="h3">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
-						<Typography variant="subtitle0" sx={{ color: "typography.secondary" }}>
-							ID: {order.id}
-						</Typography>
-					</div>
+
+					<PageHeading
+						title={`Заказ от ${DateFormatter.DDMMYYYY(order.createdAt)}`}
+						subText={`ID: ${order.id}`}
+					/>
+
 					<div className="gap-1 pb-4 d-f fd-r">{orderStatusBadges[order.status]}</div>
 					<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
 						<div className="gap-2 w-100 d-f fd-c">

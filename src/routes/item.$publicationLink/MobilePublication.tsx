@@ -5,6 +5,7 @@ import { PublicationAvailability } from "./Availability";
 import { PublicationActionButtons } from "./ActionButtons";
 import { PublicationProps } from "./types";
 import { ItemCreditInfo } from "@components/ItemCreditInfo";
+import { PageHeading } from "@components/PageHeading";
 
 const MobilePublication: React.FC<PublicationProps> = ({
 	publication,
@@ -32,12 +33,10 @@ const MobilePublication: React.FC<PublicationProps> = ({
 
 	return (
 		<>
-			<Box display="flex" flexDirection="column" width="100%" gap={2}>
-				<ImageCarousel isMobile={true} imageUrls={imageUrls} />
+			<Box display="flex" flexDirection="column" width="100%" alignItems={"center"} gap={2}>
+				<ImageCarousel imageUrls={imageUrls} />
 			</Box>
-			<Box paddingTop={3} paddingBottom={2}>
-				<Typography variant="h5">{selectedVariation.product.title}</Typography>
-			</Box>
+			<PageHeading title={selectedVariation.product.title}/>
 			<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={2}>
 				{publication.items.length !== 1 && (
 					<Box display="flex" flexDirection="column" gap={2}>

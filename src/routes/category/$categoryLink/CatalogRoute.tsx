@@ -38,11 +38,7 @@ export function Component() {
 			</Helmet>
 			<Catalog
 				sectionFilter={sectionFilter}
-				path={[
-					{ title: "Каталог", link: "/" },
-					{ title: "Категории", link: "/category" },
-				]}
-				current={category?.title ?? ""}
+				title={category?.title ?? ""}
 				emptyElement={
 					<Empty
 						title={`Пока нет товаров`}

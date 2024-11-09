@@ -94,10 +94,15 @@ export default function ItemCard({
 				/>
 			</Link>
 			<div className="gap-1 px-1 d-f fd-c">
-				<Tooltip enterDelay={500} title={data.product.title}>
-					<Typography
+				<Tooltip leaveTouchDelay={5000} enterTouchDelay={10} enterDelay={500} title={data.product.title}>
+					<Typography	
 						variant="subtitle0"
-						style={{
+						sx={{
+							userSelect: "none",
+							// msUserSelect: "none",
+							// mozUserSelect: "none",
+							// WebkitUserSelect: "none",
+							fontWeight: 600,
 							maxWidth: 280,
 							overflow: "hidden",
 							textOverflow: "ellipsis",

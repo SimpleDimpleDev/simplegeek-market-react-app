@@ -1,12 +1,11 @@
 import { useGetFAQItemListQuery } from "@api/shop/faq";
+import { PageHeading } from "@components/PageHeading";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { ExpandMore } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, CircularProgress, Typography } from "@mui/material";
 import { Helmet } from "react-helmet";
-import { useIsMobile } from "src/hooks/useIsMobile";
 
 export function Component() {
-	const isMobile = useIsMobile();
 	const { data: FAQItemList, isLoading: FAQItemListIsLoading } = useGetFAQItemListQuery();
 	return (
 		<>
@@ -22,9 +21,7 @@ export function Component() {
 			) : (
 				<>
 					<div className="py-2">
-						<Typography sx={{ verticalAlign: "baseline" }} variant={isMobile ? "h4" : "h3"}>
-							FAQ
-						</Typography>
+						<PageHeading title="FAQ" />
 					</div>
 
 					<div className="py-3">

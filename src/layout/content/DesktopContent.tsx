@@ -11,7 +11,7 @@ const DesktopContent: React.FC = () => {
 			}}
 		>
 			<div
-				className="pt-4 w-100 h-100 d-f fd-c fg-1 jc-fs"
+				className="pt-2 w-100 h-100 d-f fd-c fg-1 jc-fs"
 				style={{
 					position: "relative",
 					paddingBottom: "28px",

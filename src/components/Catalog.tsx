@@ -19,27 +19,27 @@ import {
 	Button,
 	Grid2,
 	Grow,
+	Box,
 } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useFilters } from "src/hooks/useFilters";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { useItemsToRender } from "src/hooks/useItemsToRender";
-import BreadcrumbsPageHeader from "./BreadcrumbsPageHeader";
 import { Empty } from "./Empty";
 import { CatalogFilters } from "./Filters";
 import ItemCard from "./ItemCard";
 import LazyLoad from "./LazyLoad";
 import { ScrollTop } from "./ScrollToTopButton";
 import SomethingWentWrong from "./SomethingWentWrong";
+import { PageHeading } from "./PageHeading";
 
 interface CatalogProps {
 	sectionFilter: (item: CatalogItem) => boolean;
-	current: string;
-	path?: { title: string; link: string }[];
+	title: string;
 	emptyElement: React.ReactNode;
 }
 
-const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path, emptyElement }) => {
+const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement }) => {
 	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
@@ -140,8 +140,11 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path, emptyEl
 				<>
 					<ScrollTop />
 					<Modal open={filtersOpen} onClose={() => setFiltersOpen(false)}>
-						<div className="top-0 left-0 bg-primary w-100v h-100v ai-fs d-f fd-c jc-fs of-a ps-f">
-							<div className="px-2 w-100 h-9 ai-c d-f fd-r jc-sb">
+						<div className="top-0 left-0 bg-primary w-100v h-100v ai-fs d-f fd-c jc-fs of-a">
+							<div
+								className="bg-primary px-2 w-100 h-7 ai-c d-f fd-r jc-sb ps-a"
+								style={{ zIndex: 1000 }}
+							>
 								<IconButton>
 									<Close sx={{ opacity: 0 }} />
 								</IconButton>
@@ -153,52 +156,78 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path, emptyEl
 								</IconButton>
 							</div>
 
-							<CatalogFilters
-								isMobile={isMobile}
-								filterGroupList={filterGroupList}
-								preorderList={preorderList}
-								availabilityFilter={availabilityFilter}
-								handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
-								preorderIdFilter={preorderIdFilter}
-								handleChangePreorderIdFilter={handleChangePreorderIdFilter}
-								checkedFilters={checkedFilters}
-								handleToggleFilter={handleToggleFilter}
-								priceRangeFilter={priceRangeFilter}
-								handleChangePriceRangeFilter={handleChangePriceRangeFilter}
-								onResetFilters={() => {
-									resetFilters();
-									setFiltersOpen(false);
-								}}
-								onCloseFilters={() => setFiltersOpen(false)}
-							/>
+							<Box paddingTop={7} height={"100%"} width={"100%"} flexShrink={0}>
+								<div>
+									<CatalogFilters
+										isMobile={isMobile}
+										filterGroupList={filterGroupList}
+										preorderList={preorderList}
+										availabilityFilter={availabilityFilter}
+										handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
+										preorderIdFilter={preorderIdFilter}
+										handleChangePreorderIdFilter={handleChangePreorderIdFilter}
+										checkedFilters={checkedFilters}
+										handleToggleFilter={handleToggleFilter}
+										priceRangeFilter={priceRangeFilter}
+										handleChangePriceRangeFilter={handleChangePriceRangeFilter}
+										onResetFilters={() => {
+											resetFilters();
+											setFiltersOpen(false);
+										}}
+										onCloseFilters={() => setFiltersOpen(false)}
+									/>
+								</div>
+							</Box>
 						</div>
 					</Modal>
-					<BreadcrumbsPageHeader isMobile={isMobile} current={current} path={path} />
+					<PageHeading title={title} />
 
 					<div className="gap-2 d-f fd-r">
 						{!isMobile && (
-							<CatalogFilters
-								isMobile={isMobile}
-								filterGroupList={filterGroupList}
-								preorderList={preorderList}
-								availabilityFilter={availabilityFilter}
-								handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
-								preorderIdFilter={preorderIdFilter}
-								handleChangePreorderIdFilter={handleChangePreorderIdFilter}
-								checkedFilters={checkedFilters}
-								handleToggleFilter={handleToggleFilter}
-								priceRangeFilter={priceRangeFilter}
-								handleChangePriceRangeFilter={handleChangePriceRangeFilter}
-								onResetFilters={() => resetFilters()}
-							/>
+							<Box height={"100%"} width={280} flexShrink={0}>
+								<div className="gap-1 d-f fd-c" style={{ position: "sticky", top: "16px" }}>
+									<FormControl fullWidth>
+										<Select
+											value={sorting}
+											onChange={(e) => {
+												setSorting(e.target.value as Sorting);
+											}}
+											sx={{
+												flexShrink: 0,
+												backgroundColor: "surface.primary",
+											}}
+										>
+											<MenuItem value={"popular"}>Сначала популярные</MenuItem>
+											<MenuItem value={"new"}>Сначала новые</MenuItem>
+											<MenuItem value={"expensive"}>Сначала дорогие</MenuItem>
+											<MenuItem value={"cheap"}>Сначала недорогие</MenuItem>
+										</Select>
+									</FormControl>
+									<CatalogFilters
+										isMobile={isMobile}
+										filterGroupList={filterGroupList}
+										preorderList={preorderList}
+										availabilityFilter={availabilityFilter}
+										handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
+										preorderIdFilter={preorderIdFilter}
+										handleChangePreorderIdFilter={handleChangePreorderIdFilter}
+										checkedFilters={checkedFilters}
+										handleToggleFilter={handleToggleFilter}
+										priceRangeFilter={priceRangeFilter}
+										handleChangePriceRangeFilter={handleChangePriceRangeFilter}
+										onResetFilters={() => resetFilters()}
+									/>
+								</div>
+							</Box>
 						)}
 
 						<div className="gap-2 w-100 d-f fd-c">
-							<div className="gap-1 ai-c d-f fd-r">
-								<div className="w-100">
-									<FormControl fullWidth>
-										{isMobile ? (
+							{isMobile && (
+								<div className="gap-1 ai-c d-f fd-r">
+									<div className="w-100">
+										<FormControl fullWidth>
 											<NativeSelect
+												variant="outlined"
 												value={sorting}
 												onChange={(e) => {
 													setSorting(e.target.value as Sorting);
@@ -209,30 +238,9 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path, emptyEl
 												<option value={"expensive"}>Сначала дорогие</option>
 												<option value={"cheap"}>Сначала недорогие</option>
 											</NativeSelect>
-										) : (
-											<Select
-												labelId="demo-simple-select-label"
-												id="demo-simple-select"
-												value={sorting}
-												onChange={(e) => {
-													setSorting(e.target.value as Sorting);
-												}}
-												sx={{
-													flexShrink: 0,
-													width: isMobile ? "100%" : 360,
-													backgroundColor: "surface.primary",
-												}}
-											>
-												<MenuItem value={"popular"}>Сначала популярные</MenuItem>
-												<MenuItem value={"new"}>Сначала новые</MenuItem>
-												<MenuItem value={"expensive"}>Сначала дорогие</MenuItem>
-												<MenuItem value={"cheap"}>Сначала недорогие</MenuItem>
-											</Select>
-										)}
-									</FormControl>
-								</div>
+										</FormControl>
+									</div>
 
-								{isMobile && (
 									<IconButton
 										style={{
 											width: 48,
@@ -248,8 +256,8 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, current, path, emptyEl
 											<FilterList />
 										</Badge>
 									</IconButton>
-								)}
-							</div>
+								</div>
+							)}
 
 							{itemsToRender.length === 0 ? (
 								<Empty

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Box, CircularProgress, Divider, Tab, Tabs, Typography } from "@mui/material";
+import { Box, CircularProgress, Divider, Tab, Tabs } from "@mui/material";
 import { ShoppingBag } from "@mui/icons-material";
 
 import { Empty } from "@components/Empty";
@@ -12,6 +12,7 @@ import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { Helmet } from "react-helmet";
+import { PageHeading } from "@components/PageHeading";
 
 function tabsProps(index: number) {
 	return {
@@ -70,47 +71,51 @@ export function Component() {
 				<title>Заказы - SimpleGeek</title>
 			</Helmet>
 			{orderListIsLoading ? (
-				<div className="w-100 h-100 ai-c d-f jc-c">
+				<Box width={"100%"} height={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}>
 					<CircularProgress />
-				</div>
+				</Box>
 			) : !orderList ? (
 				<SomethingWentWrong />
 			) : (
-				<Box display={"flex"} flexDirection={"column"} gap={3} width={"100%"}>
-					<Box display={"flex"} flexDirection={"column"} gap={2}>
-						<Box p={"16px 0"}>
-							<Typography variant={isMobile ? "h4" : "h3"}>Заказы</Typography>
-						</Box>
-						<Box display={"flex"} flexDirection={"column"}>
-							<Tabs value={currentTab} onChange={handleChangeTab} aria-label="basic tabs example">
-								<Tab label="Активные" {...tabsProps(0)} />
-								<Tab label="Завершенные" {...tabsProps(1)} />
-								<Tab label="Все" {...tabsProps(2)} />
-							</Tabs>
-							<Divider />
-						</Box>
+				<>
+					<PageHeading title={"Заказы"} />
+					<Box>
+						<Tabs value={currentTab} onChange={handleChangeTab} aria-label="basic tabs example">
+							<Tab label="Активные" {...tabsProps(0)} />
+							<Tab label="Завершенные" {...tabsProps(1)} />
+							<Tab label="Все" {...tabsProps(2)} />
+						</Tabs>
+						<Divider />
 					</Box>
-					{ordersToRender.length > 0 ? (
-						ordersToRender.map((order, index) => (
-							<OrderCard isMobile={isMobile} key={index} order={order} onPay={handlePay} />
-						))
-					) : (
-						<div className="w-100 h-100 ai-c d-f jc-c">
-							<Empty
-								icon={
-									<ShoppingBag
-										sx={{
-											width: 91,
-											height: 91,
-											color: "icon.tertiary",
-										}}
-									/>
-								}
-								title={"Заказы не найдены"}
-							/>
-						</div>
-					)}
-				</Box>
+					<Box display={"flex"} flexDirection={"column"} gap={2} pt={2}>
+						{ordersToRender.length > 0 ? (
+							ordersToRender.map((order, index) => (
+								<OrderCard isMobile={isMobile} key={index} order={order} onPay={handlePay} />
+							))
+						) : (
+							<Box
+								width={"100%"}
+								height={"100%"}
+								display={"flex"}
+								justifyContent={"center"}
+								alignItems={"center"}
+							>
+								<Empty
+									icon={
+										<ShoppingBag
+											sx={{
+												width: 91,
+												height: 91,
+												color: "icon.tertiary",
+											}}
+										/>
+									}
+									title={"Заказы не найдены"}
+								/>
+							</Box>
+						)}
+					</Box>
+				</>
 			)}
 		</>
 	);

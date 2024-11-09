@@ -154,7 +154,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 					}
 					return newSearchParams;
 				},
-				{ replace: true }
+				{ replace: true, preventScrollReset: true },
 			);
 		},
 		[setSearchParams]
@@ -168,7 +168,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 					setFiltersParam(newSearchParams, checkedFilters);
 					return newSearchParams;
 				},
-				{ replace: true }
+				{ replace: true, preventScrollReset: true },
 			);
 		},
 		[setSearchParams]

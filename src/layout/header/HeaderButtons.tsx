@@ -12,7 +12,7 @@ const HeaderButtons = ({ isMobile, buttons }: { isMobile?: boolean; buttons: Hea
 	<div className="h-100 ai-c d-f fd-r jc-fs" style={{ gap: isMobile ? 24 : 16 }}>
 		{buttons.map(({ text, icon, onClick, badgeCount }) => (
 			<IconButton sx={{ borderRadius: 2, padding: 1, margin: -1 }} onClick={onClick}>
-				<div className="gap-4px ai-c d-f fd-c" style={{width: "90px"}}>
+				<div className="gap-4px ai-c d-f fd-c" style={{width: "74px"}}>
 					<div className="w-4 h-4 ai-c d-f icon-secondary jc-c ps-r">
 						<Badge color="warning" badgeContent={badgeCount}>
 							{icon}

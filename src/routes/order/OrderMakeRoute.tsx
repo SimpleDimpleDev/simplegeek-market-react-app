@@ -45,6 +45,7 @@ import { isExpectedApiError } from "@utils/api";
 import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
 import { phoneOnlyCountries } from "@config/phone";
 import { Helmet } from "react-helmet";
+import { PageHeading } from "@components/PageHeading";
 
 type DeliveryFormData = {
 	recipient: Recipient;
@@ -381,9 +382,7 @@ export function Component() {
 							<Typography color="inherit">Назад в корзину</Typography>
 						</Button>
 
-						<Box padding={"16px 0"}>
-							<Typography variant={isMobile ? "h4" : "h3"}>Оформление заказа</Typography>
-						</Box>
+						<PageHeading title={"Оформление заказа"}/>
 
 						<form
 							onSubmit={handleSubmit(handleCreateStockOrder)}

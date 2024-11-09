@@ -1,12 +1,11 @@
 import { Helmet } from "react-helmet";
-import { useIsMobile } from "src/hooks/useIsMobile";
 
 import { ChevronLeft } from "@mui/icons-material";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { PageHeading } from "@components/PageHeading";
 
 export function Component() {
-	const isMobile = useIsMobile();
 	const navigate = useNavigate();
 	return (
 		<>
@@ -23,9 +22,7 @@ export function Component() {
 					<Typography color="inherit">Назад</Typography>
 				</Button>
 			</div>
-			<div className="py-2">
-				<Typography variant={isMobile ? "h4" : "h3"}>Политика конфиденциальности</Typography>
-			</div>
+			<PageHeading title="Политика конфиденциальности" />
 			<div>
 				<p>
 					<strong>1. Общие положения</strong>

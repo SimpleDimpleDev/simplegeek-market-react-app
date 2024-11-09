@@ -1,4 +1,3 @@
-import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
 import { Box, Typography, Select, MenuItem, CircularProgress } from "@mui/material";
 import { PublicationProps } from "./types";
 import { PublicationAvailability } from "./Availability";
@@ -6,6 +5,7 @@ import { PublicationActionButtons } from "./ActionButtons";
 import { useNavigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { ItemCreditInfo } from "@components/ItemCreditInfo";
+import { PageHeading } from "@components/PageHeading";
 
 const ImageCarousel = lazy(() => import("./ImageCarousel"));
 
@@ -35,16 +35,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 
 	return (
 		<>
-			<BreadcrumbsPageHeader
-				isMobile={false}
-				path={[
-					{
-						title: "Главная",
-						link: "/",
-					},
-				]}
-				current={selectedVariation.product.title}
-			/>
+			<PageHeading title={selectedVariation.product.title}/>
 			<Box display="flex" flexDirection="row" gap={3} paddingBottom={3} justifyContent={"space-between"}>
 				<Box display="flex" flexDirection="column" gap={2}>
 					<Suspense
@@ -54,7 +45,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 							</div>
 						}
 					>
-						<ImageCarousel isMobile={false} imageUrls={imageUrls} />
+						<ImageCarousel imageUrls={imageUrls} />
 					</Suspense>
 				</Box>
 

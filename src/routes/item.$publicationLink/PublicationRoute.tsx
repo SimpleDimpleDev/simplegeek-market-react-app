@@ -39,7 +39,8 @@ export function Component() {
 
 	const itemVariationIndexString = searchParams.get("v");
 	const itemVariationIndex = itemVariationIndexString === null ? 0 : parseInt(itemVariationIndexString);
-	const setItemVariationIndex = (index: number) => setSearchParams({ ["v"]: index.toString() }, { replace: true });
+	const setItemVariationIndex = (index: number) =>
+		setSearchParams({ ["v"]: index.toString() }, { replace: true, preventScrollReset: true });
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 

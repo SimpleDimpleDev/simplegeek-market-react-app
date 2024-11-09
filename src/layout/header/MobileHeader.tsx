@@ -92,7 +92,7 @@ const MobileHeader: React.FC = () => {
 				/>
 			</div>
 			<Slide in={!trigger} direction="down">
-				<div className="top-8 bg-primary p-2 w-100 h-11 ps-f" style={{ zIndex: 4 }}>
+				<div className="top-9 bg-primary p-2 w-100 h-11 ps-f" style={{ zIndex: 4 }}>
 					<CatalogSearch catalogItems={catalog?.items || []} isMobile />
 				</div>
 			</Slide>
