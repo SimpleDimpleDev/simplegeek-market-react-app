@@ -1,5 +1,5 @@
 import { AvailabilityFilter, CheckedFilter, FilterGroupGet, PreorderFilter, PriceRangeFilter } from "@appTypes/Filters";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
 	Typography,
@@ -66,6 +66,7 @@ interface CatalogFiltersProps {
 
 	filterGroupList: FilterGroupGet[];
 	preorderList: PreorderShop[];
+	priceLimits: { min: number; max: number };
 
 	availabilityFilter: AvailabilityFilter;
 	handleToggleAvailabilityFilter: () => void;
@@ -88,6 +89,7 @@ export const CatalogFilters = ({
 
 	filterGroupList,
 	preorderList,
+	priceLimits,
 
 	availabilityFilter,
 	handleToggleAvailabilityFilter,
@@ -104,21 +106,15 @@ export const CatalogFilters = ({
 	onResetFilters,
 	onCloseFilters,
 }: CatalogFiltersProps) => {
-	const [minPrice, setMinPrice] = useState(priceRangeFilter[0]);
-	const [maxPrice, setMaxPrice] = useState(priceRangeFilter[1]);
 
-	const handleChangeMinPriceFilter = () => {
-		handleChangePriceRangeFilter("min", minPrice);
+
+	const handleChangeMinPriceFilter = (value: number) => {
+		handleChangePriceRangeFilter("min", value);
 	};
 
-	const handleChangeMaxPriceFilter = () => {
-		handleChangePriceRangeFilter("max", maxPrice);
+	const handleChangeMaxPriceFilter = (value: number) => {
+		handleChangePriceRangeFilter("max", value);
 	};
-
-	useEffect(() => {
-		setMinPrice(priceRangeFilter[0]);
-		setMaxPrice(priceRangeFilter[1]);
-	}, [priceRangeFilter]);
 
 	return (
 		<div className="gap-1 bg-primary pt-2 w-100 h-mc br-3 d-f fd-c fs-0">
@@ -172,26 +168,34 @@ export const CatalogFilters = ({
 						<TextField
 							variant="outlined"
 							label="от"
-							value={String(minPrice)}
-							onChange={handleIntChange((value) => setMinPrice(Number(value)))}
-							onBlur={handleChangeMinPriceFilter}
-							onKeyDown={(event) => event.key === "Enter" && handleChangeMinPriceFilter()}
-							InputProps={{
-								sx: {
-									backgroundColor: "#F6F6F9 !important",
+							value={String(priceRangeFilter[0])}
+							onChange={handleIntChange(
+								(value) => handleChangeMinPriceFilter(Number(value)),
+								priceLimits.min,
+								priceLimits.max
+							)}
+							slotProps={{
+								input: {
+									sx: {
+										backgroundColor: "#F6F6F9 !important",
+									},
 								},
 							}}
 						/>
 						<TextField
 							variant="outlined"
 							label="до"
-							value={String(maxPrice)}
-							onChange={handleIntChange((value) => setMaxPrice(Number(value)))}
-							onBlur={handleChangeMaxPriceFilter}
-							onKeyDown={(event) => event.key === "Enter" && handleChangeMaxPriceFilter()}
-							InputProps={{
-								sx: {
-									backgroundColor: "#F6F6F9 !important",
+							value={String(priceRangeFilter[1])}
+							onChange={handleIntChange(
+								(value) => handleChangeMaxPriceFilter(Number(value)),
+								priceLimits.min,
+								priceLimits.max
+							)}
+							slotProps={{
+								input: {
+									sx: {
+										backgroundColor: "#F6F6F9 !important",
+									},
 								},
 							}}
 						/>

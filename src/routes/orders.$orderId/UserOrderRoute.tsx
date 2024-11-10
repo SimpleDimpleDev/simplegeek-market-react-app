@@ -1,7 +1,7 @@
 import { ChevronLeft } from "@mui/icons-material";
-import { Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { orderStatusBadges } from "@components/Badges";
 import CountdownTimer from "@components/CountdownTimer";
 import { DeliveryPackage, DeliveryService } from "@appTypes/Delivery";
@@ -16,6 +16,7 @@ import { CreditGet } from "@appTypes/Credit";
 import { DeliveryForm } from "@components/DeliveryForm";
 import { Helmet } from "react-helmet";
 import { PageHeading } from "@components/PageHeading";
+import { isExpectedApiError } from "@utils/api";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЭК",
@@ -76,8 +77,11 @@ export function Component() {
 		throw new Response("No order id provided", { status: 404 });
 	}
 	const { data: order, isLoading: orderIsLoading } = useGetOrderQuery({ id: orderId });
-	const [fetchPaymentUrl, { data: paymentUrlData, isSuccess: paymentUrlIsSuccess }] = useLazyGetPaymentUrlQuery();
+	const [initPayment, { data: initPaymentData, isSuccess: initPaymentIsSuccess, isError: initPaymentIsError, error: initPaymentError }] = useLazyGetPaymentUrlQuery();
 
+	const [paymentErrorDialogOpen, setPaymentErrorDialogOpen] = useState(false);
+	const [paymentError, setPaymentError] = useState<{ message: string; orderId: string } | null>(null);
+	
 	const packages: DeliveryPackage[] = useMemo(() => {
 		if (!order) return [];
 		const packages: DeliveryPackage[] = [];
@@ -154,13 +158,31 @@ export function Component() {
 	]);
 
 	useEffect(() => {
-		if (paymentUrlIsSuccess) {
-			window.location.href = paymentUrlData.paymentUrl;
+		if (initPaymentIsSuccess) {
+			window.location.href = initPaymentData.paymentUrl;
 		}
-	}, [paymentUrlIsSuccess, paymentUrlData]);
+	}, [initPaymentIsSuccess, initPaymentData]);
 
+	useEffect(() => {
+		if (initPaymentIsError) {
+			if (isExpectedApiError(initPaymentError)) {
+				switch (initPaymentError.data.title) {
+					case "PaymentInitError": {
+						const message = initPaymentError.data.message;
+						const details = initPaymentError.data.details as string[];
+						const orderId = details[0] as string;
+						setPaymentError({ message, orderId });
+						setPaymentErrorDialogOpen(true);
+						console.debug("PaymentInitError", { message, orderId });
+						break;
+					}
+				}
+			}
+		}
+	}, [initPaymentIsError, initPaymentError]);
+	
 	const handlePay = async (invoiceId: string) => {
-		fetchPaymentUrl({ invoiceId });
+		initPayment({ invoiceId });
 	};
 
 	return (
@@ -176,6 +198,34 @@ export function Component() {
 				<SomethingWentWrong />
 			) : (
 				<>
+					<Dialog
+						open={paymentErrorDialogOpen}
+						onClose={() => setPaymentErrorDialogOpen(false)}
+						aria-labelledby="error-dialog-title"
+						aria-describedby="error-dialog-description"
+					>
+						{paymentError && (
+							<>
+								<DialogTitle id="error-dialog-title">Ошибка оплаты</DialogTitle>
+								<DialogContent>
+									<DialogContentText id="error-dialog-description">
+										{paymentError.message}
+										<br />
+										Попробуйте ещё раз. При повторной ошибке свяжитесь с
+										администратором.
+									</DialogContentText>
+								</DialogContent>
+								<DialogActions>
+									<Button
+										variant="contained"
+										onClick={() => setPaymentErrorDialogOpen(false)}
+									>
+										Понятно
+									</Button>
+								</DialogActions>
+							</>
+						)}
+					</Dialog>
 					<div className="gap-2 ai-fs d-f fd-c">
 						<Button
 							variant="text"

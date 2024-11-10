@@ -24,12 +24,13 @@ export function Component() {
 						<PageHeading title="FAQ" />
 					</div>
 
-					<div className="py-3">
+					<div className="gap-2 d-f fd-c">
 						{FAQItemList?.items.map((item) => (
 							<Accordion
 								sx={{
 									width: "100%",
 									borderTop: "none",
+									boxShadow: "none",
 									"&:before": {
 										display: "none",
 									},
@@ -37,11 +38,11 @@ export function Component() {
 								disableGutters
 							>
 								<AccordionSummary expandIcon={<ExpandMore />}>
-									<Typography variant="subtitle0">{item.question}</Typography>
+									<Typography variant="h6">{item.question}</Typography>
 								</AccordionSummary>
 								<AccordionDetails>
 									<div className="gap-1 pb-2 d-f fg-c">
-										<Typography variant="body2">{item.answer}</Typography>
+										<Typography variant="subtitle0">{item.answer}</Typography>
 									</div>
 								</AccordionDetails>
 							</Accordion>

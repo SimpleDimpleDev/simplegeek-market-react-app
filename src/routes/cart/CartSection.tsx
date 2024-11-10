@@ -225,30 +225,29 @@ export const CartSection = ({
 						height="fit-content"
 					>
 						<Box display="flex" flexDirection="column" gap={1}>
-							<Typography variant="subtitle0">Итого:</Typography>
 							<Box display="flex" flexDirection="column" gap={2}>
 								{totalDiscount > 0 ? (
 									<Stack direction={"column"} gap={1} divider={<Divider flexItem />}>
 										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
-											<Typography variant="body1">Цена без скидки:</Typography>
+											<Typography>Цена без скидки:</Typography>
 											<Typography variant="h6" sx={{ color: "typography.secondary" }}>
 												{totalPrice} ₽
 											</Typography>
 										</div>
 										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
-											<Typography variant="body1">Скидка:</Typography>
+											<Typography>Скидка:</Typography>
 											<Typography variant="h6" color="warning">
 												{totalDiscount} ₽
 											</Typography>
 										</div>
 										<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
-											<Typography variant="body1">Итого:</Typography>
+											<Typography>Итого:</Typography>
 											<Typography variant="h6">{totalPrice - totalDiscount} ₽</Typography>
 										</div>
 									</Stack>
 								) : (
 									<div className="d-f fd-r jc-sb" style={{ alignItems: "baseline" }}>
-										<Typography variant="body1">Итого:</Typography>
+										<Typography>Итого:</Typography>
 										<Typography variant="h6">{totalPrice} ₽</Typography>
 									</div>
 								)}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Box, CircularProgress, Divider, Tab, Tabs } from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Tab, Tabs } from "@mui/material";
 import { ShoppingBag } from "@mui/icons-material";
 
 import { Empty } from "@components/Empty";
@@ -13,6 +13,7 @@ import { useIsMobile } from "src/hooks/useIsMobile";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { Helmet } from "react-helmet";
 import { PageHeading } from "@components/PageHeading";
+import { isExpectedApiError } from "@utils/api";
 
 function tabsProps(index: number) {
 	return {
@@ -43,7 +44,13 @@ export function Component() {
 	const { data: orderList, isLoading: orderListIsLoading } = useGetOrderListQuery();
 	const [currentTab, setCurrentTab] = useState<number>(0);
 
-	const [fetchPaymentUrl, { data: paymentUrlData, isSuccess: paymentUrlIsSuccess }] = useLazyGetPaymentUrlQuery();
+	const [paymentErrorDialogOpen, setPaymentErrorDialogOpen] = useState(false);
+	const [paymentError, setPaymentError] = useState<{ message: string; orderId: string } | null>(null);
+
+	const [
+		initPayment,
+		{ data: initPaymentData, isSuccess: initPaymentIsSuccess, isError: initPaymentIsError, error: initPaymentError },
+	] = useLazyGetPaymentUrlQuery();
 
 	const ordersToRender = !orderList
 		? []
@@ -56,13 +63,31 @@ export function Component() {
 	};
 
 	useEffect(() => {
-		if (paymentUrlIsSuccess) {
-			window.location.href = paymentUrlData.paymentUrl;
+		if (initPaymentIsSuccess) {
+			window.location.href = initPaymentData.paymentUrl;
 		}
-	}, [paymentUrlIsSuccess, paymentUrlData]);
+	}, [initPaymentIsSuccess, initPaymentData]);
+
+	useEffect(() => {
+		if (initPaymentIsError) {
+			if (isExpectedApiError(initPaymentError)) {
+				switch (initPaymentError.data.title) {
+					case "PaymentInitError": {
+						const message = initPaymentError.data.message;
+						const details = initPaymentError.data.details as string[];
+						const orderId = details[0] as string;
+						setPaymentError({ message, orderId });
+						setPaymentErrorDialogOpen(true);
+						console.debug("PaymentInitError", { message, orderId });
+						break;
+					}
+				}
+			}
+		}
+	}, [initPaymentIsError, initPaymentError]);
 
 	const handlePay = async (invoiceId: string) => {
-		fetchPaymentUrl({ invoiceId });
+		initPayment({ invoiceId });
 	};
 
 	return (
@@ -78,6 +103,34 @@ export function Component() {
 				<SomethingWentWrong />
 			) : (
 				<>
+					<Dialog
+						open={paymentErrorDialogOpen}
+						onClose={() => setPaymentErrorDialogOpen(false)}
+						aria-labelledby="error-dialog-title"
+						aria-describedby="error-dialog-description"
+					>
+						{paymentError && (
+							<>
+								<DialogTitle id="error-dialog-title">Ошибка оплаты</DialogTitle>
+								<DialogContent>
+									<DialogContentText id="error-dialog-description">
+										{paymentError.message}
+										<br />
+										Попробуйте ещё раз. При повторной ошибке свяжитесь с
+										администратором.
+									</DialogContentText>
+								</DialogContent>
+								<DialogActions>
+									<Button
+										variant="contained"
+										onClick={() => setPaymentErrorDialogOpen(false)}
+									>
+										Понятно
+									</Button>
+								</DialogActions>
+							</>
+						)}
+					</Dialog>
 					<PageHeading title={"Заказы"} />
 					<Box>
 						<Tabs value={currentTab} onChange={handleChangeTab} aria-label="basic tabs example">

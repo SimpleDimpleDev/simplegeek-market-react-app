@@ -23,7 +23,7 @@ export function Component() {
 				</Button>
 			</div>
 			<PageHeading title="Политика конфиденциальности" />
-			<div>
+			<div className="bg-primary p-3 br-2">
 				<p>
 					<strong>1. Общие положения</strong>
 				</p>

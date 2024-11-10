@@ -46,6 +46,7 @@ import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
 import { phoneOnlyCountries } from "@config/phone";
 import { Helmet } from "react-helmet";
 import { PageHeading } from "@components/PageHeading";
+import { useGetCartItemListQuery } from "@api/shop/cart";
 
 type DeliveryFormData = {
 	recipient: Recipient;
@@ -91,6 +92,7 @@ export function Component() {
 	const submit = useSubmit();
 	const navigate = useNavigate();
 
+	const { refetch: refetchCart } = useGetCartItemListQuery();
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: checkoutItemList, isLoading: checkoutItemListIsLoading } = useGetCheckoutItemsQuery(void 0, {
 		refetchOnMountOrArgChange: true,
@@ -219,8 +221,9 @@ export function Component() {
 					}
 				}
 			}
+			refetchCart();
 		}
-	}, [orderMakeIsError, orderMakeError, submit]);
+	}, [orderMakeIsError, orderMakeError, submit, refetchCart]);
 
 	const orderItems = useMemo(() => {
 		if (!catalog) return [];

@@ -60,15 +60,29 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({ catalogItems, isMobile })
 								width: 40,
 								borderRadius: 6,
 								overflow: "hidden",
+								flexShrink: 0,
 							}}
 						>
 							<img
+								width={40}
+								height={40}
 								src={getImageUrl(option.product.images.at(0)?.url ?? "", "small")}
 								className="contain"
 							/>
 						</div>
-						<div>
-							<Typography>{option.product.title}</Typography>
+						<div className="w-100">
+							<Typography
+								sx={{
+									WebkitLineClamp: 2,
+									display: "-webkit-box",
+									WebkitBoxOrient: "vertical",
+									overflow: "hidden",
+									textOverflow: "ellipsis",
+									maxWidth: "100%",
+								}}
+							>
+								{option.product.title}
+							</Typography>
 						</div>
 					</div>
 				</li>

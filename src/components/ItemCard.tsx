@@ -258,7 +258,7 @@ export const ShopOrderItemCard: React.FC<ShopOrderItemCardProps> = ({ imgUrl, ti
 				</div>
 			</div>
 			<div className="pt-2">
-				<Typography variant="subtitle1">{price} ₽</Typography>
+				<Typography variant="subtitle1" sx={{ width: "max-content"}}>{price} ₽</Typography>
 			</div>
 		</div>
 	);

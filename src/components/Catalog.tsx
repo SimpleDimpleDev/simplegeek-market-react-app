@@ -93,6 +93,7 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 	const {
 		filterGroupList,
 		preorderList,
+		priceLimits,
 
 		availabilityFilter,
 		handleToggleAvailabilityFilter,
@@ -162,6 +163,7 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 										isMobile={isMobile}
 										filterGroupList={filterGroupList}
 										preorderList={preorderList}
+										priceLimits={priceLimits}
 										availabilityFilter={availabilityFilter}
 										handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
 										preorderIdFilter={preorderIdFilter}
@@ -207,6 +209,7 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 										isMobile={isMobile}
 										filterGroupList={filterGroupList}
 										preorderList={preorderList}
+										priceLimits={priceLimits}
 										availabilityFilter={availabilityFilter}
 										handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
 										preorderIdFilter={preorderIdFilter}

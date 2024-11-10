@@ -56,6 +56,7 @@ interface useFiltersArgs {
 interface useFiltersReturn {
 	filterGroupList: FilterGroupGet[];
 	preorderList: PreorderShop[];
+	priceLimits: { min: number; max: number };
 
 	availabilityFilter: AvailabilityFilter;
 	handleToggleAvailabilityFilter: () => void;
@@ -131,13 +132,16 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		return existingPreorderList;
 	}, [items]);
 
+	const priceMin = useMemo(() => 0, []);
+	const priceMax = useMemo(() => Math.max(...(items?.map((item) => item.price) || [Infinity])), [items]);
+
 	const { preorderIdFilter, checkedFilters } = parseFilterParams(searchParams);
 	const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>(true);
 	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([0, Infinity]);
 
 	useEffect(() => {
-		setPriceRangeFilter([0, Math.max(...(items?.map((item) => item.price) || [Infinity]))]);
-	}, [items]);
+		setPriceRangeFilter([priceMin, priceMax]);
+	}, [priceMin, priceMax]);
 
 	const setPreorderIdFilter = useCallback(
 		(preorderId: string | null) => {
@@ -154,7 +158,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 					}
 					return newSearchParams;
 				},
-				{ replace: true, preventScrollReset: true },
+				{ replace: true, preventScrollReset: true }
 			);
 		},
 		[setSearchParams]
@@ -168,7 +172,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 					setFiltersParam(newSearchParams, checkedFilters);
 					return newSearchParams;
 				},
-				{ replace: true, preventScrollReset: true },
+				{ replace: true, preventScrollReset: true }
 			);
 		},
 		[setSearchParams]
@@ -285,7 +289,8 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	return {
 		filterGroupList,
 		preorderList,
-
+		priceLimits: { min: priceMin, max: priceMax },
+		
 		availabilityFilter,
 		handleToggleAvailabilityFilter,
 
