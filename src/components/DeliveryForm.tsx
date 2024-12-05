@@ -220,10 +220,8 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
 							)}
 							{isEditing && (
 								<Button
-									variant="text"
-									color="warning"
-									size="medium"
-									sx={{ width: "fit-content", padding: 0, color: "warning.main" }}
+									variant="contained"
+									sx={{ width: "fit-content" }}
 									onClick={() => setCdekWidgetOpen(true)}
 								>
 									{cdekDeliveryData ? "Изменить" : "Выбрать"}

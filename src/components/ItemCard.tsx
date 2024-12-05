@@ -250,15 +250,15 @@ export const ShopOrderItemCard: React.FC<ShopOrderItemCardProps> = ({ imgUrl, ti
 				<div className="ai-c br-2 d-f fs-0 jc-c of-h" style={{ width: 96, height: 96 }}>
 					<img src={imgUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
 				</div>
-				<div className="gap-1 pt-2 d-f fd-c">
+				<div className="gap-1 d-f fd-c">
 					<Typography variant="body1">{title}</Typography>
 					<Typography variant="body2" sx={{ color: "typography.secondary" }}>
 						{quantity} шт.
 					</Typography>
 				</div>
 			</div>
-			<div className="pt-2">
-				<Typography variant="subtitle1" sx={{ width: "max-content"}}>{price} ₽</Typography>
+			<div className="ml-2">
+				<Typography variant="subtitle0" sx={{ width: "max-content", display: "flex" }}>{price} ₽</Typography>
 			</div>
 		</div>
 	);

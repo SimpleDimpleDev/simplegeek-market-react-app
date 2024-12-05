@@ -101,7 +101,7 @@ export function Component() {
 	const [orderError, setOrderError] = useState<{ message: string; details: string[] | null } | null>(
 		actionData?.orderError || null
 	);
-	const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+	const [errorDialogOpen, setErrorDialogOpen] = useState(!!actionData);
 
 	useEffect(() => {
 		if (checkoutIsSuccess) {

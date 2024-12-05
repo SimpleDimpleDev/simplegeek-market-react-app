@@ -385,7 +385,7 @@ export function Component() {
 							<Typography color="inherit">Назад в корзину</Typography>
 						</Button>
 
-						<PageHeading title={"Оформление заказа"}/>
+						<PageHeading title={"Оформление заказа"} />
 
 						<form
 							onSubmit={handleSubmit(handleCreateStockOrder)}
@@ -439,10 +439,8 @@ export function Component() {
 													)}
 
 													<Button
-														variant="text"
-														color="warning"
-														size="medium"
-														sx={{ width: "fit-content", padding: 0, color: "warning.main" }}
+														variant="contained"
+														sx={{ width: "fit-content" }}
 														onClick={() => setCdekWidgetOpen(true)}
 													>
 														{cdekDeliveryData ? "Изменить" : "Выбрать"}
@@ -516,7 +514,7 @@ export function Component() {
 													onChange={(e) => setSaveDelivery(e.target.checked)}
 												/>
 											}
-											label="Сохранить адрес доставки"
+											label={`${userSavedDelivery ? "Обновить" : "Сохранить"} адрес доставки`}
 										/>
 									</div>
 								) : (

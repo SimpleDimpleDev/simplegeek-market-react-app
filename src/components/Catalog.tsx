@@ -21,7 +21,7 @@ import {
 	Grow,
 	Box,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFilters } from "src/hooks/useFilters";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { useItemsToRender } from "src/hooks/useItemsToRender";
@@ -117,6 +117,22 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 
 	const { itemsToRender } = useItemsToRender({ items: sectionItems, availableItemIds, filterFunction, sorting });
 
+	const isFirstItemsRender = useRef(true);
+	const catalogRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (itemsToRender === undefined) return;
+		if (isFirstItemsRender.current) {
+			isFirstItemsRender.current = false;
+			return;
+		}
+
+		if (catalogRef.current) {
+			const catalogTop = catalogRef.current.getBoundingClientRect().top + window.scrollY;
+			window.scrollTo({ top: catalogTop - 16, behavior: "smooth" });
+		}
+	}, [itemsToRender, isFirstItemsRender]);
+
 	if (catalogIsLoading || availabilityIsLoading) {
 		return (
 			<div className="w-100 h-100 ai-c d-f jc-c">
@@ -182,8 +198,8 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 							</Box>
 						</div>
 					</Modal>
+					<div ref={catalogRef}/>
 					<PageHeading title={title} />
-
 					<div className="gap-2 d-f fd-r">
 						{!isMobile && (
 							<Box height={"100%"} width={280} flexShrink={0}>
