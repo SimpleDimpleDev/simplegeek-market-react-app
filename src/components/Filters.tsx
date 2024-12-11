@@ -106,8 +106,6 @@ export const CatalogFilters = ({
 	onResetFilters,
 	onCloseFilters,
 }: CatalogFiltersProps) => {
-
-
 	const handleChangeMinPriceFilter = (value: number) => {
 		handleChangePriceRangeFilter("min", value);
 	};
@@ -118,7 +116,16 @@ export const CatalogFilters = ({
 
 	return (
 		<div className="gap-1 bg-primary pt-2 w-100 h-mc br-3 d-f fd-c fs-0">
-			<List sx={{ width: "100%", maxWidth: isMobile ? "100%" : 360, bgcolor: "background.paper", padding: 0 }}>
+			<List
+				sx={{
+					width: "100%",
+					maxWidth: isMobile ? "100%" : 360,
+					bgcolor: "background.paper",
+					padding: 0,
+					maxHeight: "68lvh",
+					overflowY: "auto",
+				}}
+			>
 				<ListItem disablePadding>
 					<ListItemButton
 						role={undefined}
