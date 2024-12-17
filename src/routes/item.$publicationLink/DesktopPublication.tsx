@@ -89,7 +89,7 @@ const AttributesSection: React.FC<AttributesSectionProps> = ({ selectedVariation
 												navigate(`/?f[]=${filterGroup.id}:${filter.id}`);
 											}}
 											sx={{
-												width: "min-content",
+												width: "max-content",
 												overflow: "hidden",
 												textOverflow: "ellipsis",
 												WebkitLineClamp: 1,
