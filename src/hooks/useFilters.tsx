@@ -228,15 +228,16 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 			// preorder
 			if (preorderIdFilter !== null && preorderList.some((preorder) => preorder.id === preorderIdFilter)) {
 				const itemPreorder = item.preorder;
-
 				if (itemPreorder === null) return false;
-
 				if (itemPreorder.id !== preorderIdFilter) return false;
 			}
 
 			// filters
 			if (checkedFilters.length !== 0) {
+
 				const itemFilterGroups = item.product.filterGroups;
+				let filterMatched = false;
+
 				for (const checkedFilter of checkedFilters) {
 					// check if filter group and filter exists
 					const existingFilterGroup = filterGroupList.find(
@@ -249,11 +250,15 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 						continue;
 
 					const itemFilterGroup = itemFilterGroups.find((group) => group.id === checkedFilter.filterGroupId);
-					if (!itemFilterGroup) return false;
+					if (!itemFilterGroup) continue;
 
-					if (!itemFilterGroup.filters.find((groupFilter) => groupFilter.id === checkedFilter.id))
-						return false;
+					if (itemFilterGroup.filters.find((groupFilter) => groupFilter.id === checkedFilter.id)) {
+						filterMatched = true;
+						break;
+					}
 				}
+
+				if (!filterMatched) return false;
 			}
 
 			// price
