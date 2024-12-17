@@ -106,6 +106,7 @@ export const cssBaseLine = {
 	".p-2": { padding: "16px" },
 	".p-3": { padding: "24px" },
 	".p-4": { padding: "32px" },
+	".pt-0": { paddingTop: "0px" },
 	".pt-1": { paddingTop: "8px" },
 	".pt-2": { paddingTop: "16px" },
 	".pt-3": { paddingTop: "24px" },

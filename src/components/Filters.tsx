@@ -116,59 +116,61 @@ export const CatalogFilters = ({
 
 	return (
 		<div className="gap-1 bg-primary pt-2 w-100 h-mc br-3 d-f fd-c fs-0">
-			<List
-				sx={{
-					width: "100%",
-					maxWidth: isMobile ? "100%" : 360,
-					bgcolor: "background.paper",
-					padding: 0,
-					maxHeight: "68lvh",
-					overflowY: "auto",
-				}}
-			>
-				<ListItem disablePadding>
-					<ListItemButton
-						role={undefined}
-						onClick={handleToggleAvailabilityFilter}
-						sx={{ height: 42, padding: 0 }}
-					>
-						<Checkbox checked={availabilityFilter} tabIndex={-1} disableRipple color="warning" />
-						<Typography variant="subtitle0">В наличии</Typography>
-					</ListItemButton>
-				</ListItem>
+			<div>
+				<List
+					sx={{
+						width: "100%",
+						maxWidth: isMobile ? "100%" : 360,
+						bgcolor: "background.paper",
+						padding: 0,
+						maxHeight: "60svh",
+						overflowY: "auto",
+					}}
+				>
+					<ListItem disablePadding>
+						<ListItemButton
+							role={undefined}
+							onClick={handleToggleAvailabilityFilter}
+							sx={{ height: 42, padding: 0 }}
+						>
+							<Checkbox checked={availabilityFilter} tabIndex={-1} disableRipple color="warning" />
+							<Typography variant="subtitle0">В наличии</Typography>
+						</ListItemButton>
+					</ListItem>
 
-				{preorderList.length > 0 && (
-					<FilterGroup
-						data={{
-							id: "preorder",
-							title: "Предзаказ",
-							filters: preorderList.map((preorder) => ({ id: preorder.id, value: preorder.title })) as [
-								{ id: string; value: string },
-								...{ id: string; value: string }[]
-							],
-						}}
-						checkedFiltersIds={preorderIdFilter ? [preorderIdFilter] : []}
-						onToggleFilter={(_, id) => handleChangePreorderIdFilter(id)}
-					/>
-				)}
-
-				{filterGroupList.map((group, index) => {
-					const filterGroupId = group.id;
-					const checkedFiltersIds = checkedFilters
-						.filter((filter) => filter.filterGroupId === filterGroupId)
-						.map((filter) => filter.id);
-					return (
+					{preorderList.length > 0 && (
 						<FilterGroup
-							key={index}
-							data={group}
-							checkedFiltersIds={checkedFiltersIds}
-							onToggleFilter={handleToggleFilter}
+							data={{
+								id: "preorder",
+								title: "Предзаказ",
+								filters: preorderList.map((preorder) => ({
+									id: preorder.id,
+									value: preorder.title,
+								})) as [{ id: string; value: string }, ...{ id: string; value: string }[]],
+							}}
+							checkedFiltersIds={preorderIdFilter ? [preorderIdFilter] : []}
+							onToggleFilter={(_, id) => handleChangePreorderIdFilter(id)}
 						/>
-					);
-				})}
-			</List>
+					)}
 
-			<div className="gap-2 p-2 d-f fd-c">
+					{filterGroupList.map((group, index) => {
+						const filterGroupId = group.id;
+						const checkedFiltersIds = checkedFilters
+							.filter((filter) => filter.filterGroupId === filterGroupId)
+							.map((filter) => filter.id);
+						return (
+							<FilterGroup
+								key={index}
+								data={group}
+								checkedFiltersIds={checkedFiltersIds}
+								onToggleFilter={handleToggleFilter}
+							/>
+						);
+					})}
+				</List>
+			</div>
+			
+			<div className="gap-2 p-2 pt-0 d-f fd-c">
 				<div className="gap-05 d-f fd-c">
 					<Typography variant="subtitle0">Цена, ₽</Typography>
 					<div className="gap-1 pt-1 d-f fd-r">
