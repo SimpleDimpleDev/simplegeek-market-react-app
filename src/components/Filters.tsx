@@ -153,23 +153,25 @@ export const CatalogFilters = ({
 						/>
 					)}
 
-					{filterGroupList.map((group, index) => {
-						const filterGroupId = group.id;
-						const checkedFiltersIds = checkedFilters
-							.filter((filter) => filter.filterGroupId === filterGroupId)
-							.map((filter) => filter.id);
-						return (
-							<FilterGroup
-								key={index}
-								data={group}
-								checkedFiltersIds={checkedFiltersIds}
-								onToggleFilter={handleToggleFilter}
-							/>
-						);
-					})}
+					{filterGroupList
+						.sort((a, b) => a.title.localeCompare(b.title))
+						.map((group, index) => {
+							const filterGroupId = group.id;
+							const checkedFiltersIds = checkedFilters
+								.filter((filter) => filter.filterGroupId === filterGroupId)
+								.map((filter) => filter.id);
+							return (
+								<FilterGroup
+									key={index}
+									data={group}
+									checkedFiltersIds={checkedFiltersIds}
+									onToggleFilter={handleToggleFilter}
+								/>
+							);
+						})}
 				</List>
 			</div>
-			
+
 			<div className="gap-2 p-2 pt-0 d-f fd-c">
 				<div className="gap-05 d-f fd-c">
 					<Typography variant="subtitle0">Цена, ₽</Typography>
