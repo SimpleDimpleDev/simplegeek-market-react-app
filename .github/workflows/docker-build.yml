@@ -19,7 +19,7 @@ jobs:
             - name: Log in to Docker Registry
               uses: docker/login-action@v1
               with:
-                  registry: registry.24simplegeek.ru
+                  registry: registry.24simplegeek.ru:5000
                   username: ${{ secrets.DEV_REGISTRY_USERNAME }}
                   password: ${{ secrets.DEV_REGISTRY_PASSWORD }}
 
@@ -28,8 +28,8 @@ jobs:
                   docker build \
                     --build-arg SHOP_API_URL=${{ secrets.DEV_SHOP_API_URL }} \
                     --build-arg AUTH_API_URL=${{ secrets.DEV_AUTH_API_URL }} \
-                    -t registry.24simplegeek.ru/market-react-app-server:dev .
+                    -t registry.24simplegeek.ru:5000/market-react-app-server:dev .
 
             - name: Push Docker image
               run: |
-                  docker push registry.24simplegeek.ru/market-react-app-server:dev
+                  docker push registry.24simplegeek.ru:5000/market-react-app-server:dev
