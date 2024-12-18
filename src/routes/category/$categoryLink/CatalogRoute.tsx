@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useGetCatalogQuery } from "@api/shop/catalog";
 import { Empty } from "@components/Empty";
 import { Search } from "@mui/icons-material";
+import { Helmet } from "react-helmet";
 
 export function Component() {
 	const params = useParams();
@@ -31,20 +32,21 @@ export function Component() {
 	);
 
 	return (
-		<Catalog
-			sectionFilter={sectionFilter}
-			path={[
-				{ title: "Каталог", link: "/" },
-				{ title: "Категории", link: "/category" },
-			]}
-			current={category?.title ?? ""}
-			emptyElement={
-				<Empty
-					title={`Пока нет товаров`}
-					description="Вернитесь позже"
-					icon={<Search sx={{ height: 96, width: 96 }} />}
-				/>
-			}
-		/>
+		<>
+			<Helmet>
+				<title>{category?.title ? `${category.title} - ` : ""}SimpleGeek</title>
+			</Helmet>
+			<Catalog
+				sectionFilter={sectionFilter}
+				title={category?.title ?? ""}
+				emptyElement={
+					<Empty
+						title={`Пока нет товаров`}
+						description="Вернитесь позже"
+						icon={<Search sx={{ height: 96, width: 96 }} />}
+					/>
+				}
+			/>
+		</>
 	);
 }

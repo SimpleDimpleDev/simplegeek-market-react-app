@@ -4,6 +4,7 @@ import { CircularProgress } from "@mui/material";
 import { RecoveryFlow, UpdateRecoveryFlowBody } from "@ory/client";
 import { UserAuthCard } from "@ory/elements";
 import { useCallback, useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function Component() {
@@ -64,33 +65,40 @@ export function Component() {
 	}, []);
 
 	// we check if the flow is set, if not we show a loading indicator
-	return flow ? (
-		// We create a dynamic Recovery form based on the flow using Ory Elements
-		<div className="gap-5 bg-primary p-3 pt-2 br-3 d-f fd-c">
-			<UserAuthCard
-				flowType={"recovery"}
-				// the flow is always required since it contains the UI form elements, UI error messages and csrf token
-				flow={flow}
-				// the recovery form should allow users to navigate to the login page
-				additionalProps={{
-					loginURL: {
-						handler: () => {
-							navigate(
-								{
-									pathname: "/auth/login",
+	return (
+		<>
+			<Helmet>
+				<title>Восстановление - SimpleGeek</title>
+			</Helmet>
+			{flow ? (
+				// We create a dynamic Recovery form based on the flow using Ory Elements
+				<div className="gap-5 bg-primary p-3 pt-2 br-3 d-f fd-c">
+					<UserAuthCard
+						flowType={"recovery"}
+						// the flow is always required since it contains the UI form elements, UI error messages and csrf token
+						flow={flow}
+						// the recovery form should allow users to navigate to the login page
+						additionalProps={{
+							loginURL: {
+								handler: () => {
+									navigate(
+										{
+											pathname: "/auth/login",
+										},
+										{ replace: true }
+									);
 								},
-								{ replace: true }
-							);
-						},
-					},
-				}}
-				// submit the form data to Ory
-				onSubmit={({ body }) => submitFlow(body as UpdateRecoveryFlowBody)}
-			/>
-		</div>
-	) : (
-		<div className="w-100 h-100 ai-c d-f jc-c">
-			<CircularProgress />
-		</div>
+							},
+						}}
+						// submit the form data to Ory
+						onSubmit={({ body }) => submitFlow(body as UpdateRecoveryFlowBody)}
+					/>
+				</div>
+			) : (
+				<div className="w-100 h-100 ai-c d-f jc-c">
+					<CircularProgress />
+				</div>
+			)}
+		</>
 	);
 }

@@ -1,11 +1,8 @@
 import { useDeleteCartItemsMutation, usePatchCartItemMutation } from "@api/shop/cart";
-import {
-	useAddFavoriteItemMutation,
-	useRemoveFavoriteItemMutation,
-} from "@api/shop/favorites";
+import { useAddFavoriteItemMutation, useRemoveFavoriteItemMutation } from "@api/shop/favorites";
 import { CatalogItemCart } from "@appTypes/Cart";
 import { Favorite, FavoriteBorder, Delete, Remove, Add } from "@mui/icons-material";
-import { Box, IconButton, Typography, Checkbox, CircularProgress } from "@mui/material";
+import { Box, IconButton, Typography, Checkbox, CircularProgress, Button } from "@mui/material";
 
 import { getImageUrl } from "@utils/image";
 
@@ -111,6 +108,7 @@ const CartItem = ({
 	favoriteItemListIsLoading,
 	checked,
 	onCheck,
+	onClick,
 }: CartItemProps) => {
 	const [addFavoriteItem] = useAddFavoriteItemMutation();
 	const [removeFavoriteItem] = useRemoveFavoriteItemMutation();
@@ -147,21 +145,24 @@ const CartItem = ({
 					<Box display="flex" flexDirection="row" gap={1}>
 						{!isMobile && <Checkbox checked={checked} onChange={onCheck} />}
 
-						<Box
-							width={96}
-							height={96}
-							borderRadius={2}
-							display="flex"
-							flexShrink={0}
-							justifyContent="center"
-							alignItems="center"
-							overflow="hidden"
+						<Button
+							sx={{
+								width: "96px",
+								height: "96px",
+								borderRadius: "16px",
+								flexShrink: 0,
+								display: "flex",
+								overflow: "hidden",
+								justifyContent: "center",
+								alignItems: "center",
+							}}
+							onClick={onClick}
 						>
 							<img
 								src={getImageUrl(item.product.images.at(0)?.url ?? "", "medium")}
 								style={{ width: "100%", height: "100%", objectFit: "cover" }}
 							/>
-						</Box>
+						</Button>
 
 						<Box display="flex" flexDirection="column" justifyContent="space-between">
 							<Box display="flex" flexDirection="column" gap={"4px"} paddingLeft={1}>

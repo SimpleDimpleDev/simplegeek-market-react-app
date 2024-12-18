@@ -29,12 +29,23 @@ declare module "@mui/material/Typography" {
 	}
 }
 
+declare module "@mui/material/Button" {
+	interface ButtonPropsColorOverrides {
+		tertiary: true; // Add your custom color here
+	}
+}
+
 declare module "@mui/material/styles" {
 	interface Palette {
 		icon: CustomPaletteOptions;
 		surface: CustomPaletteOptions;
 		typography: CustomPaletteOptions;
 		snackbar: CustomPaletteOptions;
+		tertiary: {
+			main: string;
+			dark: string;
+			light: string;
+		};
 	}
 
 	interface PaletteOptions {
@@ -42,6 +53,11 @@ declare module "@mui/material/styles" {
 		surface?: CustomPaletteOptions;
 		typography?: CustomPaletteOptions;
 		snackbar?: CustomPaletteOptions;
+		tertiary?: {
+			main: string;
+			dark: string;
+			light: string;
+		};
 	}
 
 	interface TypographyVariants {
@@ -63,7 +79,7 @@ const theme = createTheme({
 			md: 980,
 			lg: 1025,
 			xl: 1280,
-		}
+		},
 	},
 	palette: {
 		surface: {
@@ -100,6 +116,11 @@ const theme = createTheme({
 			main: "#DADDE2",
 			dark: "#C8CDC4",
 			light: "#464B53",
+		},
+		tertiary: {
+			main: "#464B53",
+			dark: "#464B53",
+			light: "#C8CDC4",
 		},
 		warning: {
 			main: "#EF6C00",

@@ -19,4 +19,4 @@ export const CDEKFromPoint: CDEKFromPoint = {
 
 export const defaultLocation = [37.3855, 55.582];
 
-export const tariffs = { office: [136], door: [] };
+export const tariffs = { office: [136], door: [], pickup: [] };

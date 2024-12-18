@@ -1,10 +1,13 @@
 FROM node:20-alpine AS frontend-build
 WORKDIR /app
 COPY package.json .
+COPY package-lock.json .
 RUN npm install
 COPY . .
 ARG SHOP_API_URL
 ARG AUTH_API_URL
+ARG CATALOG_POLLING_INTERVAL=60000
+ARG AVAILABILITY_POLLING_INTERVAL=10000
 RUN npm run build
 
 # Nginx server

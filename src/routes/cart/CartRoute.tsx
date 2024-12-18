@@ -12,14 +12,13 @@ import {
 	Stack,
 } from "@mui/material";
 import { useActionData, useNavigate } from "react-router-dom";
-import { CountPageHeader } from "@components/CountPageHeader";
+import { PageHeading } from "@components/PageHeading";
 import { Empty } from "@components/Empty";
 import { UserCartItem } from "@appTypes/UserItems";
 import { useEffect, useMemo, useState } from "react";
 
 import { CartSection } from "./CartSection";
 
-import SuggestedItems from "@components/SuggestedItems";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
 import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/catalog";
@@ -31,6 +30,9 @@ import { useIsMobile } from "src/hooks/useIsMobile";
 import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { isExpectedApiError } from "@utils/api";
+import RecentItems from "@components/RecentItems";
+import { Helmet } from "react-helmet";
+import { getRuGoodsWord } from "@utils/format";
 
 export function Component() {
 	const isMobile = useIsMobile();
@@ -99,7 +101,7 @@ export function Component() {
 	const [orderError, setOrderError] = useState<{ message: string; details: string[] | null } | null>(
 		actionData?.orderError || null
 	);
-	const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+	const [errorDialogOpen, setErrorDialogOpen] = useState(!!actionData);
 
 	useEffect(() => {
 		if (checkoutIsSuccess) {
@@ -143,9 +145,12 @@ export function Component() {
 			checkout({ items });
 		}
 	};
-
+	
 	return (
 		<>
+			<Helmet>
+				<title>Корзина - SimpleGeek</title>
+			</Helmet>
 			{catalogIsLoading || availabilityIsLoading || cartItemListIsLoading || favoriteItemListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
@@ -174,45 +179,15 @@ export function Component() {
 							<Button onClick={() => setErrorDialogOpen(false)}>Понятно</Button>
 						</DialogActions>
 					</Dialog>
-					<CountPageHeader isMobile={isMobile} title="Корзина" count={cartItemList?.items.length || 0} />
-					{/* {orderError &&
-						(!orderError.details ? (
-							<div className="section">
-								<Box display="flex" flexDirection="row" gap={1}>
-									<PriorityHigh color="error" />
-									<Typography variant="body1">{orderError.message}</Typography>
-								</Box>
-							</div>
-						) : (
-							<Accordion
-								sx={{
-									width: "100%",
-									borderTop: "none",
-									"&:before": {
-										display: "none",
-									},
-									boxShadow: "none",
-								}}
-								disableGutters
-							>
-								<AccordionSummary expandIcon={<ExpandMore />}>
-									<Box display="flex" flexDirection="row" gap={1}>
-										<PriorityHigh color="error" />
-										<Typography variant="body1">{orderError.message}</Typography>
-									</Box>
-								</AccordionSummary>
-								<AccordionDetails>
-									<Stack direction="column" divider={<Divider />} spacing={1}>
-										{orderError.details?.map((error) => (
-											<Typography key={error} variant="body2">
-												{error}
-											</Typography>
-										))}
-									</Stack>
-								</AccordionDetails>
-							</Accordion>
-						))} */}
-					<Stack direction={"column"} gap={4} divider={<Divider />} p={"24px 0"}>
+					<PageHeading
+						title="Корзина"
+						infoText={
+							cartItemList
+								? `${cartItemList.items.length} ${getRuGoodsWord(cartItemList.items.length)}`
+								: ""
+						}
+					/>
+					<Stack direction={"column"} gap={4} divider={<Divider />}>
 						{formedCart.sections.map((section) => {
 							const userSectionItems =
 								cartItemList.items.filter((item) =>
@@ -251,7 +226,7 @@ export function Component() {
 							}
 						/>
 					)}
-					<SuggestedItems />
+					<RecentItems />
 				</>
 			)}
 		</>

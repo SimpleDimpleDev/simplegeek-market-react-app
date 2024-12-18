@@ -1,7 +1,7 @@
 import { ChevronLeft } from "@mui/icons-material";
-import { Button, CircularProgress, Divider, Stack, Typography } from "@mui/material";
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { orderStatusBadges } from "@components/Badges";
 import CountdownTimer from "@components/CountdownTimer";
 import { DeliveryPackage, DeliveryService } from "@appTypes/Delivery";
@@ -14,9 +14,12 @@ import SomethingWentWrong from "@components/SomethingWentWrong";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { CreditGet } from "@appTypes/Credit";
 import { DeliveryForm } from "@components/DeliveryForm";
+import { Helmet } from "react-helmet";
+import { PageHeading } from "@components/PageHeading";
+import { isExpectedApiError } from "@utils/api";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
-	CDEK: "СДЕК",
+	CDEK: "СДЭК",
 	SELF_PICKUP: "Самовывоз",
 };
 
@@ -74,8 +77,11 @@ export function Component() {
 		throw new Response("No order id provided", { status: 404 });
 	}
 	const { data: order, isLoading: orderIsLoading } = useGetOrderQuery({ id: orderId });
-	const [fetchPaymentUrl, { data: paymentUrlData, isSuccess: paymentUrlIsSuccess }] = useLazyGetPaymentUrlQuery();
+	const [initPayment, { data: initPaymentData, isSuccess: initPaymentIsSuccess, isError: initPaymentIsError, error: initPaymentError }] = useLazyGetPaymentUrlQuery();
 
+	const [paymentErrorDialogOpen, setPaymentErrorDialogOpen] = useState(false);
+	const [paymentError, setPaymentError] = useState<{ message: string; orderId: string } | null>(null);
+	
 	const packages: DeliveryPackage[] = useMemo(() => {
 		if (!order) return [];
 		const packages: DeliveryPackage[] = [];
@@ -88,7 +94,11 @@ export function Component() {
 		return packages;
 	}, [order]);
 
-	// TODO: get from backend
+	const canChangeDelivery = useMemo(() => {
+		// TODO: check if it's possible to change delivery
+		return false;
+	}, []);
+
 	const { paidCreditAmount, unpaidCreditAmount, orderHasCredit } = useMemo(() => {
 		if (!order) return { paidCreditAmount: undefined, unpaidCreditAmount: undefined, orderHasCredit: undefined };
 		let paidCreditAmount = 0;
@@ -148,17 +158,38 @@ export function Component() {
 	]);
 
 	useEffect(() => {
-		if (paymentUrlIsSuccess) {
-			window.location.href = paymentUrlData.paymentUrl;
+		if (initPaymentIsSuccess) {
+			window.location.href = initPaymentData.paymentUrl;
 		}
-	}, [paymentUrlIsSuccess, paymentUrlData]);
+	}, [initPaymentIsSuccess, initPaymentData]);
 
+	useEffect(() => {
+		if (initPaymentIsError) {
+			if (isExpectedApiError(initPaymentError)) {
+				switch (initPaymentError.data.title) {
+					case "PaymentInitError": {
+						const message = initPaymentError.data.message;
+						const details = initPaymentError.data.details as string[];
+						const orderId = details[0] as string;
+						setPaymentError({ message, orderId });
+						setPaymentErrorDialogOpen(true);
+						console.debug("PaymentInitError", { message, orderId });
+						break;
+					}
+				}
+			}
+		}
+	}, [initPaymentIsError, initPaymentError]);
+	
 	const handlePay = async (invoiceId: string) => {
-		fetchPaymentUrl({ invoiceId });
+		initPayment({ invoiceId });
 	};
 
 	return (
 		<>
+			<Helmet>
+				<title>{order ? `Заказ от ${DateFormatter.DDMMYYYY(order.createdAt)} - ` : ""}SimpleGeek</title>
+			</Helmet>
 			{orderIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
@@ -167,18 +198,50 @@ export function Component() {
 				<SomethingWentWrong />
 			) : (
 				<>
+					<Dialog
+						open={paymentErrorDialogOpen}
+						onClose={() => setPaymentErrorDialogOpen(false)}
+						aria-labelledby="error-dialog-title"
+						aria-describedby="error-dialog-description"
+					>
+						{paymentError && (
+							<>
+								<DialogTitle id="error-dialog-title">Ошибка оплаты</DialogTitle>
+								<DialogContent>
+									<DialogContentText id="error-dialog-description">
+										{paymentError.message}
+										<br />
+										Попробуйте ещё раз. При повторной ошибке свяжитесь с
+										администратором.
+									</DialogContentText>
+								</DialogContent>
+								<DialogActions>
+									<Button
+										variant="contained"
+										onClick={() => setPaymentErrorDialogOpen(false)}
+									>
+										Понятно
+									</Button>
+								</DialogActions>
+							</>
+						)}
+					</Dialog>
 					<div className="gap-2 ai-fs d-f fd-c">
-						<Button variant="text" sx={{ color: "warning.main" }} onClick={() => navigate(-1)}>
+						<Button
+							variant="text"
+							sx={{ color: "warning.main" }}
+							onClick={() => navigate("/profile/orders")}
+						>
 							<ChevronLeft />
 							<Typography color="inherit">Все заказы</Typography>
 						</Button>
 					</div>
-					<div className="py-2">
-						<Typography variant="h3">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
-						<Typography variant="subtitle0" sx={{ color: "typography.secondary" }}>
-							ID: {order.id}
-						</Typography>
-					</div>
+
+					<PageHeading
+						title={`Заказ от ${DateFormatter.DDMMYYYY(order.createdAt)}`}
+						subText={`ID: ${order.id}`}
+					/>
+
 					<div className="gap-1 pb-4 d-f fd-r">{orderStatusBadges[order.status]}</div>
 					<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
 						<div className="gap-2 w-100 d-f fd-c">
@@ -202,7 +265,8 @@ export function Component() {
 										) : (
 											<div className="gap-1">
 												<Typography variant="subtitle1">
-													Доставка к вам оформляется после полной оплаты заказа и его прибытия на склад в Москве.
+													Доставка к вам оформляется после полной оплаты заказа и его прибытия
+													на склад в Москве.
 												</Typography>
 												<div className="gap-1 d-f fd-r">
 													<Typography
@@ -220,7 +284,7 @@ export function Component() {
 									) : (
 										<>Ошибка</>
 									)
-								) : order.delivery.tracking === null ? (
+								) : canChangeDelivery ? (
 									<DeliveryForm
 										isMobile={isMobile}
 										delivery={order.delivery}
@@ -331,8 +395,8 @@ export function Component() {
 							{order.status === "CANCELLED" ? (
 								<Typography variant="subtitle1">Заказ отменен</Typography>
 							) : order.status === "UNPAID" ? (
-								<div className="gap-1 d-f fd-r">
-									<Typography variant="subtitle1" sx={{ color: "typography.error" }}>
+								<>
+									<Typography variant="h6" sx={{ color: "typography.error" }}>
 										Заказ не оплачен
 									</Typography>
 									<Button
@@ -342,7 +406,7 @@ export function Component() {
 									>
 										{"Оплатить "} <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
 									</Button>
-								</div>
+								</>
 							) : order.preorder !== null && showDetailedOrder ? (
 								<>
 									<Typography variant="h6">Оплачено</Typography>
@@ -430,7 +494,7 @@ export function Component() {
 								</>
 							) : (
 								<>
-									<div className="d-f fd-c jc-sb">
+									<>
 										<div className="gap-1">
 											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
 												Итого:
@@ -438,10 +502,10 @@ export function Component() {
 											<Typography variant="subtitle0">{order.initialInvoice.amount} ₽</Typography>
 										</div>
 										<Divider orientation="horizontal" flexItem />
-										<Typography variant="subtitle1" sx={{ color: "typography.success" }}>
+										<Typography variant="h6" sx={{ color: "typography.success" }}>
 											Оплачено!
 										</Typography>
-									</div>
+									</>
 								</>
 							)}
 						</div>

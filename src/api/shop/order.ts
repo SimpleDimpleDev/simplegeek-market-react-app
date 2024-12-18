@@ -27,6 +27,7 @@ const orderApi = shopApi.injectEndpoints({
 				method: "POST",
 				body,
 			}),
+			invalidatesTags: ["Cart"],
 			transformResponse: (response) => validateData(PaymentUrlGetSchema, response),
 		}),
 		getPaymentUrl: build.query<z.infer<typeof PaymentUrlGetSchema>, { invoiceId: string }>({

@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { Box, IconButton, styled } from "@mui/material";
+import { Box, IconButton, styled, useMediaQuery } from "@mui/material";
 import React, { useState } from "react";
 import { ArrowProps } from "react-multi-carousel/lib/types";
 
@@ -37,11 +37,11 @@ const responsive = {
 		items: 5,
 	},
 	desktop: {
-		breakpoint: { max: 3000, min: 1024 },
+		breakpoint: { max: 3000, min: 662 },
 		items: 4,
 	},
 	mobile: {
-		breakpoint: { max: 1024, min: 0 },
+		breakpoint: { max: 662, min: 0 },
 		items: 2,
 	},
 };
@@ -59,15 +59,14 @@ const RightButton = ({ onClick, ...rest }: ArrowProps) => (
 );
 
 interface ImageCarouselProps {
-	isMobile: boolean;
 	imageUrls: string[]; // Array of image URLs
 }
 
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ isMobile, imageUrls }) => {
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ imageUrls }) => {
 	const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 	const selectedImageUrl = imageUrls[selectedImageIndex];
 
-	console.log({ imageUrls });
+	const isMobile = useMediaQuery("(max-width: 662px)");
 
 	return (
 		<Box style={{ width: isMobile ? 345 : 630 }}>

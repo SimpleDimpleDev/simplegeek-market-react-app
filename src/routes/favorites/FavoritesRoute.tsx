@@ -1,17 +1,16 @@
 import { Favorite as FavoriteIcon } from "@mui/icons-material";
-import { Box, CircularProgress, Divider, Stack, Typography } from "@mui/material";
+import { CircularProgress, Divider, Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
-import { CountPageHeader } from "@components/CountPageHeader";
+import { PageHeading } from "@components/PageHeading";
 import { Empty } from "@components/Empty";
 import { FavoritesSection } from "./FavoritesSection";
 import { useGetItemsAvailabilityQuery, useGetCatalogQuery } from "@api/shop/catalog";
 import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
-import { useIsMobile } from "src/hooks/useIsMobile";
 import SomethingWentWrong from "@components/SomethingWentWrong";
+import { Helmet } from "react-helmet";
+import { getRuGoodsWord } from "@utils/format";
 
 export function Component() {
-	const isMobile = useIsMobile();
-
 	const { data: availableItemsList, isLoading: availableItemListIsLoading } = useGetItemsAvailabilityQuery();
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
@@ -36,6 +35,9 @@ export function Component() {
 
 	return (
 		<>
+			<Helmet>
+				<title>Избранное - SimpleGeek</title>
+			</Helmet>
 			{catalogIsLoading || availableItemListIsLoading || favoriteItemListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
@@ -44,25 +46,22 @@ export function Component() {
 				<SomethingWentWrong />
 			) : (
 				<>
-					<CountPageHeader
+					<PageHeading
 						title="Избранное"
-						count={favoriteItemList?.items.length || 0}
-						isMobile={isMobile}
+						infoText={
+							favoriteItemList
+								? `${favoriteItemList.items.length} ${getRuGoodsWord(favoriteItemList.items.length)}`
+								: ""
+						}
 					/>
 					<Stack divider={<Divider sx={{ color: "divider" }} />}>
-						{mappedItems.available.length > 0 && (
-							<Box padding="24px 0px">
-								<FavoritesSection items={mappedItems.available} />
-							</Box>
-						)}
+						{mappedItems.available.length > 0 && <FavoritesSection items={mappedItems.available} />}
 						{mappedItems.unavailable.length > 0 && (
 							<>
 								<Typography variant="h5" style={{ paddingTop: 24 }}>
 									Недоступны для заказа
 								</Typography>
-								<Box padding="24px 0px">
-									<FavoritesSection items={mappedItems.unavailable} />
-								</Box>
+								<FavoritesSection items={mappedItems.unavailable} />
 							</>
 						)}
 					</Stack>

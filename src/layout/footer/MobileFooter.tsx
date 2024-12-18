@@ -13,7 +13,7 @@ const MobileFooter = () => (
 		}}
 	>
 		<div className="gap-1 h-100 d-f fd-c jc-fs">
-				<Typography variant={"h5"}>admin@simplegeek.ru</Typography>
+				<Typography variant={"subtitle0"}>admin@simplegeek.ru</Typography>
 				<Typography variant="body1">Если у вас остались вопросы</Typography>
 			</div>
 
@@ -21,7 +21,7 @@ const MobileFooter = () => (
 				{/* <div style={{ width: 103.75, height: 56 }}>
 					<img src={logo} height={56} alt="logo" />
 				</div> */}
-				<Typography variant={"h6"}>Мы в социальных сетях</Typography>
+				<Typography variant={"subtitle0"}>Мы в социальных сетях</Typography>
 				<div style={{ display: "flex", justifyContent: "flex-start" }}>
 					<img style={{ width: 32, height: 32, cursor: "pointer" }} src={vkIcon} alt="vk" onClick={() => window.open("https://vk.com/simplegeeek")} />
 				</div>

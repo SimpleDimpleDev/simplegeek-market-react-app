@@ -1,7 +1,6 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import SuggestedItems from "@components/SuggestedItems";
 
-import { lazy, Suspense, useMemo } from "react";
+import { lazy, Suspense, useEffect, useMemo } from "react";
 
 import { getImageUrl } from "@utils/image";
 import { useAddCartItemMutation, useGetCartItemListQuery } from "@api/shop/cart";
@@ -15,6 +14,11 @@ import { useIsMobile } from "src/hooks/useIsMobile";
 import { useAddTrackedItemMutation, useGetTrackedItemListQuery, useRemoveTrackedItemMutation } from "@api/shop/tracked";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import SomethingWentWrong from "@components/SomethingWentWrong";
+import { Helmet } from "react-helmet";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@state/store";
+import { addVisit } from "@state/visits/visitsSlice";
+import SimilarItems from "@components/SimilarItems";
 
 const MobilePublication = lazy(() => import("./MobilePublication"));
 const DesktopPublication = lazy(() => import("./DesktopPublication"));
@@ -26,6 +30,8 @@ export function Component() {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
 
+	const dispatch = useDispatch<AppDispatch>();
+
 	const publicationLink = params.publicationLink;
 	if (publicationLink === undefined) {
 		throw new Response("No item link provided", { status: 404 });
@@ -33,7 +39,8 @@ export function Component() {
 
 	const itemVariationIndexString = searchParams.get("v");
 	const itemVariationIndex = itemVariationIndexString === null ? 0 : parseInt(itemVariationIndexString);
-	const setItemVariationIndex = (index: number) => setSearchParams({ ["v"]: index.toString() }, { replace: true });
+	const setItemVariationIndex = (index: number) =>
+		setSearchParams({ ["v"]: index.toString() }, { replace: true, preventScrollReset: true });
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 
@@ -55,7 +62,11 @@ export function Component() {
 		() => catalog?.publications.find((publication) => publication.link === publicationLink),
 		[catalog, publicationLink]
 	);
-	const selectedVariation = publication?.items.at(itemVariationIndex);
+
+	const selectedVariation = useMemo(
+		() => publication?.items.at(itemVariationIndex),
+		[publication, itemVariationIndex]
+	);
 
 	const selectedVariationIsAvailable = useMemo(
 		() => (selectedVariation === undefined ? undefined : availableItemList?.items.includes(selectedVariation.id)),
@@ -82,6 +93,12 @@ export function Component() {
 				: trackedItemList?.items.some((trackedItem) => trackedItem.id === selectedVariation.id),
 		[trackedItemList, selectedVariation]
 	);
+
+	useEffect(() => {
+		if (selectedVariation) {
+			dispatch(addVisit({ id: selectedVariation.id }));
+		}
+	}, [dispatch, selectedVariation]);
 
 	const preparedImageUrls = useMemo(
 		() => selectedVariation?.product.images.map((image) => getImageUrl(image.url, "large")) || [],
@@ -124,60 +141,68 @@ export function Component() {
 				</div>
 			) : !catalog || !publication || !selectedVariation ? (
 				<SomethingWentWrong />
-			) : isMobile ? (
-				<Suspense
-					fallback={
-						<div className="w-100 h-100 ai-c d-f jc-c">
-							<CircularProgress />
-						</div>
-					}
-				>
-					<MobilePublication
-						publication={publication}
-						selectedVariation={selectedVariation}
-						imageUrls={preparedImageUrls}
-						selectedVariationIndex={itemVariationIndex}
-						onChangeSelectedVariationIndex={setItemVariationIndex}
-						availableItemIdsIsLoading={availableItemListIsLoading}
-						selectedVariationIsAvailable={selectedVariationIsAvailable}
-						cartItemListIsLoading={cartItemListIsLoading}
-						selectedVariationIsInCart={selectedVariationIsInCart}
-						onCartClick={handleCartClick}
-						favoriteItemListIsLoading={favoriteItemListIsLoading}
-						selectedVariationIsFavorite={selectedVariationIsFavorite}
-						onFavoriteClick={handleToggleFavorite}
-						trackedItemListIsLoading={trackedItemListIsLoading}
-						selectedVariationIsTracked={selectedVariationIsTracked}
-					/>
-					<SuggestedItems />
-				</Suspense>
 			) : (
-				<Suspense
-					fallback={
-						<div className="w-100 h-100 ai-c d-f jc-c">
-							<CircularProgress />
-						</div>
-					}
-				>
-					<DesktopPublication
-						publication={publication}
-						selectedVariation={selectedVariation}
-						imageUrls={preparedImageUrls}
-						selectedVariationIndex={itemVariationIndex}
-						onChangeSelectedVariationIndex={setItemVariationIndex}
-						availableItemIdsIsLoading={availableItemListIsLoading}
-						selectedVariationIsAvailable={selectedVariationIsAvailable}
-						cartItemListIsLoading={cartItemListIsLoading}
-						selectedVariationIsInCart={selectedVariationIsInCart}
-						onCartClick={handleCartClick}
-						favoriteItemListIsLoading={favoriteItemListIsLoading}
-						selectedVariationIsFavorite={selectedVariationIsFavorite}
-						onFavoriteClick={handleToggleFavorite}
-						trackedItemListIsLoading={trackedItemListIsLoading}
-						selectedVariationIsTracked={selectedVariationIsTracked}
-					/>
-					<SuggestedItems />
-				</Suspense>
+				<>
+					<Helmet>
+						<title>{selectedVariation.product.title} - SimpleGeek</title>
+						<meta name="description" content={selectedVariation.product.description || ""} />
+					</Helmet>
+					{isMobile ? (
+						<Suspense
+							fallback={
+								<div className="w-100 h-100 ai-c d-f jc-c">
+									<CircularProgress />
+								</div>
+							}
+						>
+							<MobilePublication
+								publication={publication}
+								selectedVariation={selectedVariation}
+								imageUrls={preparedImageUrls}
+								selectedVariationIndex={itemVariationIndex}
+								onChangeSelectedVariationIndex={setItemVariationIndex}
+								availableItemIdsIsLoading={availableItemListIsLoading}
+								selectedVariationIsAvailable={selectedVariationIsAvailable}
+								cartItemListIsLoading={cartItemListIsLoading}
+								selectedVariationIsInCart={selectedVariationIsInCart}
+								onCartClick={handleCartClick}
+								favoriteItemListIsLoading={favoriteItemListIsLoading}
+								selectedVariationIsFavorite={selectedVariationIsFavorite}
+								onFavoriteClick={handleToggleFavorite}
+								trackedItemListIsLoading={trackedItemListIsLoading}
+								selectedVariationIsTracked={selectedVariationIsTracked}
+							/>
+							<SimilarItems itemId={selectedVariation.id} />
+						</Suspense>
+					) : (
+						<Suspense
+							fallback={
+								<div className="w-100 h-100 ai-c d-f jc-c">
+									<CircularProgress />
+								</div>
+							}
+						>
+							<DesktopPublication
+								publication={publication}
+								selectedVariation={selectedVariation}
+								imageUrls={preparedImageUrls}
+								selectedVariationIndex={itemVariationIndex}
+								onChangeSelectedVariationIndex={setItemVariationIndex}
+								availableItemIdsIsLoading={availableItemListIsLoading}
+								selectedVariationIsAvailable={selectedVariationIsAvailable}
+								cartItemListIsLoading={cartItemListIsLoading}
+								selectedVariationIsInCart={selectedVariationIsInCart}
+								onCartClick={handleCartClick}
+								favoriteItemListIsLoading={favoriteItemListIsLoading}
+								selectedVariationIsFavorite={selectedVariationIsFavorite}
+								onFavoriteClick={handleToggleFavorite}
+								trackedItemListIsLoading={trackedItemListIsLoading}
+								selectedVariationIsTracked={selectedVariationIsTracked}
+							/>
+							<SimilarItems itemId={selectedVariation.id} />
+						</Suspense>
+					)}
+				</>
 			)}
 		</>
 	);

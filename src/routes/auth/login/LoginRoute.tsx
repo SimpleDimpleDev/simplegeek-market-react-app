@@ -8,6 +8,7 @@ import { UserAuthCard } from "@ory/elements";
 import { AppDispatch } from "@state/store";
 import { fetchUser } from "@state/user/thunks";
 import { useCallback, useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -123,53 +124,61 @@ export function Component() {
 	}, []);
 
 	// we check if the flow is set, if not we show a loading indicator
-	return flow ? (
-		// we render the login form using Ory Elements
-		<div className="gap-5 bg-primary p-3 pt-2 br-3 d-f fd-c">
-			<UserAuthCard
-				flowType={"login"}
-				// we always need the flow data which populates the form fields and error messages dynamically
-				flow={flow}
-				// the login card should allow the user to go to the registration page and the recovery page
-				additionalProps={{
-					forgotPasswordURL: {
-						handler: () => {
-							const search = new URLSearchParams();
-							if (flow.return_to) search.set("return_to", flow.return_to);
-							navigate(
-								{
-									pathname: "/auth/recovery",
-									search: search.toString(),
+	return (
+		<>
+			<Helmet>
+				<title>Вход - SimpleGeek</title>
+			</Helmet>
+			{flow ? (
+				// we render the login form using Ory Elements
+				<div className="gap-5 bg-primary p-3 pt-2 br-3 d-f fd-c">
+					<UserAuthCard
+						flowType={"login"}
+						// we always need the flow data which populates the form fields and error messages dynamically
+						flow={flow}
+						// the login card should allow the user to go to the registration page and the recovery page
+						additionalProps={{
+							forgotPasswordURL: {
+								handler: () => {
+									const search = new URLSearchParams();
+									if (flow.return_to) search.set("return_to", flow.return_to);
+									navigate(
+										{
+											pathname: "/auth/recovery",
+											search: search.toString(),
+										},
+										{ replace: true }
+									);
 								},
-								{ replace: true }
-							);
-						},
-					},
-					signupURL: {
-						handler: () => {
-							const search = new URLSearchParams();
-							if (flow.return_to) search.set("return_to", flow.return_to);
-							if (flow.oauth2_login_challenge) search.set("login_challenge", flow.oauth2_login_challenge);
+							},
+							signupURL: {
+								handler: () => {
+									const search = new URLSearchParams();
+									if (flow.return_to) search.set("return_to", flow.return_to);
+									if (flow.oauth2_login_challenge)
+										search.set("login_challenge", flow.oauth2_login_challenge);
 
-							navigate(
-								{
-									pathname: "/auth/registration",
-									search: search.toString(),
+									navigate(
+										{
+											pathname: "/auth/registration",
+											search: search.toString(),
+										},
+										{ replace: true }
+									);
 								},
-								{ replace: true }
-							);
-						},
-					},
-				}}
-				// we might need webauthn support which requires additional js
-				includeScripts={true}
-				// we submit the form data to Ory
-				onSubmit={({ body }) => submitFlow(body as UpdateLoginFlowBody)}
-			/>
-		</div>
-	) : (
-		<div className="w-100 h-100 ai-c d-f jc-c">
-			<CircularProgress />
-		</div>
+							},
+						}}
+						// we might need webauthn support which requires additional js
+						includeScripts={true}
+						// we submit the form data to Ory
+						onSubmit={({ body }) => submitFlow(body as UpdateLoginFlowBody)}
+					/>
+				</div>
+			) : (
+				<div className="w-100 h-100 ai-c d-f jc-c">
+					<CircularProgress />
+				</div>
+			)}
+		</>
 	);
 }

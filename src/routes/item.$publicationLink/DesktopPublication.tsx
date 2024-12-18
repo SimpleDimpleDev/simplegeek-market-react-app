@@ -1,13 +1,118 @@
-import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
-import { Box, Typography, Select, MenuItem, CircularProgress } from "@mui/material";
+import {
+	Box,
+	Typography,
+	Select,
+	MenuItem,
+	CircularProgress,
+	useMediaQuery,
+	Stack,
+	Divider,
+	Button,
+} from "@mui/material";
 import { PublicationProps } from "./types";
 import { PublicationAvailability } from "./Availability";
 import { PublicationActionButtons } from "./ActionButtons";
 import { useNavigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { ItemCreditInfo } from "@components/ItemCreditInfo";
+import { PageHeading } from "@components/PageHeading";
+import { PublicationGet } from "@appTypes/Publication";
+import { CatalogItemGet } from "@appTypes/CatalogItem";
 
 const ImageCarousel = lazy(() => import("./ImageCarousel"));
+
+interface VariationSelectProps {
+	publication: PublicationGet;
+	selectedVariationIndex: number;
+	onChangeSelectedVariationIndex: (index: number) => void;
+}
+
+const VariationSelect: React.FC<VariationSelectProps> = ({
+	publication,
+	selectedVariationIndex,
+	onChangeSelectedVariationIndex,
+}) => {
+	return (
+		<>
+			{publication.items.length !== 1 && (
+				<Box display="flex" flexDirection="column" gap={2}>
+					<Typography variant="h5">Вариация</Typography>
+					<Select
+						fullWidth
+						variant="outlined"
+						sx={{ backgroundColor: "surface.primary" }}
+						value={selectedVariationIndex}
+						onChange={(event) => {
+							onChangeSelectedVariationIndex(event.target.value as number);
+						}}
+					>
+						{publication.items.map((itemVariation, index) => (
+							<MenuItem key={index} value={index}>
+								{itemVariation.product.title}
+							</MenuItem>
+						))}
+					</Select>
+				</Box>
+			)}
+		</>
+	);
+};
+
+interface AttributesSectionProps {
+	selectedVariation: CatalogItemGet;
+}
+const AttributesSection: React.FC<AttributesSectionProps> = ({ selectedVariation }) => {
+	const navigate = useNavigate();
+	const sortedFilterGroups = [...selectedVariation.product.filterGroups].sort(
+		(a, b) => a.title.localeCompare(b.title),
+	)
+	return (
+		<>
+			{sortedFilterGroups.length !== 0 && (
+				<Box display={"flex"} flexDirection={"column"} gap={1}>
+					<Typography variant="h5">О товаре</Typography>
+					<Stack direction="column" divider={<Divider />} spacing={1}>
+						{sortedFilterGroups
+							.map((filterGroup, filterGroupIndex) => (
+								<Box
+									key={filterGroupIndex}
+									display="flex"
+									flexDirection="column"
+									justifyContent={"space-between"}
+								>
+									<Typography variant="body1">{filterGroup.title}</Typography>
+									<Box display="flex" flexDirection="row" flexWrap={"wrap"} gap={1}>
+										{filterGroup.filters.map((filter, index) => (
+											<Button
+												key={index}
+												variant="text"
+												color="warning"
+												onClick={() => {
+													navigate(`/?f[]=${filterGroup.id}:${filter.id}`);
+												}}
+												sx={{
+													width: "max-content",
+													overflow: "hidden",
+													textOverflow: "ellipsis",
+													WebkitLineClamp: 1,
+													display: "-webkit-box",
+													WebkitBoxOrient: "vertical",
+													maxWidth: "100%",
+													minWidth: 0,
+												}}
+											>
+												{filter.value}
+											</Button>
+										))}
+									</Box>
+								</Box>
+							))}
+					</Stack>
+				</Box>
+			)}
+		</>
+	);
+};
 
 const DesktopPublication: React.FC<PublicationProps> = ({
 	publication,
@@ -31,21 +136,11 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 	trackedItemListIsLoading,
 	selectedVariationIsTracked,
 }) => {
-	const navigate = useNavigate();
-
+	const isTablet = useMediaQuery("(max-width: 1442px)");
 	return (
 		<>
-			<BreadcrumbsPageHeader
-				isMobile={false}
-				path={[
-					{
-						title: "Главная",
-						link: "/",
-					},
-				]}
-				current={selectedVariation.product.title}
-			/>
-			<Box display="flex" flexDirection="row" gap={3} paddingBottom={3} justifyContent={"space-between"}>
+			<PageHeading title={selectedVariation.product.title} />
+			<Box display="flex" flexDirection="row" justifyContent={"space-between"}>
 				<Box display="flex" flexDirection="column" gap={2}>
 					<Suspense
 						fallback={
@@ -54,62 +149,27 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 							</div>
 						}
 					>
-						<ImageCarousel isMobile={false} imageUrls={imageUrls} />
+						<ImageCarousel imageUrls={imageUrls} />
 					</Suspense>
 				</Box>
-
-				<Box width={360} display="flex" flexDirection="column" gap={3}>
-					{publication.items.length !== 1 && (
-						<Box display="flex" flexDirection="column" gap={2}>
-							<Typography variant="h5">Вариация</Typography>
-							<Select
-								fullWidth
-								variant="outlined"
-								sx={{ backgroundColor: "surface.primary" }}
-								value={selectedVariationIndex}
-								onChange={(event) => {
-									onChangeSelectedVariationIndex(event.target.value as number);
-								}}
-							>
-								{publication.items.map((itemVariation, index) => (
-									<MenuItem key={index} value={index}>
-										{itemVariation.product.title}
-									</MenuItem>
-								))}
-							</Select>
-						</Box>
-					)}
-					{selectedVariation.product.filterGroups.length !== 0 && (
-						<Box display={"flex"} flexDirection={"column"} gap={2}>
-							<Typography variant="h5">О товаре</Typography>
-							{selectedVariation.product.filterGroups.map((filterGroup) =>
-								filterGroup.filters.map((filter, index) => (
-									<Box
-										key={index}
-										display="flex"
-										flexDirection="row"
-										justifyContent={"space-between"}
-									>
-										<Typography variant="body1" color="typography.secondary">
-											{filterGroup.title}
-										</Typography>
-										<Typography
-											variant="body1"
-											color="warning.main"
-											onClick={() => {
-												navigate(`/?f[]=${filterGroup.id}:${filter.id}`);
-											}}
-										>
-											{filter.value}
-										</Typography>
-									</Box>
-								))
-							)}
-						</Box>
-					)}
-				</Box>
-
+				{!isTablet && (
+					<Box display="flex" flexDirection="column" gap={3} width={360} flexShrink={0}>
+						<VariationSelect
+							publication={publication}
+							selectedVariationIndex={selectedVariationIndex}
+							onChangeSelectedVariationIndex={onChangeSelectedVariationIndex}
+						/>
+						<AttributesSection selectedVariation={selectedVariation} />
+					</Box>
+				)}
 				<Box display="flex" flexDirection="column" gap={3} width={360} flexShrink={0}>
+					{isTablet && (
+						<VariationSelect
+							publication={publication}
+							selectedVariationIndex={selectedVariationIndex}
+							onChangeSelectedVariationIndex={onChangeSelectedVariationIndex}
+						/>
+					)}
 					<Box position={"sticky"} top={24} display={"flex"} flexDirection={"column"} gap={2}>
 						<Box
 							display="flex"
@@ -153,7 +213,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 					</Box>
 				</Box>
 			</Box>
-			<Box display="flex" flexDirection="column" paddingTop={3} paddingBottom={3} gap={3}>
+			<Box component={"section"} display="flex" flexDirection="column" paddingTop={3} paddingBottom={3} gap={2}>
 				<Typography variant="h5">Описание</Typography>
 				<Typography variant="body1" color="typography.secondary">
 					{selectedVariation.product.description}

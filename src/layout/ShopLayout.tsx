@@ -1,5 +1,5 @@
-import { Button, CircularProgress, Modal, Typography } from "@mui/material";
-import { lazy, Suspense, useState } from "react";
+import { CircularProgress } from "@mui/material";
+import { lazy, Suspense } from "react";
 import { ScrollRestoration } from "react-router-dom";
 import { useIsMobile } from "src/hooks/useIsMobile";
 
@@ -12,7 +12,6 @@ const DesktopFooter = lazy(() => import("./footer/DesktopFooter"));
 
 export default function ShopLayout() {
 	const isMobile = useIsMobile();
-	const [showWarning, setShowWarning] = useState(true);
 	return (
 		<div className="d-f fd-c" style={{ height: "100vh" }}>
 			<div className="d-f fd-c" style={{ minHeight: "101vh" }}>
@@ -23,19 +22,6 @@ export default function ShopLayout() {
 						</div>
 					}
 				>
-					{showWarning && (
-						<Modal open={showWarning} onClose={() => setShowWarning(false)}>
-							<div className="bg-primary w-100 h-100 ai-c br-2 d-f jc-c">
-								<Typography variant="h2">Сайт в разработке</Typography>
-								<Button
-									sx={{ position: "absolute", top: 16, right: 16, opacity: 0 }}
-									onClick={() => setShowWarning(false)}
-								>
-									AHOI
-								</Button>
-							</div>
-						</Modal>
-					)}
 					{isMobile ? (
 						<>
 							<MobileHeader />

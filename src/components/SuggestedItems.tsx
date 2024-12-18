@@ -14,6 +14,7 @@ import { useMemo } from "react";
 import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
 import { useGetTrackedItemListQuery } from "@api/shop/tracked";
 import SomethingWentWrong from "./SomethingWentWrong";
+import { useSuggestedItems } from "src/hooks/useSuggestedItems";
 
 const responsive = {
 	desktop: {
@@ -57,7 +58,11 @@ const RightButton = ({ onClick, ...rest }: ArrowProps) => (
 	</ScrollButton>
 );
 
-export default function SuggestedItems() {
+type SuggestedItemsProps = {
+	excludeItemIds?: string[];
+};
+
+export default function SuggestedItems({ excludeItemIds }: SuggestedItemsProps) {
 	const isMobile = useIsMobile();
 
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
@@ -106,6 +111,19 @@ export default function SuggestedItems() {
 		return idSet;
 	}, [trackedItemList]);
 
+	const availableItems = useMemo(() => {
+		return catalog?.items.filter((item) => availableItemIds?.has(item.id));
+	}, [catalog, availableItemIds]);
+
+	const { suggestedItems } = useSuggestedItems({
+		catalogItems: availableItems || [],
+		excludeItemIds: excludeItemIds || [],
+	});
+
+	if (!catalogIsLoading && !suggestedItems.length) {
+		return null;
+	}
+
 	return (
 		<Box padding={"40px 0 24px 0"} width={"100%"} gap={3}>
 			{catalogIsLoading ? (
@@ -116,27 +134,32 @@ export default function SuggestedItems() {
 				<SomethingWentWrong />
 			) : (
 				<>
-					<Typography variant="h5">Также может понравится</Typography>
+					<Typography variant="h5" sx={{ mb: 2 }}>
+						Также может понравится
+					</Typography>
 					<Carousel
 						responsive={responsive}
 						swipeable={isMobile}
 						draggable={isMobile}
+						minimumTouchDrag={25}
 						deviceType={isMobile ? "mobile" : "desktop"}
 						customLeftArrow={<LeftButton />}
 						customRightArrow={<RightButton />}
 					>
-						{catalog.items.map((item) => (
-							<ItemCard
-								data={item}
-								isAvailable={availableItemIds?.has(item.id)}
-								availabilityIsLoading={availabilityIsLoading}
-								isInCart={cartItemIds?.has(item.id)}
-								cartItemListIsLoading={cartItemListIsLoading}
-								isFavorite={favoriteItemIds?.has(item.id)}
-								favoriteItemListIsLoading={favoriteItemListIsLoading}
-								isTracked={trackedItemIds?.has(item.id)}
-								trackedItemListIsLoading={trackedItemListIsLoading}
-							/>
+						{suggestedItems.map((item) => (
+							<div className="w-100 h-100 ai-c d-f jc-c" key={item.id}>
+								<ItemCard
+									data={item}
+									isAvailable={availableItemIds?.has(item.id)}
+									availabilityIsLoading={availabilityIsLoading}
+									isInCart={cartItemIds?.has(item.id)}
+									cartItemListIsLoading={cartItemListIsLoading}
+									isFavorite={favoriteItemIds?.has(item.id)}
+									favoriteItemListIsLoading={favoriteItemListIsLoading}
+									isTracked={trackedItemIds?.has(item.id)}
+									trackedItemListIsLoading={trackedItemListIsLoading}
+								/>
+							</div>
 						))}
 					</Carousel>
 				</>

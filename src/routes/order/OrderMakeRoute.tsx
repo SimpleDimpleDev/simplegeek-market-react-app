@@ -4,6 +4,11 @@ import {
 	Button,
 	Checkbox,
 	CircularProgress,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 	Divider,
 	FormControlLabel,
 	IconButton,
@@ -12,7 +17,7 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { useNavigate, useSubmit } from "react-router-dom";
+import { Link, useNavigate, useSubmit } from "react-router-dom";
 
 import { getRuGoodsWord } from "@utils/format";
 import { useEffect, useMemo, useState } from "react";
@@ -37,6 +42,12 @@ import mainLogoSmall from "@assets/MainLogoSmall.webp";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { isExpectedApiError } from "@utils/api";
 
+import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
+import { phoneOnlyCountries } from "@config/phone";
+import { Helmet } from "react-helmet";
+import { PageHeading } from "@components/PageHeading";
+import { useGetCartItemListQuery } from "@api/shop/cart";
+
 type DeliveryFormData = {
 	recipient: Recipient;
 	service: DeliveryService | null;
@@ -49,11 +60,11 @@ const DeliveryFormResolver = z
 		recipient: z.object({
 			fullName: z.string({ message: "Укажите ФИО" }).min(2, "ФИО должно быть не менее 2 символов"),
 			phone: z
-				.string({ message: "Укажите номер телефона" })
-				.regex(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/, {
+				.string()
+				.min(1, { message: "Укажите номер телефона" })
+				.refine((value) => matchIsValidTel(value, { onlyCountries: phoneOnlyCountries }), {
 					message: "Неверный номер телефона",
-				})
-				.min(10, "Номер телефона должен быть не менее 10 символов"),
+				}),
 		}),
 		service: z.enum(["SELF_PICKUP", "CDEK"], { message: "Укажите способ доставки" }),
 		point: z
@@ -81,6 +92,7 @@ export function Component() {
 	const submit = useSubmit();
 	const navigate = useNavigate();
 
+	const { refetch: refetchCart } = useGetCartItemListQuery();
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 	const { data: checkoutItemList, isLoading: checkoutItemListIsLoading } = useGetCheckoutItemsQuery(void 0, {
 		refetchOnMountOrArgChange: true,
@@ -139,11 +151,20 @@ export function Component() {
 	}, [userSavedDelivery, reset]);
 
 	const service = watch("service");
+	const deliveryPoint = watch("point");
 	const cdekDeliveryData = watch("cdekDeliveryData");
+
+	useEffect(() => {
+		setValue("point", null);
+		setValue("cdekDeliveryData", null);
+	}, [service, setValue]);
 
 	const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
 
 	const [saveDelivery, setSaveDelivery] = useState(true);
+
+	const [errorPaymentErrorDialogOpen, setPaymentErrorDialogOpen] = useState(false);
+	const [paymentError, setPaymentError] = useState<{ message: string; orderId: string } | null>(null);
 
 	useEffect(() => {
 		if (userSavedDelivery) {
@@ -185,23 +206,24 @@ export function Component() {
 						}
 						messageString = orderMakeError.data.message;
 						const detailsJSON = JSON.stringify(details);
-						console.log("OrderItemsError", { messageString, detailsJSON });
+						console.debug("OrderItemsError", { messageString, detailsJSON });
 						submit({ message: messageString, details: detailsJSON }, { action: "/cart", method: "post" });
 						break;
 					}
 					case "PaymentInitError": {
-						let orderId: string | undefined;
 						const message = orderMakeError.data.message;
-						if (orderMakeError.data.details) {
-							orderId = orderMakeError.data.details[0];
-						}
-						console.log("PaymentInitError", { message, orderId });
+						const details = orderMakeError.data.details as string[];
+						const orderId = details[0] as string;
+						setPaymentError({ message, orderId });
+						setPaymentErrorDialogOpen(true);
+						console.debug("PaymentInitError", { message, orderId });
 						break;
 					}
 				}
 			}
+			refetchCart();
 		}
-	}, [orderMakeIsError, orderMakeError, submit]);
+	}, [orderMakeIsError, orderMakeError, submit, refetchCart]);
 
 	const orderItems = useMemo(() => {
 		if (!catalog) return [];
@@ -272,6 +294,9 @@ export function Component() {
 
 	return (
 		<>
+			<Helmet>
+				<title>Оформление заказа - SimpleGeek</title>
+			</Helmet>
 			{catalogIsLoading || checkoutItemListIsLoading || userSavedDeliveryIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
@@ -280,6 +305,34 @@ export function Component() {
 				<SomethingWentWrong />
 			) : (
 				<>
+					<Dialog
+						open={errorPaymentErrorDialogOpen}
+						onClose={() => setPaymentErrorDialogOpen(false)}
+						aria-labelledby="error-dialog-title"
+						aria-describedby="error-dialog-description"
+					>
+						{paymentError && (
+							<>
+								<DialogTitle id="error-dialog-title">Ошибка оплаты</DialogTitle>
+								<DialogContent>
+									<DialogContentText id="error-dialog-description">
+										{paymentError.message}
+										<br />
+										Повторите оплату на странице заказа. При повторной ошибке свяжитесь с
+										администратором.
+									</DialogContentText>
+								</DialogContent>
+								<DialogActions>
+									<Button
+										variant="contained"
+										onClick={() => navigate(`/orders/${paymentError.orderId}`)}
+									>
+										К заказу
+									</Button>
+								</DialogActions>
+							</>
+						)}
+					</Dialog>
 					<Modal
 						open={cdekWidgetOpen}
 						onClose={() => setCdekWidgetOpen(false)}
@@ -332,9 +385,7 @@ export function Component() {
 							<Typography color="inherit">Назад в корзину</Typography>
 						</Button>
 
-						<Box padding={"16px 0"}>
-							<Typography variant={isMobile ? "h4" : "h3"}>Оформление заказа</Typography>
-						</Box>
+						<PageHeading title={"Оформление заказа"} />
 
 						<form
 							onSubmit={handleSubmit(handleCreateStockOrder)}
@@ -353,7 +404,6 @@ export function Component() {
 													isChecked={service === "SELF_PICKUP"}
 													onChange={() => setValue("service", "SELF_PICKUP")}
 													mainText={"Самовывоз"}
-													subText={"Оплата при получении"}
 													imgUrl={mainLogoSmall}
 												/>
 
@@ -361,7 +411,7 @@ export function Component() {
 													isChecked={service === "CDEK"}
 													onChange={() => setValue("service", "CDEK")}
 													mainText={"СДЭК"}
-													subText={"Оплата доставки при получении"}
+													subText={"Оплата доставки при получении в пункте выдачи."}
 													imgUrl={cdekLogo}
 												/>
 											</Box>
@@ -369,22 +419,30 @@ export function Component() {
 											{service === "SELF_PICKUP" && (
 												<Box display={"flex"} flexDirection={"column"} gap={"8px"}>
 													<Typography variant="h6">Самовывоз</Typography>
+													<Typography>
+														г. Москва, м. Красные Ворота, ул. Новая Басманная, д.12, с2
+														(выход из метро №2)
+														<br />
+														Время работы: пн-пт 13:00 - 21:00
+													</Typography>
 												</Box>
 											)}
 
 											{service === "CDEK" && (
 												<Box display={"flex"} flexDirection={"column"} gap={"8px"}>
-													{cdekDeliveryData ? (
+													{deliveryPoint && !cdekDeliveryData ? (
+														<Typography>
+															{deliveryPoint.address} - {deliveryPoint.code}
+														</Typography>
+													) : cdekDeliveryData ? (
 														<CDEKDeliveryInfo {...cdekDeliveryData} />
 													) : (
 														<Typography variant="h6">Адрес не выбран</Typography>
 													)}
 
 													<Button
-														variant="text"
-														color="warning"
-														size="medium"
-														sx={{ width: "fit-content", padding: 0, color: "warning.main" }}
+														variant="contained"
+														sx={{ width: "fit-content" }}
 														onClick={() => setCdekWidgetOpen(true)}
 													>
 														{cdekDeliveryData ? "Изменить" : "Выбрать"}
@@ -406,19 +464,27 @@ export function Component() {
 										<div>
 											<Typography variant="h5">Получатель</Typography>
 											<div
-												className="gap-1 ai-c d-f"
-												style={{ flexDirection: isMobile ? "column" : "row" }}
+												className="gap-1 ai-bl d-f"
+												style={{
+													flexDirection: isMobile ? "column" : "row",
+													paddingTop: isMobile ? "16px" : 0,
+												}}
 											>
 												<Controller
 													name="recipient.phone"
 													control={control}
-													render={({ field, fieldState: { error } }) => (
-														<TextField
-															{...field}
-															label="Номер телефона"
-															variant="outlined"
+													render={({
+														field: { value, ...fieldProps },
+														fieldState: { error },
+													}) => (
+														<MuiTelInput
+															{...fieldProps}
 															fullWidth
-															margin="normal"
+															label="Номер телефона"
+															defaultCountry={"RU"}
+															onlyCountries={phoneOnlyCountries}
+															langOfCountryName="RU"
+															value={value}
 															error={!!error}
 															helperText={error?.message}
 														/>
@@ -450,7 +516,7 @@ export function Component() {
 													onChange={(e) => setSaveDelivery(e.target.checked)}
 												/>
 											}
-											label="Сохранить адрес доставки"
+											label={`${userSavedDelivery ? "Обновить" : "Сохранить"} адрес доставки`}
 										/>
 									</div>
 								) : (
@@ -563,6 +629,11 @@ export function Component() {
 											Оплатить
 										</Button>
 									)}
+									<Typography variant="caption">
+										Ваши личные данные будут использоваться для обработки заказов, упрощения работы
+										с сайтом и для других целей, описанных в нашей{" "}
+										{<Link to={"/policy"}>политике конфиденциальности.</Link>}
+									</Typography>
 								</Box>
 							</Box>
 						</form>

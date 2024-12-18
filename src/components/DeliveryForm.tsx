@@ -8,10 +8,13 @@ import { CardRadio } from "./CardRadio";
 import { Close } from "@mui/icons-material";
 import cdekLogo from "@assets/SdekLogo.webp";
 import mainLogoSmall from "@assets/MainLogoSmall.webp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DeliverySchema } from "@schemas/Delivery";
+
+import { MuiTelInput, matchIsValidTel } from "mui-tel-input";
+import { phoneOnlyCountries } from "@config/phone";
 
 type DeliveryFormData = {
 	recipient: Recipient;
@@ -25,11 +28,11 @@ const DeliveryFormResolver = z
 		recipient: z.object({
 			fullName: z.string({ message: "Укажите ФИО" }).min(2, "ФИО должно быть не менее 2 символов"),
 			phone: z
-				.string({ message: "Укажите номер телефона" })
-				.regex(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/, {
+				.string()
+				.min(1, { message: "Укажите номер телефона" })
+				.refine((value) => matchIsValidTel(value, { onlyCountries: phoneOnlyCountries }), {
 					message: "Неверный номер телефона",
-				})
-				.min(10, "Номер телефона должен быть не менее 10 символов"),
+				}),
 		}),
 		service: z.enum(["SELF_PICKUP", "CDEK"], { message: "Укажите способ доставки" }),
 		point: z
@@ -61,7 +64,14 @@ interface DeliveryFormProps {
 	onChange: (data: z.infer<typeof DeliverySchema>) => void;
 }
 
-const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, packages, defaultEditing, canModify, onChange }) => {
+const DeliveryForm: React.FC<DeliveryFormProps> = ({
+	isMobile,
+	delivery,
+	packages,
+	defaultEditing,
+	canModify,
+	onChange,
+}) => {
 	const {
 		control,
 		watch,
@@ -90,16 +100,21 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 	});
 
 	const service = watch("service");
+	const deliveryPoint = watch("point");
 	const cdekDeliveryData = watch("cdekDeliveryData");
 
 	const [isEditing, setIsEditing] = useState(defaultEditing);
 	const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
 
+	useEffect(() => {
+		if (delivery) {
+			reset(delivery);
+		}
+	}, [reset, delivery]);
+
 	const handleSave = (data: DeliveryFormData) => {
 		onChange(DeliverySchema.parse(data));
 		setIsEditing(false);
-		// TODO: update externally
-		reset(DeliverySchema.parse(data));
 	};
 
 	const handleStopEditing = () => {
@@ -112,7 +127,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 		setValue("point", {
 			code: data.address.code,
 			address: `${data.address.city}, ${data.address.address}`,
-		})
+		});
 		setCdekWidgetOpen(false);
 	};
 
@@ -153,12 +168,14 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 						}}
 						onReady={() => {}}
 						// TODO: mass vs weight
-						packages={packages?.map((pkg) => ({
-							width: pkg.width,
-							height: pkg.height,
-							length: pkg.length,
-							weight: pkg.weight,
-						})) || []}
+						packages={
+							packages?.map((pkg) => ({
+								width: pkg.width,
+								height: pkg.height,
+								length: pkg.length,
+								weight: pkg.weight,
+							})) || []
+						}
 					/>
 				</Box>
 			</Modal>
@@ -171,7 +188,6 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 							disabled={!isEditing}
 							onChange={() => setValue("service", "SELF_PICKUP")}
 							mainText={"Самовывоз"}
-							subText={"Оплата при получении"}
 							imgUrl={mainLogoSmall}
 						/>
 
@@ -180,7 +196,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 							disabled={!isEditing}
 							onChange={() => setValue("service", "CDEK")}
 							mainText={"СДЭК"}
-							subText={"Оплата доставки при получении"}
+							subText={"Оплата доставки при получении в пункте выдачи."}
 							imgUrl={cdekLogo}
 						/>
 					</Box>
@@ -193,17 +209,19 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 
 					{service === "CDEK" && (
 						<Box display={"flex"} flexDirection={"column"} gap={"8px"}>
-							{cdekDeliveryData ? (
+							{deliveryPoint && !cdekDeliveryData ? (
+								<Typography>
+									{deliveryPoint.address} - {deliveryPoint.code}
+								</Typography>
+							) : cdekDeliveryData ? (
 								<CDEKDeliveryInfo {...cdekDeliveryData} />
 							) : (
 								<Typography variant="h6">Адрес не выбран</Typography>
 							)}
 							{isEditing && (
 								<Button
-									variant="text"
-									color="warning"
-									size="medium"
-									sx={{ width: "fit-content", padding: 0, color: "warning.main" }}
+									variant="contained"
+									sx={{ width: "fit-content" }}
 									onClick={() => setCdekWidgetOpen(true)}
 								>
 									{cdekDeliveryData ? "Изменить" : "Выбрать"}
@@ -225,18 +243,26 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 
 				<div>
 					<Typography variant="h5">Получатель</Typography>
-					<div className="gap-1 ai-c d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
+					<div
+						className="gap-1 ai-bl d-f"
+						style={{
+							flexDirection: isMobile ? "column" : "row",
+							paddingTop: isMobile ? "16px" : 0,
+						}}
+					>
 						<Controller
 							name="recipient.phone"
 							control={control}
-							render={({ field, fieldState: { error } }) => (
-								<TextField
-									{...field}
+							render={({ field: { value, ...fieldProps }, fieldState: { error } }) => (
+								<MuiTelInput
+									{...fieldProps}
 									disabled={!isEditing}
-									label="Номер телефона"
-									variant="outlined"
 									fullWidth
-									margin="normal"
+									label="Номер телефона"
+									defaultCountry={"RU"}
+									onlyCountries={phoneOnlyCountries}
+									langOfCountryName="RU"
+									value={value}
 									error={!!error}
 									helperText={error?.message}
 								/>
@@ -284,17 +310,19 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({ isMobile, delivery, package
 							</Button>
 						)}
 					</div>
-				) : canModify && (
-					<>
-						<Button
-							sx={{ width: "max-content" }}
-							onClick={() => setIsEditing(true)}
-							variant="contained"
-							color="primary"
-						>
-							Изменить
-						</Button>
-					</>
+				) : (
+					canModify && (
+						<>
+							<Button
+								sx={{ width: "max-content" }}
+								onClick={() => setIsEditing(true)}
+								variant="contained"
+								color="primary"
+							>
+								Изменить
+							</Button>
+						</>
+					)
 				)}
 			</form>
 		</>

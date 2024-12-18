@@ -1,10 +1,67 @@
-import { Box, Typography, NativeSelect } from "@mui/material";
+import { Box, Typography, NativeSelect, Button, Divider, Stack } from "@mui/material";
 import ImageCarousel from "./ImageCarousel";
 import { useNavigate } from "react-router-dom";
 import { PublicationAvailability } from "./Availability";
 import { PublicationActionButtons } from "./ActionButtons";
 import { PublicationProps } from "./types";
 import { ItemCreditInfo } from "@components/ItemCreditInfo";
+import { PageHeading } from "@components/PageHeading";
+import { CatalogItemGet } from "@appTypes/CatalogItem";
+
+interface AttributesSectionProps {
+	selectedVariation: CatalogItemGet;
+}
+const AttributesSection: React.FC<AttributesSectionProps> = ({ selectedVariation }) => {
+	const navigate = useNavigate();
+	const sortedFilterGroups = [...selectedVariation.product.filterGroups].sort((a, b) =>
+		a.title.localeCompare(b.title)
+	);
+	return (
+		<>
+			{sortedFilterGroups.length !== 0 && (
+				<Box display={"flex"} flexDirection={"column"} paddingTop={3} gap={1}>
+					<Typography variant="h6">О товаре</Typography>
+					<Stack direction="column" divider={<Divider />} spacing={1}>
+						{sortedFilterGroups.map((filterGroup, filterGroupIndex) => (
+							<Box
+								key={filterGroupIndex}
+								display="flex"
+								flexDirection="column"
+								justifyContent={"space-between"}
+							>
+								<Typography variant="body1">{filterGroup.title}</Typography>
+								<Box display="flex" flexDirection="row" flexWrap={"wrap"} gap={1}>
+									{filterGroup.filters.map((filter, index) => (
+										<Button
+											key={index}
+											variant="text"
+											color="warning"
+											onClick={() => {
+												navigate(`/?f[]=${filterGroup.id}:${filter.id}`);
+											}}
+											sx={{
+												width: "max-content",
+												overflow: "hidden",
+												textOverflow: "ellipsis",
+												WebkitLineClamp: 1,
+												display: "-webkit-box",
+												WebkitBoxOrient: "vertical",
+												maxWidth: "100%",
+												minWidth: 0,
+											}}
+										>
+											{filter.value}
+										</Button>
+									))}
+								</Box>
+							</Box>
+						))}
+					</Stack>
+				</Box>
+			)}
+		</>
+	);
+};
 
 const MobilePublication: React.FC<PublicationProps> = ({
 	publication,
@@ -28,16 +85,12 @@ const MobilePublication: React.FC<PublicationProps> = ({
 	trackedItemListIsLoading,
 	selectedVariationIsTracked,
 }) => {
-	const navigate = useNavigate();
-
 	return (
 		<>
-			<Box display="flex" flexDirection="column" width="100%" gap={2}>
-				<ImageCarousel isMobile={true} imageUrls={imageUrls} />
+			<Box display="flex" flexDirection="column" width="100%" alignItems={"center"} gap={2}>
+				<ImageCarousel imageUrls={imageUrls} />
 			</Box>
-			<Box paddingTop={3} paddingBottom={2}>
-				<Typography variant="h5">{selectedVariation.product.title}</Typography>
-			</Box>
+			<PageHeading title={selectedVariation.product.title} />
 			<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={2}>
 				{publication.items.length !== 1 && (
 					<Box display="flex" flexDirection="column" gap={2}>
@@ -100,31 +153,9 @@ const MobilePublication: React.FC<PublicationProps> = ({
 
 				{selectedVariation.creditInfo && <ItemCreditInfo creditInfo={selectedVariation.creditInfo} />}
 
-				{selectedVariation.product.filterGroups.length !== 0 && (
-					<Box display="flex" flexDirection="column" paddingTop={4} gap={2}>
-						<Typography variant="h6">О товаре</Typography>
-						{selectedVariation.product.filterGroups.map((filterGroup) =>
-							filterGroup.filters.map((filter, index) => (
-								<Box key={index} display="flex" flexDirection="row" justifyContent={"space-between"}>
-									<Typography variant="body1" color="typography.secondary">
-										{filterGroup.title}
-									</Typography>
-									<Typography
-										variant="body1"
-										color="warning.main"
-										onClick={() => {
-											navigate(`/?f[]=${filterGroup.id}:${filter.id}`);
-										}}
-									>
-										{filter.value}
-									</Typography>
-								</Box>
-							))
-						)}
-					</Box>
-				)}
+				<AttributesSection selectedVariation={selectedVariation} />
 
-				<Box display="flex" flexDirection="column" paddingTop={4} gap={3}>
+				<Box component={"section"} display="flex" flexDirection="column" paddingTop={4} gap={3}>
 					<Typography variant="h6">Описание</Typography>
 					<Typography variant="body1" color="typography.secondary">
 						{selectedVariation.product.description}

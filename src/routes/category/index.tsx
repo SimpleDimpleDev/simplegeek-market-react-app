@@ -1,8 +1,9 @@
 import { useGetCatalogQuery } from "@api/shop/catalog";
-import BreadcrumbsPageHeader from "@components/BreadcrumbsPageHeader";
+import { PageHeading } from "@components/PageHeading";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { CircularProgress, Grid2, Typography } from "@mui/material";
 import { getImageUrl } from "@utils/image";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "src/hooks/useIsMobile";
 
@@ -12,6 +13,9 @@ export function Component() {
 
 	return (
 		<>
+			<Helmet>
+				<title>Категории - SimpleGeek</title>
+			</Helmet>
 			{catalogIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
@@ -30,11 +34,7 @@ export function Component() {
 							width: "100%",
 						}}
 					>
-						<BreadcrumbsPageHeader
-							isMobile={isMobile}
-							path={[{ title: "Каталог", link: "/" }]}
-							current="Категории"
-						/>
+						<PageHeading title="Категории" />
 					</div>
 					<div className="h-100">
 						<Grid2 container spacing={2}>
