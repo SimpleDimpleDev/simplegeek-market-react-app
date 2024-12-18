@@ -4,8 +4,10 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm install
 COPY . .
-ARG SHOP_API_URL=https://api.simplegeek.ru/api
-ARG AUTH_API_URL=https://auth.simplegeek.ru
+ARG SHOP_API_URL
+ARG AUTH_API_URL
+ARG CATALOG_POLLING_INTERVAL=60000
+ARG AVAILABILITY_POLLING_INTERVAL=10000
 RUN npm run build
 
 # Nginx server
