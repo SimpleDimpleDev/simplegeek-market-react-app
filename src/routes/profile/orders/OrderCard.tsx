@@ -49,7 +49,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 				{order.status === "UNPAID" && order.initialInvoice?.expiresAt && (
 					<div className="gap-1 d-f fd-c">
 						<Typography variant="subtitle1">
-							В случае неоплаты заказ отменится через 15 минут после оформления.
+							В случае неоплаты заказ отменится через 3 часа после оформления.
 						</Typography>
 					</div>
 				)}
