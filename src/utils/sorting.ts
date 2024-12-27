@@ -23,8 +23,15 @@ export const getSortedItems = (
 	availableItemIds: Set<string>,
 	sorting: Sorting
 ): CatalogItem[] => {
-	const availableItems = [...items].filter((item) => availableItemIds.has(item.id));
-	const unavailableItems = [...items].filter((item) => !availableItemIds.has(item.id));
+	let newSortedItems;
+	if (sorting !== "new") {
+		newSortedItems = [...items].sort((a, b) => sortFunction(a, b, "new"));
+	} else {
+		newSortedItems = [...items];
+	}
+
+	const availableItems = [...newSortedItems].filter((item) => availableItemIds.has(item.id));
+	const unavailableItems = [...newSortedItems].filter((item) => !availableItemIds.has(item.id));
 
 	const sortedAvailableItems = availableItems.sort((a, b) => sortFunction(a, b, sorting));
 	const sortedUnavailableItems = unavailableItems.sort((a, b) => sortFunction(a, b, sorting));
