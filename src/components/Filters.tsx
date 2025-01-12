@@ -26,6 +26,8 @@ interface FilterGroupProps {
 const FilterGroup = ({ data, checkedFiltersIds, onToggleFilter, defaultExpanded = false }: FilterGroupProps) => {
 	const [expanded, setExpanded] = useState(defaultExpanded ? true : checkedFiltersIds.length > 0);
 
+	const filters = [...data.filters];
+
 	return (
 		<>
 			<ListItemButton key={data.title} onClick={() => setExpanded(!expanded)}>
@@ -34,27 +36,29 @@ const FilterGroup = ({ data, checkedFiltersIds, onToggleFilter, defaultExpanded 
 			</ListItemButton>
 			<Collapse mountOnEnter unmountOnExit orientation="vertical" in={expanded}>
 				<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper", padding: 0 }}>
-					{data.filters.map((filter) => {
-						return (
-							<ListItem key={filter.id} disablePadding>
-								<ListItemButton
-									role={undefined}
-									onClick={() => onToggleFilter(data.id, filter.id)}
-									sx={{ height: 42, padding: 0 }}
-								>
-									<Checkbox
-										checked={checkedFiltersIds.includes(filter.id)}
-										tabIndex={-1}
-										disableRipple
-										color="warning"
-									/>
-									<div className="gap-0.5 ai-c d-f fd-r">
-										<Typography variant="body1">{filter.value}</Typography>
-									</div>
-								</ListItemButton>
-							</ListItem>
-						);
-					})}
+					{filters
+						.sort((a, b) => a.value.localeCompare(b.value))
+						.map((filter) => {
+							return (
+								<ListItem key={filter.id} disablePadding>
+									<ListItemButton
+										role={undefined}
+										onClick={() => onToggleFilter(data.id, filter.id)}
+										sx={{ height: 42, padding: 0 }}
+									>
+										<Checkbox
+											checked={checkedFiltersIds.includes(filter.id)}
+											tabIndex={-1}
+											disableRipple
+											color="warning"
+										/>
+										<div className="gap-0.5 ai-c d-f fd-r">
+											<Typography variant="body1">{filter.value}</Typography>
+										</div>
+									</ListItemButton>
+								</ListItem>
+							);
+						})}
 				</List>
 			</Collapse>
 		</>
@@ -114,6 +118,8 @@ export const CatalogFilters = ({
 		handleChangePriceRangeFilter("max", value);
 	};
 
+	const filterGroupListCopy = [...filterGroupList];
+
 	return (
 		<div className="gap-1 bg-primary pt-2 w-100 h-mc br-3 d-f fd-c fs-0">
 			<div>
@@ -153,7 +159,7 @@ export const CatalogFilters = ({
 						/>
 					)}
 
-					{filterGroupList
+					{filterGroupListCopy
 						.sort((a, b) => a.title.localeCompare(b.title))
 						.map((group, index) => {
 							const filterGroupId = group.id;
