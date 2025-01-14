@@ -1,5 +1,16 @@
 import { ChevronLeft } from "@mui/icons-material";
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Stack, Typography } from "@mui/material";
+import {
+	Button,
+	CircularProgress,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+	Divider,
+	Stack,
+	Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { orderStatusBadges } from "@components/Badges";
@@ -77,11 +88,19 @@ export function Component() {
 		throw new Response("No order id provided", { status: 404 });
 	}
 	const { data: order, isLoading: orderIsLoading } = useGetOrderQuery({ id: orderId });
-	const [initPayment, { data: initPaymentData, isSuccess: initPaymentIsSuccess, isError: initPaymentIsError, error: initPaymentError }] = useLazyGetPaymentUrlQuery();
+	const [
+		initPayment,
+		{
+			data: initPaymentData,
+			isSuccess: initPaymentIsSuccess,
+			isError: initPaymentIsError,
+			error: initPaymentError,
+		},
+	] = useLazyGetPaymentUrlQuery();
 
 	const [paymentErrorDialogOpen, setPaymentErrorDialogOpen] = useState(false);
 	const [paymentError, setPaymentError] = useState<{ message: string; orderId: string } | null>(null);
-	
+
 	const packages: DeliveryPackage[] = useMemo(() => {
 		if (!order) return [];
 		const packages: DeliveryPackage[] = [];
@@ -141,7 +160,7 @@ export function Component() {
 		return !localShippingInvoice && order.preorder.shippingCostIncluded !== "FULL";
 	}, [order, localShippingInvoice]);
 
-	const showDetailedOrder = useMemo(() => {
+	const hasAdditionalPayments = useMemo(() => {
 		return (
 			!!orderHasCredit ||
 			!!foreignShippingInvoice ||
@@ -180,7 +199,7 @@ export function Component() {
 			}
 		}
 	}, [initPaymentIsError, initPaymentError]);
-	
+
 	const handlePay = async (invoiceId: string) => {
 		initPayment({ invoiceId });
 	};
@@ -211,15 +230,11 @@ export function Component() {
 									<DialogContentText id="error-dialog-description">
 										{paymentError.message}
 										<br />
-										Попробуйте ещё раз. При повторной ошибке свяжитесь с
-										администратором.
+										Попробуйте ещё раз. При повторной ошибке свяжитесь с администратором.
 									</DialogContentText>
 								</DialogContent>
 								<DialogActions>
-									<Button
-										variant="contained"
-										onClick={() => setPaymentErrorDialogOpen(false)}
-									>
+									<Button variant="contained" onClick={() => setPaymentErrorDialogOpen(false)}>
 										Понятно
 									</Button>
 								</DialogActions>
@@ -393,21 +408,38 @@ export function Component() {
 							style={{ width: isMobile ? "100%" : 360 }}
 						>
 							{order.status === "CANCELLED" ? (
-								<Typography variant="subtitle1">Заказ отменен</Typography>
+								<>
+									<Typography variant="subtitle1">Заказ отменен</Typography>
+									<Divider orientation="horizontal" flexItem />
+									{order.initialInvoice.status === "REFUNDED" ? (
+										<Typography variant="subtitle0">Произведён возврат средств</Typography>
+									) : (
+										order.initialInvoice.status === "UNPAID" && (
+											<Typography variant="subtitle0">Платёж просрочен</Typography>
+										)
+									)}
+								</>
 							) : order.status === "UNPAID" ? (
 								<>
-									<Typography variant="h6" sx={{ color: "typography.error" }}>
-										Заказ не оплачен
-									</Typography>
-									<Button
-										onClick={() => handlePay(order.initialInvoice.id)}
-										variant="contained"
-										sx={{ width: "fit-content", display: "flex", gap: 1 }}
-									>
-										{"Оплатить "} <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
-									</Button>
+									{order.initialInvoice.status === "WAITING" ? (
+										<Typography variant="subtitle1">Ожидаем подтверждение банка</Typography>
+									) : (
+										<>
+											<Typography variant="subtitle1" sx={{ color: "typography.error" }}>
+												Заказ не оплачен
+											</Typography>
+											<Button
+												onClick={() => handlePay(order.initialInvoice.id)}
+												variant="contained"
+												sx={{ width: "fit-content", display: "flex", gap: 1 }}
+											>
+												{"Оплатить "}{" "}
+												<CountdownTimer deadline={order.initialInvoice.expiresAt!} />
+											</Button>
+										</>
+									)}
 								</>
-							) : order.preorder !== null && showDetailedOrder ? (
+							) : order.preorder !== null && hasAdditionalPayments ? (
 								<>
 									<Typography variant="h6">Оплачено</Typography>
 									<Stack direction="column" divider={<Divider />} spacing={1}>
@@ -494,18 +526,16 @@ export function Component() {
 								</>
 							) : (
 								<>
-									<>
-										<div className="gap-1">
-											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
-												Итого:
-											</Typography>
-											<Typography variant="subtitle0">{order.initialInvoice.amount} ₽</Typography>
-										</div>
-										<Divider orientation="horizontal" flexItem />
-										<Typography variant="h6" sx={{ color: "typography.success" }}>
-											Оплачено!
+									<div className="gap-1">
+										<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+											Итого:
 										</Typography>
-									</>
+										<Typography variant="subtitle0">{order.initialInvoice.amount} ₽</Typography>
+									</div>
+									<Divider orientation="horizontal" flexItem />
+									<Typography variant="h6" sx={{ color: "typography.success" }}>
+										Оплачено!
+									</Typography>
 								</>
 							)}
 						</div>
