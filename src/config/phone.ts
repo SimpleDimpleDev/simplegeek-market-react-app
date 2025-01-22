@@ -1,3 +1,3 @@
 import { CountryCode } from './../../node_modules/libphonenumber-js/types.d';
 
-export const phoneOnlyCountries: CountryCode[] = ["RU", "BY", "KZ"]
+export const PHONE_ONLY_COUNTRIES: CountryCode[] = ["RU", "BY", "KZ"]

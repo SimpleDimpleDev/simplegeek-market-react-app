@@ -2,6 +2,8 @@ import NotFound from "@components/NotFound";
 import { createRoutesFromElements, Route } from "react-router-dom";
 import { cartRouteAction } from "./cart/action";
 
+const isDev = import.meta.env.MODE === "development";
+
 const routes = createRoutesFromElements(
 	<>	
 		<Route path="test" lazy={() => import("@routes/test")} />
@@ -26,6 +28,7 @@ const routes = createRoutesFromElements(
 			<Route path="settings" lazy={() => import("@routes/profile/settings/UserSettingsRoute")} />
 		</Route>
 		<Route path="search" lazy={() => import("@routes/search/SearchRoute")} />
+		{isDev && <Route path="dev" lazy={() => import("@routes/test")} />}
 		<Route path="*" element={<NotFound />} />
 	</>
 );
