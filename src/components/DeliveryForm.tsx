@@ -77,13 +77,21 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 			formState: { errors },
 		} = useForm<DeliveryFormData>({
 			resolver: zodResolver(DeliveryFormResolver),
-			defaultValues: {
+			defaultValues: defaultDelivery ? {
 				recipient: defaultDelivery?.recipient || {
 					fullName: "",
 					phone: "",
 				},
 				point: defaultDelivery?.point || null,
 				service: defaultDelivery?.service || null,
+				cdekDeliveryData: null,
+			} : {
+				recipient: {
+					fullName: "",
+					phone: "",
+				},
+				service: null,
+				point: null,
 				cdekDeliveryData: null,
 			},
 		});
@@ -97,28 +105,12 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 		}));
 
 		useEffect(() => {
-			if (defaultDelivery) {
-				reset({
-					recipient: defaultDelivery.recipient,
-					service: defaultDelivery.service,
-					point: defaultDelivery.point,
-					cdekDeliveryData: null,
-				});
-			} else if (userSavedDelivery) {
+			if (defaultDelivery) return;
+			if (userSavedDelivery) {
 				reset({
 					recipient: userSavedDelivery.recipient,
 					service: userSavedDelivery.service,
 					point: userSavedDelivery.point,
-					cdekDeliveryData: null,
-				});
-			} else {
-				reset({
-					recipient: {
-						fullName: "",
-						phone: "",
-					},
-					service: null,
-					point: null,
 					cdekDeliveryData: null,
 				});
 			}
