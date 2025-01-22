@@ -129,6 +129,7 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 		const cdekDeliveryData = watch("cdekDeliveryData");
 
 		useEffect(() => {
+			if (!service) return;
 			setValue("point", null);
 			setValue("cdekDeliveryData", null);
 		}, [service, setValue]);

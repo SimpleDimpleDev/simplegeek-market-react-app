@@ -483,6 +483,7 @@ export function Component() {
 											sx={{ width: "fit-content", display: "flex", gap: 1 }}
 										>
 											Оплатить
+											{" "}
 											<CountdownTimer deadline={order.initialInvoice.expiresAt!} />
 										</Button>
 									</>
