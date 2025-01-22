@@ -68,7 +68,6 @@ type DeliveryFormProps = {
 
 const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 	({ isMobile, defaultDelivery, packages, onSubmit }: DeliveryFormProps, ref) => {
-		console.log("DeliveryForm defaultDelivery", defaultDelivery);
 		const {
 			control,
 			watch,
@@ -105,17 +104,6 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 		}));
 
 		useEffect(() => {
-			if (defaultDelivery) {
-				reset({
-					recipient: defaultDelivery.recipient,
-					service: defaultDelivery.service,
-					point: defaultDelivery.point,
-					cdekDeliveryData: null,
-				});
-			}
-		}, [defaultDelivery, reset]);
-
-		useEffect(() => {
 			if (defaultDelivery) return;
 			if (userSavedDelivery) {
 				reset({
@@ -132,9 +120,8 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 		const cdekDeliveryData = watch("cdekDeliveryData");
 
 		useEffect(() => {
-			if (!service) return;
-			setValue("point", null);
-			setValue("cdekDeliveryData", null);
+			// setValue("point", null);
+			// setValue("cdekDeliveryData", null);
 		}, [service, setValue]);
 
 		const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
