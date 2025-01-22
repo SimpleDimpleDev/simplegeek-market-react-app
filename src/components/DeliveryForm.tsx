@@ -119,13 +119,14 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 		const deliveryPoint = watch("point");
 		const cdekDeliveryData = watch("cdekDeliveryData");
 
-		useEffect(() => {
-			// setValue("point", null);
-			// setValue("cdekDeliveryData", null);
-		}, [service, setValue]);
-
 		const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
 		const [saveDelivery, setSaveDelivery] = useState(!defaultDelivery);
+
+		const handleChangeService = (service: DeliveryService) => {
+			setValue("service", service);
+			setValue("point", null);
+			setValue("cdekDeliveryData", null);
+		};
 
 		const handleChooseCdekAddress = (data: CDEKDeliveryData) => {
 			setValue("cdekDeliveryData", data);
@@ -190,14 +191,14 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 						<Box>
 							<CardRadio
 								isChecked={service === "SELF_PICKUP"}
-								onChange={() => setValue("service", "SELF_PICKUP")}
+								onChange={() => handleChangeService("SELF_PICKUP")}
 								mainText={"Самовывоз"}
 								imgUrl={mainLogoSmall}
 							/>
 
 							<CardRadio
 								isChecked={service === "CDEK"}
-								onChange={() => setValue("service", "CDEK")}
+								onChange={() => handleChangeService("CDEK")}
 								mainText={"СДЭК"}
 								subText={"Оплата доставки при получении в пункте выдачи."}
 								imgUrl={cdekLogo}
