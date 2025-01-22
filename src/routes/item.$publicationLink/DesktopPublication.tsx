@@ -63,54 +63,68 @@ interface AttributesSectionProps {
 }
 const AttributesSection: React.FC<AttributesSectionProps> = ({ selectedVariation }) => {
 	const navigate = useNavigate();
-	const sortedFilterGroups = [...selectedVariation.product.filterGroups].sort(
-		(a, b) => a.title.localeCompare(b.title),
-	)
+	const sortedFilterGroups = [...selectedVariation.product.filterGroups].sort((a, b) =>
+		a.title.localeCompare(b.title)
+	);
 	return (
-		<>
-			{sortedFilterGroups.length !== 0 && (
-				<Box display={"flex"} flexDirection={"column"} gap={1}>
-					<Typography variant="h5">О товаре</Typography>
-					<Stack direction="column" divider={<Divider />} spacing={1}>
-						{sortedFilterGroups
-							.map((filterGroup, filterGroupIndex) => (
-								<Box
-									key={filterGroupIndex}
-									display="flex"
-									flexDirection="column"
-									justifyContent={"space-between"}
-								>
-									<Typography variant="body1">{filterGroup.title}</Typography>
-									<Box display="flex" flexDirection="row" flexWrap={"wrap"} gap={1}>
-										{filterGroup.filters.map((filter, index) => (
-											<Button
-												key={index}
-												variant="text"
-												color="warning"
-												onClick={() => {
-													navigate(`/?f[]=${filterGroup.id}:${filter.id}`);
-												}}
-												sx={{
-													width: "max-content",
-													overflow: "hidden",
-													textOverflow: "ellipsis",
-													WebkitLineClamp: 1,
-													display: "-webkit-box",
-													WebkitBoxOrient: "vertical",
-													maxWidth: "100%",
-													minWidth: 0,
-												}}
-											>
-												{filter.value}
-											</Button>
-										))}
-									</Box>
-								</Box>
-							))}
-					</Stack>
+		<Box display={"flex"} flexDirection={"column"} gap={1}>
+			<Typography variant="h5">О товаре</Typography>
+			<Stack direction="column" divider={<Divider />} spacing={1}>
+				<Box display="flex" flexDirection="column" justifyContent={"space-between"}>
+					<Typography variant="body1">Категория</Typography>
+					<Box display="flex" flexDirection="row" flexWrap={"wrap"} gap={1}>
+						<Button
+							variant="text"
+							color="warning"
+							onClick={() => {
+								navigate(`/category/${selectedVariation.product.category.link}`);
+							}}
+							sx={{
+								width: "max-content",
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+								WebkitLineClamp: 1,
+								display: "-webkit-box",
+								WebkitBoxOrient: "vertical",
+								maxWidth: "100%",
+								minWidth: 0,
+							}}
+						>
+							{selectedVariation.product.category.title}
+						</Button>
+					</Box>
 				</Box>
-			)}
-		</>
+				{sortedFilterGroups.map((filterGroup, filterGroupIndex) => (
+					<Box key={filterGroupIndex} display="flex" flexDirection="column" justifyContent={"space-between"}>
+						<Typography variant="body1">{filterGroup.title}</Typography>
+						<Box display="flex" flexDirection="row" flexWrap={"wrap"} gap={1}>
+							{filterGroup.filters.map((filter, index) => (
+								<Button
+									key={index}
+									variant="text"
+									color="warning"
+									onClick={() => {
+										navigate(`/?f[]=${filterGroup.id}:${filter.id}`);
+									}}
+									sx={{
+										width: "max-content",
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										WebkitLineClamp: 1,
+										display: "-webkit-box",
+										WebkitBoxOrient: "vertical",
+										maxWidth: "100%",
+										minWidth: 0,
+									}}
+								>
+									{filter.value}
+								</Button>
+							))}
+						</Box>
+					</Box>
+				))}
+			</Stack>
+		</Box>
 	);
 };
 
