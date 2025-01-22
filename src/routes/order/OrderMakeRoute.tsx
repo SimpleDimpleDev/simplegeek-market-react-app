@@ -22,7 +22,6 @@ import { ShopOrderItemCard, ShopOrderItemCardCredit } from "@components/ItemCard
 import { useGetCatalogQuery } from "@api/shop/catalog";
 import { useCreateOrderMutation, useGetCheckoutDataQuery } from "@api/shop/order";
 import { useIsMobile } from "src/hooks/useIsMobile";
-import { useGetSavedDeliveryQuery } from "@api/shop/profile";
 
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { isExpectedApiError } from "@utils/api";
@@ -42,7 +41,6 @@ export function Component() {
 	const { refetch: refetchCart } = useGetCartItemListQuery();
 	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery();
 
-	const { data: userSavedDelivery, isLoading: userSavedDeliveryIsLoading } = useGetSavedDeliveryQuery();
 	const { data: checkoutData, isLoading: checkoutDataIsLoading } = useGetCheckoutDataQuery(void 0, {
 		refetchOnMountOrArgChange: true,
 	});
@@ -132,7 +130,7 @@ export function Component() {
 			<Helmet>
 				<title>Оформление заказа - SimpleGeek</title>
 			</Helmet>
-			{catalogIsLoading || checkoutDataIsLoading || userSavedDeliveryIsLoading ? (
+			{catalogIsLoading || checkoutDataIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
@@ -181,7 +179,7 @@ export function Component() {
 								{checkoutData.shouldSelectDelivery ? (
 									<DeliveryForm
 										ref={deliveryFormRef}
-										defaultDelivery={userSavedDelivery}
+										defaultDelivery={null}
 										packages={checkoutData.packages}
 										onSubmit={handleDeliveryFormSubmit}
 										isMobile={isMobile}

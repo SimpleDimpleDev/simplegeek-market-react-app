@@ -14,6 +14,7 @@ import { CardRadio } from "./CardRadio";
 
 import cdekLogo from "@assets/SdekLogo.webp";
 import mainLogoSmall from "@assets/MainLogoSmall.webp";
+import { useGetSavedDeliveryQuery } from "@api/shop/profile";
 
 type DeliveryFormData = {
 	recipient: Recipient;
@@ -87,6 +88,8 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 			},
 		});
 
+		const { data: userSavedDelivery } = useGetSavedDeliveryQuery();
+
 		useImperativeHandle(ref, () => ({
 			submit: handleSubmit((data: DeliveryFormData) => {
 				onSubmit(DeliverySchema.parse(data), saveDelivery);
@@ -101,6 +104,13 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 					point: defaultDelivery.point,
 					cdekDeliveryData: null,
 				});
+			} else if (userSavedDelivery) {
+				reset({
+					recipient: userSavedDelivery.recipient,
+					service: userSavedDelivery.service,
+					point: userSavedDelivery.point,
+					cdekDeliveryData: null,
+				});
 			} else {
 				reset({
 					recipient: {
@@ -112,7 +122,7 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 					cdekDeliveryData: null,
 				});
 			}
-		}, [defaultDelivery, reset]);
+		}, [defaultDelivery, userSavedDelivery, reset]);
 
 		const service = watch("service");
 		const deliveryPoint = watch("point");
