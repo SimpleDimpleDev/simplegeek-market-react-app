@@ -1,4 +1,4 @@
-import { ChevronLeft } from "@mui/icons-material";
+import { ChevronLeft, PriorityHigh } from "@mui/icons-material";
 import {
 	Backdrop,
 	Button,
@@ -91,6 +91,7 @@ export function Component() {
 	const navigate = useNavigate();
 
 	const deliveryFormRef = useRef<DeliveryFormRef>(null);
+	const [editingDelivery, setEditingDelivery] = useState(false);
 
 	const [snackbarOpen, setSnackbarOpen] = useState(false);
 	const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -259,36 +260,86 @@ export function Component() {
 					<div className="gap-1 pb-4 d-f fd-r">{orderStatusBadges[order.status]}</div>
 					<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
 						<div className="gap-2 w-100 d-f fd-c">
-							<div className="section">
-								{orderActions.setDelivery.enabled ? (
-									<>
-										<DeliveryForm
-											ref={deliveryFormRef}
-											isMobile={isMobile}
-											defaultDelivery={order.delivery}
-											packages={orderActions.setDelivery.packages}
-											onSubmit={handleDeliveryFormSubmit}
-										/>
-										<Button variant="contained" onClick={() => handleChangeDelivery()}>
-											{order.delivery === null ? "Оформить" : "Изменить"}
-										</Button>
-									</>
-								) : order.delivery === null ? (
-									<div className="gap-1">
-										<Typography variant="subtitle1">
-											Доставка к вам оформляется после полной оплаты заказа и его прибытия на
-											склад в Москве.
-										</Typography>
-										<div className="gap-1 d-f fd-r">
-											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
-												На складе ожидается:
+							{order.delivery === null ? (
+								orderActions.setDelivery.enabled ? (
+									editingDelivery ? (
+										<div className="gap-1 d-f fd-c">
+											<DeliveryForm
+												ref={deliveryFormRef}
+												isMobile={isMobile}
+												defaultDelivery={order.delivery}
+												packages={orderActions.setDelivery.packages}
+												onSubmit={handleDeliveryFormSubmit}
+											/>
+											<div className="gap-1 d-f fd-r">
+												<Button color="error" variant="contained" onClick={() => setEditingDelivery(false)}>
+													Оформить
+												</Button>
+												<Button color="success" variant="contained" onClick={() => handleChangeDelivery()}>
+													Сохранить
+												</Button>
+											</div>
+										</div>
+									) : (
+										<div className="section">
+											<div className="gap-1">
+												<div className="gap-1 d-f fd-r">
+													<PriorityHigh />
+													<Typography variant="subtitle1">
+														Необходимо указать способ доставки.
+													</Typography>
+												</div>
+												<Button
+													sx={{ width: "fit-content" }}
+													variant="contained"
+													onClick={() => setEditingDelivery(true)}
+												>
+													Выбрать
+												</Button>
+											</div>
+										</div>
+									)
+								) : (
+									<div className="section">
+										<div className="gap-1">
+											<Typography variant="subtitle1">
+												Доставка к вам оформляется после полной оплаты заказа и его прибытия на
+												склад в Москве.
 											</Typography>
-											<Typography variant="body1">
-												{order.preorder?.expectedArrival ?? "Неизвестно"}
-											</Typography>
+											<div className="gap-1 d-f fd-r">
+												<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+													На складе ожидается:
+												</Typography>
+												<Typography variant="body1">
+													{order.preorder?.expectedArrival ?? "Неизвестно"}
+												</Typography>
+											</div>
 										</div>
 									</div>
-								) : (
+								)
+							) : editingDelivery ? (
+								<div className="gap-1 d-f fd-c">
+									<DeliveryForm
+										ref={deliveryFormRef}
+										isMobile={isMobile}
+										defaultDelivery={order.delivery}
+										packages={orderActions.setDelivery.packages}
+										onSubmit={handleDeliveryFormSubmit}
+									/>
+									<Button variant="contained" onClick={() => handleChangeDelivery()}>
+										{order.delivery === null ? "Оформить" : "Изменить"}
+									</Button>
+									<div className="gap-1 d-f fd-r">
+										<Button color="error" variant="contained" onClick={() => setEditingDelivery(false)}>
+											Отменить
+										</Button>
+										<Button color="success" variant="contained" onClick={() => handleChangeDelivery()}>
+											Сохранить
+										</Button>
+									</div>
+								</div>
+							) : (
+								<div className="section">
 									<Stack
 										gap={1}
 										direction={"column"}
@@ -343,8 +394,13 @@ export function Component() {
 											</div>
 										</div>
 									</Stack>
-								)}
-							</div>
+									{orderActions.setDelivery.enabled && (
+										<Button variant="contained" onClick={() => setEditingDelivery(true)}>
+											Изменить
+										</Button>
+									)}
+								</div>
+							)}
 
 							<div className="section">
 								<Typography variant="h5">
@@ -362,7 +418,6 @@ export function Component() {
 																src={getImageUrl(item.image, "small")}
 															/>
 														</div>
-
 														<div className="gap-1">
 															<Typography variant="h6">{item.title}</Typography>
 															<Typography variant="body1">{item.quantity} шт.</Typography>
