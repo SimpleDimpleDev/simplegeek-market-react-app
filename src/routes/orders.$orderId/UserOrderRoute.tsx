@@ -29,7 +29,7 @@ import { CreditGet } from "@appTypes/Credit";
 import { Helmet } from "react-helmet";
 import { PageHeading } from "@components/PageHeading";
 import { isExpectedApiError } from "@utils/api";
-import { DeliveryFormRef, DeliveryForm } from "@components/DelForm";
+import { DeliveryFormRef, DeliveryForm } from "@components/DeliveryForm";
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЭК",
@@ -272,10 +272,18 @@ export function Component() {
 												onSubmit={handleDeliveryFormSubmit}
 											/>
 											<div className="gap-1 d-f fd-r">
-												<Button color="error" variant="contained" onClick={() => setEditingDelivery(false)}>
+												<Button
+													color="error"
+													variant="contained"
+													onClick={() => setEditingDelivery(false)}
+												>
 													Оформить
 												</Button>
-												<Button color="success" variant="contained" onClick={() => handleChangeDelivery()}>
+												<Button
+													color="success"
+													variant="contained"
+													onClick={() => handleChangeDelivery()}
+												>
 													Сохранить
 												</Button>
 											</div>
@@ -326,14 +334,19 @@ export function Component() {
 										packages={orderActions.setDelivery.packages}
 										onSubmit={handleDeliveryFormSubmit}
 									/>
-									<Button variant="contained" onClick={() => handleChangeDelivery()}>
-										{order.delivery === null ? "Оформить" : "Изменить"}
-									</Button>
 									<div className="gap-1 d-f fd-r">
-										<Button color="error" variant="contained" onClick={() => setEditingDelivery(false)}>
+										<Button
+											color="error"
+											variant="contained"
+											onClick={() => setEditingDelivery(false)}
+										>
 											Отменить
 										</Button>
-										<Button color="success" variant="contained" onClick={() => handleChangeDelivery()}>
+										<Button
+											color="success"
+											variant="contained"
+											onClick={() => handleChangeDelivery()}
+										>
 											Сохранить
 										</Button>
 									</div>
@@ -395,7 +408,11 @@ export function Component() {
 										</div>
 									</Stack>
 									{orderActions.setDelivery.enabled && (
-										<Button variant="contained" onClick={() => setEditingDelivery(true)}>
+										<Button
+											sx={{ width: "fit-content" }}
+											variant="contained"
+											onClick={() => setEditingDelivery(true)}
+										>
 											Изменить
 										</Button>
 									)}

@@ -31,7 +31,7 @@ import { Helmet } from "react-helmet";
 import { PageHeading } from "@components/PageHeading";
 import { useGetCartItemListQuery } from "@api/shop/cart";
 
-import { DeliveryForm, DeliveryFormRef } from "@components/DelForm";
+import { DeliveryForm, DeliveryFormRef } from "@components/DeliveryForm";
 
 export function Component() {
 	const isMobile = useIsMobile();

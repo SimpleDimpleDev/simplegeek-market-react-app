@@ -1,6 +1,6 @@
 import { Delivery } from "@appTypes/Delivery";
 import { OrderCreate } from "@appTypes/Order";
-import { DeliveryForm, DeliveryFormRef } from "@components/DelForm";
+import { DeliveryForm, DeliveryFormRef } from "@components/DeliveryForm";
 import { Button } from "@mui/material";
 import { useRef, useState } from "react";
 

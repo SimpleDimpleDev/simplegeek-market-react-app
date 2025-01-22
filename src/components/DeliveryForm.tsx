@@ -296,7 +296,7 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 						control={
 							<Checkbox checked={saveDelivery} onChange={(_, checked) => setSaveDelivery(checked)} />
 						}
-						label={`${defaultDelivery ? "Обновить" : "Сохранить"} адрес доставки для следующих заказов.`}
+						label={`${defaultDelivery ? "Обновить" : "Сохранить"} способ доставки для следующих заказов.`}
 					/>
 				</form>
 			</>
