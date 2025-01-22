@@ -68,6 +68,7 @@ type DeliveryFormProps = {
 
 const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 	({ isMobile, defaultDelivery, packages, onSubmit }: DeliveryFormProps, ref) => {
+		console.log("DeliveryForm defaultDelivery", defaultDelivery);
 		const {
 			control,
 			watch,
