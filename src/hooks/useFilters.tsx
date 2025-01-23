@@ -219,9 +219,12 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 
 	const handleChangeTypeFilter = useCallback(
 		(type: TypeFilter) => {
+			if (type === "STOCK") {
+				setPreorderIdFilter(null);
+			}
 			setTypeFilter(type);
 		},
-		[setTypeFilter]
+		[setTypeFilter, setPreorderIdFilter]
 	);
 
 	const handleChangePreorderIdFilter = useCallback(
