@@ -8,5 +8,6 @@ export type CheckedFilter = {
 	id: string;
 };
 export type AvailabilityFilter = boolean;
+export type TypeFilter = "STOCK" | "PREORDER";
 export type PriceRangeFilter = [number, number];
 export type PreorderFilter = string | null;

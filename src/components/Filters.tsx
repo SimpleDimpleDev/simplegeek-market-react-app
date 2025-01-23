@@ -1,4 +1,11 @@
-import { AvailabilityFilter, CheckedFilter, FilterGroupGet, PreorderFilter, PriceRangeFilter } from "@appTypes/Filters";
+import {
+	AvailabilityFilter,
+	CheckedFilter,
+	FilterGroupGet,
+	PreorderFilter,
+	PriceRangeFilter,
+	TypeFilter,
+} from "@appTypes/Filters";
 import { useState } from "react";
 
 import {
@@ -11,6 +18,7 @@ import {
 	Button,
 	Collapse,
 	ListItemText,
+	Radio,
 } from "@mui/material";
 import { PreorderShop } from "@appTypes/Preorder";
 import { handleIntChange } from "@utils/input";
@@ -75,6 +83,9 @@ interface CatalogFiltersProps {
 	availabilityFilter: AvailabilityFilter;
 	handleToggleAvailabilityFilter: () => void;
 
+	typeFilter: TypeFilter;
+	onTypeFilterChange: (type: TypeFilter) => void;
+
 	preorderIdFilter: PreorderFilter;
 	handleChangePreorderIdFilter: (preorderId: string | null) => void;
 
@@ -97,6 +108,9 @@ export const CatalogFilters = ({
 
 	availabilityFilter,
 	handleToggleAvailabilityFilter,
+
+	typeFilter,
+	onTypeFilterChange,
 
 	preorderIdFilter,
 	handleChangePreorderIdFilter,
@@ -140,11 +154,44 @@ export const CatalogFilters = ({
 							sx={{ height: 42, padding: 0 }}
 						>
 							<Checkbox checked={availabilityFilter} tabIndex={-1} disableRipple color="warning" />
-							<Typography variant="subtitle0">В наличии</Typography>
+							<Typography variant="subtitle0">Доступны к покупке</Typography>
 						</ListItemButton>
 					</ListItem>
-
 					{preorderList.length > 0 && (
+						<>
+							<ListItem disablePadding>
+								<ListItemButton
+									role={undefined}
+									onClick={() => onTypeFilterChange("STOCK")}
+									sx={{ height: 42, padding: 0 }}
+								>
+									<Radio
+										checked={typeFilter === "STOCK"}
+										tabIndex={-1}
+										disableRipple
+										color="warning"
+									/>
+									<Typography variant="subtitle0">В наличии</Typography>
+								</ListItemButton>
+							</ListItem>
+							<ListItem disablePadding>
+								<ListItemButton
+									role={undefined}
+									onClick={() => onTypeFilterChange("PREORDER")}
+									sx={{ height: 42, padding: 0 }}
+								>
+									<Radio
+										checked={typeFilter === "PREORDER"}
+										tabIndex={-1}
+										disableRipple
+										color="warning"
+									/>
+									<Typography variant="subtitle0">Предзаказы</Typography>
+								</ListItemButton>
+							</ListItem>
+						</>
+					)}
+					{typeFilter === "PREORDER" && (
 						<FilterGroup
 							data={{
 								id: "preorder",

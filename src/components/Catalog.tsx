@@ -98,6 +98,9 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 		availabilityFilter,
 		handleToggleAvailabilityFilter,
 
+		typeFilter,
+		handleChangeTypeFilter,
+
 		preorderIdFilter,
 		handleChangePreorderIdFilter,
 
@@ -182,6 +185,8 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 										priceLimits={priceLimits}
 										availabilityFilter={availabilityFilter}
 										handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
+										typeFilter={typeFilter}
+										onTypeFilterChange={handleChangeTypeFilter}
 										preorderIdFilter={preorderIdFilter}
 										handleChangePreorderIdFilter={handleChangePreorderIdFilter}
 										checkedFilters={checkedFilters}
@@ -228,6 +233,8 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 										priceLimits={priceLimits}
 										availabilityFilter={availabilityFilter}
 										handleToggleAvailabilityFilter={handleToggleAvailabilityFilter}
+										typeFilter={typeFilter}
+										onTypeFilterChange={handleChangeTypeFilter}
 										preorderIdFilter={preorderIdFilter}
 										handleChangePreorderIdFilter={handleChangePreorderIdFilter}
 										checkedFilters={checkedFilters}
