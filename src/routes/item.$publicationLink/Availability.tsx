@@ -44,8 +44,8 @@ const PublicationAvailability: React.FC<VariationAvailabilityProps> = ({
 						</Typography>
 						<Box display="flex" flexDirection="row">
 							<Typography variant="body2" color={"typography.secondary"}>
-								{"На складе ожидается: "}
-							</Typography>
+								На складе ожидается:
+							</Typography>{" "}
 							<Typography variant="body2">{preorder.expectedArrival ?? "Неизвестно"}</Typography>
 						</Box>
 					</>

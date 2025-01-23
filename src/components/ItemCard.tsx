@@ -129,9 +129,15 @@ export default function ItemCard({
 								</Typography>
 							)
 						) : (
-							<Typography variant="body2" color="typography.attention">
-								Нет в наличии
-							</Typography>
+							data.preorder ? (
+								<Typography variant="body2" color="typography.success">
+									Недоступно для предзаказа
+								</Typography>
+							) : (
+								<Typography variant="body2" color="typography.success">
+									Нет в наличии
+								</Typography>
+							)
 						)}
 						<div className="gap-1 d-f fd-r">
 							{data.discount ? (

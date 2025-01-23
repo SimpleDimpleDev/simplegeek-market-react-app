@@ -9,6 +9,7 @@ export type FormedCartSection = {
 	title: string;
 	unavailable: boolean;
 	preorder: PreorderShop | null;
+	shippingCostIncluded: "FOREIGN" | "FULL" | "NOT" | null;
 	creditAvailable: boolean;
 	items: CatalogItemCart[];
 };
