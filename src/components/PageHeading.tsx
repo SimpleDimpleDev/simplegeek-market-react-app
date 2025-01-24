@@ -9,7 +9,7 @@ interface Props {
 
 export const PageHeading: React.FC<Props> = ({ title, infoText, subText, additional }) => {
 	return (
-		<Box width={"100%"} padding={"16px 0px"}>
+		<Box width={"100%"} padding={"16px 0px"} flex={1} flexDirection={"column"} gap={1}>
 			<Box display={"flex"} flexDirection={"row"} alignItems={"baseline"} gap={2}>
 				<Typography sx={{ verticalAlign: "baseline" }} variant={"h4"}>
 					{title}

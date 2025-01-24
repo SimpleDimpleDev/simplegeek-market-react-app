@@ -282,7 +282,7 @@ export function Component() {
 						}
 					/>
 					{order.preorder?.expectedArrival && (
-						<Typography variant="subtitle0">
+						<Typography variant="subtitle0" sx={{paddingBottom: "16px"}}>
 							Ожидаемая дата доставки: {order.preorder.expectedArrival}
 						</Typography>
 					)}
