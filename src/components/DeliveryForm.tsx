@@ -97,6 +97,8 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 
 		const { data: userSavedDelivery } = useGetSavedDeliveryQuery();
 
+		const [saveDelivery, setSaveDelivery] = useState(!defaultDelivery);
+
 		useImperativeHandle(ref, () => ({
 			submit: handleSubmit((data: DeliveryFormData) => {
 				onSubmit(DeliverySchema.parse(data), saveDelivery);
@@ -112,6 +114,7 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 					point: userSavedDelivery.point,
 					cdekDeliveryData: null,
 				});
+				setSaveDelivery(false);
 			}
 		}, [userSavedDelivery, defaultDelivery, reset]);
 
@@ -120,7 +123,7 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 		const cdekDeliveryData = watch("cdekDeliveryData");
 
 		const [cdekWidgetOpen, setCdekWidgetOpen] = useState(false);
-		const [saveDelivery, setSaveDelivery] = useState(!defaultDelivery);
+
 
 		const handleChangeService = (service: DeliveryService) => {
 			setValue("service", service);
@@ -298,7 +301,7 @@ const DeliveryForm = forwardRef<DeliveryFormRef, DeliveryFormProps>(
 						control={
 							<Checkbox checked={saveDelivery} onChange={(_, checked) => setSaveDelivery(checked)} />
 						}
-						label={`${defaultDelivery ? "Обновить" : "Сохранить"} способ доставки для следующих заказов.`}
+						label={`${defaultDelivery || userSavedDelivery ? "Обновить" : "Сохранить"} способ доставки для следующих заказов.`}
 					/>
 				</form>
 			</>
