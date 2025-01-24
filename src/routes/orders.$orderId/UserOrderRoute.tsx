@@ -299,8 +299,9 @@ export function Component() {
 												packages={orderActions.setDelivery.packages}
 												onSubmit={handleDeliveryFormSubmit}
 											/>
-											<div className="gap-1 d-f fd-r">
+											<div className="gap-1 d-f fd-r jc-fe">
 												<Button
+													sx={{color: "white"}}
 													color="error"
 													variant="contained"
 													onClick={() => setEditingDelivery(false)}
@@ -308,6 +309,7 @@ export function Component() {
 													Оформить
 												</Button>
 												<Button
+													sx={{color: "white"}}
 													color="success"
 													variant="contained"
 													onClick={() => handleChangeDelivery()}
@@ -362,8 +364,9 @@ export function Component() {
 										packages={orderActions.setDelivery.packages}
 										onSubmit={handleDeliveryFormSubmit}
 									/>
-									<div className="gap-1 d-f fd-r">
+									<div className="gap-1 d-f fd-r jc-fe">
 										<Button
+											sx={{color: "white"}}
 											color="error"
 											variant="contained"
 											onClick={() => setEditingDelivery(false)}
@@ -371,6 +374,7 @@ export function Component() {
 											Отменить
 										</Button>
 										<Button
+											sx={{color: "white"}}
 											color="success"
 											variant="contained"
 											onClick={() => handleChangeDelivery()}
