@@ -7,6 +7,7 @@ import { PublicationProps } from "./types";
 import { ItemCreditInfo } from "@components/ItemCreditInfo";
 import { PageHeading } from "@components/PageHeading";
 import { CatalogItemGet } from "@appTypes/CatalogItem";
+import { Fragment } from "react";
 
 interface AttributesSectionProps {
 	selectedVariation: CatalogItemGet;
@@ -169,13 +170,19 @@ const MobilePublication: React.FC<PublicationProps> = ({
 				{selectedVariation.creditInfo && <ItemCreditInfo creditInfo={selectedVariation.creditInfo} />}
 
 				<AttributesSection selectedVariation={selectedVariation} />
-
-				<Box component={"section"} display="flex" flexDirection="column" paddingTop={4} gap={3}>
-					<Typography variant="h6">Описание</Typography>
-					<Typography variant="body1" color="typography.secondary">
-						{selectedVariation.product.description}
-					</Typography>
-				</Box>
+				{selectedVariation.product.description && selectedVariation.product.description.length > 0 && (
+					<Box component={"section"} display="flex" flexDirection="column" paddingTop={4} gap={3}>
+						<Typography variant="h6">Описание</Typography>
+						<Typography variant="body1" color="typography.secondary">
+							{selectedVariation.product.description.split("\n").map((line, index) => (
+								<Fragment key={index}>
+									{line}
+									<br />
+								</Fragment>
+							))}
+						</Typography>
+					</Box>
+				)}
 			</Box>
 		</>
 	);

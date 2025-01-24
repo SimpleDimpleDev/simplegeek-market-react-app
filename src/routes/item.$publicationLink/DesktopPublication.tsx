@@ -13,7 +13,7 @@ import { PublicationProps } from "./types";
 import { PublicationAvailability } from "./Availability";
 import { PublicationActionButtons } from "./ActionButtons";
 import { useNavigate } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { Fragment, lazy, Suspense } from "react";
 import { ItemCreditInfo } from "@components/ItemCreditInfo";
 import { PageHeading } from "@components/PageHeading";
 import { PublicationGet } from "@appTypes/Publication";
@@ -227,12 +227,26 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 					</Box>
 				</Box>
 			</Box>
-			<Box component={"section"} display="flex" flexDirection="column" paddingTop={3} paddingBottom={3} gap={2}>
-				<Typography variant="h5">Описание</Typography>
-				<Typography variant="body1" color="typography.secondary">
-					{selectedVariation.product.description}
-				</Typography>
-			</Box>
+			{selectedVariation.product.description && selectedVariation.product.description.length > 0 && (
+				<Box
+					component={"section"}
+					display="flex"
+					flexDirection="column"
+					paddingTop={3}
+					paddingBottom={3}
+					gap={2}
+				>
+					<Typography variant="h5">Описание</Typography>
+					<Typography variant="body1" color="typography.secondary">
+						{selectedVariation.product.description.split("\n").map((text, index) => (
+							<Fragment key={index}>
+								{text}
+								<br />
+							</Fragment>
+						))}
+					</Typography>
+				</Box>
+			)}
 		</>
 	);
 };
