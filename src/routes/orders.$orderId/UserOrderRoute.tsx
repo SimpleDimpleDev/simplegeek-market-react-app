@@ -270,22 +270,22 @@ export function Component() {
 							</div>
 						}
 						subText={`ID: ${order.id}`}
+						additional={
+							<div className="gap-1 d-f fd-r">
+								{orderStatusBadges[order.status]}
+								{order.preorder &&
+									order.status === "ACCEPTED" &&
+									preorderStatusListToRender.includes(order.preorder.status) && (
+										<>{preorderStatusBadges[order.preorder.status]}</>
+									)}
+							</div>
+						}
 					/>
-
 					{order.preorder?.expectedArrival && (
-						<Typography variant="body1">
+						<Typography variant="subtitle0">
 							Ожидаемая дата доставки: {order.preorder.expectedArrival}
 						</Typography>
 					)}
-
-					<div className="gap-1 pb-4 d-f fd-r">
-						{orderStatusBadges[order.status]}
-						{order.preorder &&
-							order.status === "ACCEPTED" &&
-							preorderStatusListToRender.includes(order.preorder.status) && (
-								<>{preorderStatusBadges[order.preorder.status]}</>
-							)}
-					</div>
 					<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
 						<div className="gap-2 w-100 d-f fd-c">
 							{order.delivery === null ? (

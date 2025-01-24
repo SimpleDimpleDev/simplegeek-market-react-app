@@ -4,9 +4,10 @@ interface Props {
 	title: string | React.ReactNode;
 	infoText?: string;
 	subText?: string;
+	additional?: React.ReactNode;
 }
 
-export const PageHeading: React.FC<Props> = ({ title, infoText, subText }) => {
+export const PageHeading: React.FC<Props> = ({ title, infoText, subText, additional }) => {
 	return (
 		<Box width={"100%"} padding={"16px 0px"}>
 			<Box display={"flex"} flexDirection={"row"} alignItems={"baseline"} gap={2}>
@@ -25,6 +26,7 @@ export const PageHeading: React.FC<Props> = ({ title, infoText, subText }) => {
 					{subText}
 				</Typography>
 			)}
+			{additional && additional}
 		</Box>
 	);
 };
