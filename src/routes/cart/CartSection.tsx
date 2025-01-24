@@ -271,7 +271,7 @@ export const CartSection = ({
 						>
 							Оформить
 						</Button>
-						{data.shippingCostIncluded !== "FULL" && (
+						{data.preorder && data.shippingCostIncluded !== "FULL" && (
 							<Typography variant="caption" color="typography.disabled">
 								В сумме заказа не учитывается стоимость доставки до склада. Она будет известна после его
 								приезда.
