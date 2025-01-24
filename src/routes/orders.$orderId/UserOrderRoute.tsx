@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { orderStatusBadges } from "@components/Badges";
+import { orderStatusBadges, preorderBadge, preorderStatusBadges } from "@components/Badges";
 import CountdownTimer from "@components/CountdownTimer";
 import { Delivery, DeliveryService } from "@appTypes/Delivery";
 import { DateFormatter, getRuGoodsWord } from "@utils/format";
@@ -30,6 +30,14 @@ import { Helmet } from "react-helmet";
 import { PageHeading } from "@components/PageHeading";
 import { isExpectedApiError } from "@utils/api";
 import { DeliveryFormRef, DeliveryForm } from "@components/DeliveryForm";
+import { PreorderStatus } from "@appTypes/Preorder";
+
+const preorderStatusListToRender: PreorderStatus[] = [
+	"WAITING_FOR_RELEASE",
+	"FOREIGN_SHIPPING",
+	"LOCAL_SHIPPING",
+	"DISPATCH",
+];
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЭК",
@@ -253,11 +261,31 @@ export function Component() {
 					</div>
 
 					<PageHeading
-						title={`Заказ от ${DateFormatter.DDMMYYYY(order.createdAt)}`}
+						title={
+							<div className="gap-1 ai-c d-f fd-r">
+								<Typography sx={{ verticalAlign: "baseline" }} variant={"h4"}>
+									Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}
+								</Typography>
+								{order.preorder && preorderBadge}
+							</div>
+						}
 						subText={`ID: ${order.id}`}
 					/>
 
-					<div className="gap-1 pb-4 d-f fd-r">{orderStatusBadges[order.status]}</div>
+					{order.preorder?.expectedArrival && (
+						<Typography variant="body1">
+							Ожидаемая дата доставки: {order.preorder.expectedArrival}
+						</Typography>
+					)}
+
+					<div className="gap-1 pb-4 d-f fd-r">
+						{orderStatusBadges[order.status]}
+						{order.preorder &&
+							order.status === "ACCEPTED" &&
+							preorderStatusListToRender.includes(order.preorder.status) && (
+								<>{preorderStatusBadges[order.preorder.status]}</>
+							)}
+					</div>
 					<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
 						<div className="gap-2 w-100 d-f fd-c">
 							{order.delivery === null ? (
@@ -359,7 +387,19 @@ export function Component() {
 										divider={<Divider orientation="horizontal" flexItem />}
 									>
 										<div className="gap-2 d-f fd-c">
-											<Typography variant={"h5"}>Доставка</Typography>
+											<div className="d-f fd-r jc-sb">
+												<Typography variant={"h5"}>Доставка</Typography>
+												{orderActions.setDelivery.enabled && (
+													<Button
+														sx={{ width: "fit-content" }}
+														variant="contained"
+														onClick={() => setEditingDelivery(true)}
+													>
+														Изменить
+													</Button>
+												)}
+											</div>
+
 											<div className={`d-f ${isMobile ? " fd-c gap-1" : " fd-r jc-sb"}`}>
 												<div className="gap-05 w-100 d-f fd-c">
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
@@ -407,15 +447,6 @@ export function Component() {
 											</div>
 										</div>
 									</Stack>
-									{orderActions.setDelivery.enabled && (
-										<Button
-											sx={{ width: "fit-content" }}
-											variant="contained"
-											onClick={() => setEditingDelivery(true)}
-										>
-											Изменить
-										</Button>
-									)}
 								</div>
 							)}
 
@@ -482,9 +513,7 @@ export function Component() {
 											variant="contained"
 											sx={{ width: "fit-content", display: "flex", gap: 1 }}
 										>
-											Оплатить
-											{" "}
-											<CountdownTimer deadline={order.initialInvoice.expiresAt!} />
+											Оплатить <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
 										</Button>
 									</>
 								)

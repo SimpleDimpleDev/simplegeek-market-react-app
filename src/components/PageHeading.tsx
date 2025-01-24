@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 
 interface Props {
-	title: string;
+	title: string | React.ReactNode;
 	infoText?: string;
 	subText?: string;
 }
