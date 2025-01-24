@@ -87,7 +87,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 				) : (
 					<div className="gap-1 pb-12px d-f fd-c jc-sb">
 						<div className="d-f fd-r jc-sb">
-							<Typography variant="h5">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
+							<div className="gap-1 d-f fd-r">
+								<Typography variant="h5">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
+								{order.preorder && preorderBadge}
+							</div>
 							<Typography variant="h5">{total} ₽</Typography>
 						</div>
 						<Typography variant="body1" sx={{ color: "typography.secondary" }}>
