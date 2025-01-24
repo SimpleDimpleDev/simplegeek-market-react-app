@@ -39,7 +39,7 @@ export const orderStatusBadges: Record<OrderStatus, JSX.Element> = {
 	),
 };
 
-export const preorderBadge: JSX.Element = <Chip color="success" label="Предзаказ" />;
+export const preorderBadge: JSX.Element = <Chip color="info" label="Предзаказ" />;
 
 export const preorderStatusBadges: Record<PreorderStatus, JSX.Element> = {
 	WAITING_FOR_RELEASE: (
