@@ -1,6 +1,5 @@
 import { ChevronLeft, PriorityHigh } from "@mui/icons-material";
 import {
-	Backdrop,
 	Button,
 	CircularProgress,
 	Dialog,
@@ -9,6 +8,7 @@ import {
 	DialogContentText,
 	DialogTitle,
 	Divider,
+	Modal,
 	Snackbar,
 	Stack,
 	Typography,
@@ -137,7 +137,7 @@ export function Component() {
 
 	useEffect(() => {
 		if (setOrderDeliveryIsSuccess) {
-			setSnackbarMessage("Доставка успешно изменена");
+			setSnackbarMessage("Способ доставки успешно изменён");
 			setSnackbarOpen(true);
 			refetchOrder();
 		}
@@ -145,8 +145,9 @@ export function Component() {
 
 	useEffect(() => {
 		if (setOrderDeliveryIsError) {
-			setSnackbarMessage("Не удалось изменить доставку");
+			setSnackbarMessage("Не удалось изменить способ доставки");
 			setSnackbarOpen(true);
+			setEditingDelivery(false);
 		}
 	}, [setOrderDeliveryIsError]);
 
@@ -223,8 +224,12 @@ export function Component() {
 				<SomethingWentWrong />
 			) : (
 				<>
-					<Backdrop open={setOrderDeliveryIsLoading || initPaymentIsLoading || orderIsFetching} />
-					<Snackbar open={snackbarOpen} message={snackbarMessage} onClose={() => setSnackbarOpen(false)} />
+					<Modal open={setOrderDeliveryIsLoading || initPaymentIsLoading || orderIsFetching}>
+						<div className="w-100v h-100v ai-c d-f jc-c" style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+							<CircularProgress />
+						</div>
+					</Modal>
+					<Snackbar autoHideDuration={3000} open={snackbarOpen} message={snackbarMessage} onClose={() => setSnackbarOpen(false)} />
 					<Dialog
 						open={paymentErrorDialogOpen}
 						onClose={() => setPaymentErrorDialogOpen(false)}
@@ -282,7 +287,7 @@ export function Component() {
 						}
 					/>
 					{order.preorder?.expectedArrival && (
-						<Typography variant="subtitle0" sx={{paddingBottom: "16px"}}>
+						<Typography variant="subtitle0" sx={{ paddingBottom: "16px" }}>
 							Ожидаемая дата доставки: {order.preorder.expectedArrival}
 						</Typography>
 					)}
@@ -301,7 +306,7 @@ export function Component() {
 											/>
 											<div className="gap-1 d-f fd-r jc-fe">
 												<Button
-													sx={{color: "white"}}
+													sx={{ color: "white" }}
 													color="error"
 													variant="contained"
 													onClick={() => setEditingDelivery(false)}
@@ -309,7 +314,7 @@ export function Component() {
 													Оформить
 												</Button>
 												<Button
-													sx={{color: "white"}}
+													sx={{ color: "white" }}
 													color="success"
 													variant="contained"
 													onClick={() => handleChangeDelivery()}
@@ -366,7 +371,7 @@ export function Component() {
 									/>
 									<div className="gap-1 d-f fd-r jc-fe">
 										<Button
-											sx={{color: "white"}}
+											sx={{ color: "white" }}
 											color="error"
 											variant="contained"
 											onClick={() => setEditingDelivery(false)}
@@ -374,7 +379,7 @@ export function Component() {
 											Отменить
 										</Button>
 										<Button
-											sx={{color: "white"}}
+											sx={{ color: "white" }}
 											color="success"
 											variant="contained"
 											onClick={() => handleChangeDelivery()}
