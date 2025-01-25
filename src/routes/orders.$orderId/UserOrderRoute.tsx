@@ -140,6 +140,7 @@ export function Component() {
 			setSnackbarMessage("Способ доставки успешно изменён");
 			setSnackbarOpen(true);
 			refetchOrder();
+			setEditingDelivery(false);
 		}
 	}, [setOrderDeliveryIsSuccess, refetchOrder]);
 
@@ -288,7 +289,7 @@ export function Component() {
 					/>
 					{order.preorder?.expectedArrival && (
 						<Typography variant="subtitle0" sx={{ paddingBottom: "16px" }}>
-							Ожидаемая дата доставки: {order.preorder.expectedArrival}
+							Ожидаемая дата прибытия предзаказа на склад: {order.preorder.expectedArrival}
 						</Typography>
 					)}
 					<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
@@ -349,14 +350,14 @@ export function Component() {
 												Доставка к вам оформляется после полной оплаты заказа и его прибытия на
 												склад в Москве.
 											</Typography>
-											<div className="gap-1 d-f fd-r">
+											{/* <div className="gap-1 d-f fd-r">
 												<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
 													На складе ожидается:
 												</Typography>
 												<Typography variant="body1">
 													{order.preorder?.expectedArrival ?? "Неизвестно"}
 												</Typography>
-											</div>
+											</div> */}
 										</div>
 									</div>
 								)

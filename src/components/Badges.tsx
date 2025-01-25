@@ -5,12 +5,12 @@ import { Chip, Tooltip } from "@mui/material";
 export const orderStatusBadges: Record<OrderStatus, JSX.Element> = {
 	CANCELLED: (
 		<Tooltip title={"Заказ отменен."}>
-			<Chip color="error" label="Отменен" />
+			<Chip color="secondary" label="Отменен" />
 		</Tooltip>
 	),
 	UNPAID: (
 		<Tooltip title={"Заказ не оплачен. Пожалуйста, оплатите заказ."}>
-			<Chip color="warning" label="Не оплачен" />
+			<Chip color="error" label="Не оплачен" />
 		</Tooltip>
 	),
 	ACCEPTED: (
