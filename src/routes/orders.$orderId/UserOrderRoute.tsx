@@ -1,4 +1,4 @@
-import { ChevronLeft, PriorityHigh } from "@mui/icons-material";
+import { ChevronLeft, OpenInNew, PriorityHigh } from "@mui/icons-material";
 import {
 	Button,
 	CircularProgress,
@@ -8,9 +8,11 @@ import {
 	DialogContentText,
 	DialogTitle,
 	Divider,
+	IconButton,
 	Modal,
 	Snackbar,
 	Stack,
+	Tooltip,
 	Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -444,18 +446,22 @@ export function Component() {
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
 														Трек-номер
 													</Typography>
-													<div className="gap-1 d-f fd-r">
+													<div className="gap-1 ai-c d-f fd-r">
 														<Typography variant="body1">
 															{order.delivery.tracking.code}
 														</Typography>
-														<Button
-															size="small"
-															onClick={() =>
-																window.open(order.delivery!.tracking!.link, "_blank")
-															}
-														>
-															Открыть
-														</Button>
+														<Tooltip title="Открыть в новой вкладке">
+															<IconButton
+																onClick={() =>
+																	window.open(
+																		order.delivery!.tracking!.link,
+																		"_blank"
+																	)
+																}
+															>
+																<OpenInNew />
+															</IconButton>
+														</Tooltip>
 													</div>
 												</div>
 											)}
