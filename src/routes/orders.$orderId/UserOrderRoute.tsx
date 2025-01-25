@@ -230,7 +230,12 @@ export function Component() {
 							<CircularProgress />
 						</div>
 					</Modal>
-					<Snackbar autoHideDuration={3000} open={snackbarOpen} message={snackbarMessage} onClose={() => setSnackbarOpen(false)} />
+					<Snackbar
+						autoHideDuration={3000}
+						open={snackbarOpen}
+						message={snackbarMessage}
+						onClose={() => setSnackbarOpen(false)}
+					/>
 					<Dialog
 						open={paymentErrorDialogOpen}
 						onClose={() => setPaymentErrorDialogOpen(false)}
@@ -434,6 +439,26 @@ export function Component() {
 												</Typography>
 												<Typography variant="body1">{order.delivery.point?.address}</Typography>
 											</div>
+											{order.delivery.tracking?.code && (
+												<div className="gap-05 d-f fd-c">
+													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
+														Трек-номер
+													</Typography>
+													<div className="gap-1 d-f fd-r">
+														<Typography variant="body1">
+															{order.delivery.tracking.code}
+														</Typography>
+														<Button
+															size="small"
+															onClick={() =>
+																window.open(order.delivery!.tracking!.link, "_blank")
+															}
+														>
+															Открыть
+														</Button>
+													</div>
+												</div>
+											)}
 										</div>
 										<div className="gap-2 d-f fd-c">
 											<Typography variant="h5">Получатель</Typography>
