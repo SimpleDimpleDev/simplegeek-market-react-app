@@ -7,6 +7,7 @@ import { ProductGetSchema } from "./Product";
 export const CatalogItemGetSchema = z
 	.object({
 		id: IdSchema,
+		quantityRestriction: z.number().nullable(),
 		product: ProductGetSchema,
 		rating: z.number(),
 		price: z.number(),
@@ -16,6 +17,10 @@ export const CatalogItemGetSchema = z
 		createdAt: ISOToDateSchema,
 	})
 	.describe("CatalogItemGet");
+
+export const CatalogItemCartSchema = CatalogItemGetSchema.extend({
+	quantity: z.number(),
+})
 
 export const CatalogItemsAvailabilityGetSchema = z
 	.object({

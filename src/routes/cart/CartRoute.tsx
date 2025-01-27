@@ -21,13 +21,11 @@ import { CartSection } from "./CartSection";
 
 import { useSelector } from "react-redux";
 import { RootState } from "@state/store";
-import { useGetCatalogQuery, useGetItemsAvailabilityQuery } from "@api/shop/catalog";
-import { useGetCartItemListQuery } from "@api/shop/cart";
+import { useGetCartItemListQuery, useGetDetailedCartQuery } from "@api/shop/cart";
 import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { useCheckoutMutation } from "@api/shop/order";
-import { formCart } from "./utils";
 import { useIsMobile } from "src/hooks/useIsMobile";
-import { availabilityPollingInterval, catalogPollingInterval } from "@config/polling";
+import { availabilityPollingInterval } from "@config/polling";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { isExpectedApiError } from "@utils/api";
 import RecentItems from "@components/RecentItems";
@@ -44,42 +42,14 @@ export function Component() {
 
 	const user = useSelector((state: RootState) => state.user.identity);
 
-	const { data: catalog, isLoading: catalogIsLoading } = useGetCatalogQuery(void 0, {
-		refetchOnMountOrArgChange: true,
-		pollingInterval: catalogPollingInterval,
-		skipPollingIfUnfocused: true,
-		refetchOnFocus: true,
-	});
-
-	const {
-		data: availableItemList,
-		isLoading: availabilityIsLoading,
-		refetch: refetchAvailability,
-	} = useGetItemsAvailabilityQuery(void 0, {
-		refetchOnMountOrArgChange: true,
-		pollingInterval: availabilityPollingInterval,
-		skipPollingIfUnfocused: true,
-		refetchOnFocus: true,
-	});
-
 	const { data: favoriteItemList, isLoading: favoriteItemListIsLoading } = useGetFavoriteItemListQuery();
-	const {
-		data: cartItemList,
-		isLoading: cartItemListIsLoading,
-		refetch: refetchCart,
-	} = useGetCartItemListQuery(void 0, {
+	const { data: detailedCart, isLoading: detailedCartIsLoading } = useGetDetailedCartQuery(void 0, {
 		refetchOnMountOrArgChange: true,
 		pollingInterval: availabilityPollingInterval,
 		skipPollingIfUnfocused: true,
 		refetchOnFocus: true,
 	});
-
-	const availableItemIds = useMemo(() => {
-		if (!availableItemList) return undefined;
-		const idSet = new Set<string>();
-		availableItemList?.items.forEach((item) => idSet.add(item));
-		return idSet;
-	}, [availableItemList]);
+	const { refetch: refetchCartItemList } = useGetCartItemListQuery();
 
 	const favoriteItemIds = useMemo(() => {
 		if (!favoriteItemList) return undefined;
@@ -87,13 +57,6 @@ export function Component() {
 		favoriteItemList?.items.forEach((item) => idSet.add(item.id));
 		return idSet;
 	}, [favoriteItemList]);
-
-	const cartItemIds = useMemo(() => {
-		if (!cartItemList) return undefined;
-		const idSet = new Set<string>();
-		cartItemList?.items.forEach((item) => idSet.add(item.id));
-		return idSet;
-	}, [cartItemList]);
 
 	const [checkout, { isSuccess: checkoutIsSuccess, isError: checkoutIsError, error: checkoutError }] =
 		useCheckoutMutation();
@@ -116,7 +79,7 @@ export function Component() {
 						details = checkoutError.data.details;
 					}
 					message = checkoutError.data.message;
-				} else if ( checkoutError.data.title === "UnverifiedError") {
+				} else if (checkoutError.data.title === "UnverifiedError") {
 					message = checkoutError.data.message;
 					navigate("/auth/verification?return_to=https://simplegeek.ru/cart");
 				}
@@ -128,18 +91,9 @@ export function Component() {
 
 	useEffect(() => {
 		if (orderError) {
-			refetchCart();
-			refetchAvailability();
+			refetchCartItemList();
 		}
-	}, [orderError, refetchCart, refetchAvailability]);
-
-	const formedCart = useMemo(
-		() =>
-			catalog && availableItemIds && cartItemList
-				? formCart({ catalogItems: catalog.items, userCart: cartItemList.items, availableItemIds })
-				: { sections: [] },
-		[catalog, availableItemIds, cartItemList]
-	);
+	}, [orderError, refetchCartItemList]);
 
 	const createOrder = async (items: UserCartItem[]) => {
 		if (!user) {
@@ -148,17 +102,17 @@ export function Component() {
 			checkout({ items });
 		}
 	};
-	
+
 	return (
 		<>
 			<Helmet>
 				<title>Корзина - SimpleGeek</title>
 			</Helmet>
-			{catalogIsLoading || availabilityIsLoading || cartItemListIsLoading || favoriteItemListIsLoading ? (
+			{detailedCartIsLoading || favoriteItemListIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
-			) : !catalog || !availableItemIds || !cartItemList ? (
+			) : !detailedCart ? (
 				<SomethingWentWrong />
 			) : (
 				<>
@@ -185,36 +139,51 @@ export function Component() {
 					<PageHeading
 						title="Корзина"
 						infoText={
-							cartItemList
-								? `${cartItemList.items.length} ${getRuGoodsWord(cartItemList.items.length)}`
+							detailedCart
+								? `${
+										detailedCart.sections.flatMap((section) =>
+											section.availableItems.concat(section.unavailableItems)
+										).length
+								  } ${getRuGoodsWord(
+										detailedCart.sections.flatMap((section) =>
+											section.availableItems.concat(section.unavailableItems)
+										).length
+								  )}`
 								: ""
 						}
 					/>
+					{/* TODO: Show only one section */}
 					<Stack direction={"column"} gap={4} divider={<Divider />}>
-						{formedCart.sections.map((section) => {
-							const userSectionItems =
-								cartItemList.items.filter((item) =>
-									section.items.some((sectionItem) => sectionItem.id === item.id)
-								) || [];
-							return (
-								userSectionItems.length > 0 && (
+						{detailedCart.sections.map((section) => (
+							<>
+								{section.availableItems.length > 0 && (
 									<CartSection
 										isMobile={isMobile}
 										key={section.title}
 										data={section}
-										availableItemIds={availableItemIds}
-										availabilityIsLoading={availabilityIsLoading}
-										cartItemIds={cartItemIds}
-										cartItemListIsLoading={cartItemListIsLoading}
+										items={section.availableItems}
+										unavailable={false}
 										favoriteItemIds={favoriteItemIds}
 										favoriteItemListIsLoading={favoriteItemListIsLoading}
 										onMakeOrder={createOrder}
 									/>
-								)
-							);
-						})}
+								)}
+								{section.unavailableItems.length > 0 && (
+									<CartSection
+										isMobile={isMobile}
+										key={section.title}
+										data={section}
+										items={section.unavailableItems}
+										unavailable={true}
+										favoriteItemIds={favoriteItemIds}
+										favoriteItemListIsLoading={favoriteItemListIsLoading}
+										onMakeOrder={createOrder}
+									/>
+								)}
+							</>
+						))}
 					</Stack>
-					{cartItemList.items.length === 0 && (
+					{detailedCart.sections.length === 0 && (
 						<Empty
 							title="В корзине ничего нет"
 							description="Добавьте в корзину что-нибудь"

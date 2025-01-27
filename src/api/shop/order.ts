@@ -3,7 +3,8 @@ import { shopApi } from "./root";
 import { z } from "zod";
 import { validateData } from "@utils/validation";
 import { UserCartItem } from "@appTypes/UserItems";
-import { CheckoutDataSchema, PaymentUrlGetSchema } from "@schemas/Order";
+import { PaymentUrlGetSchema } from "@schemas/Order";
+import { CheckoutDataSchema } from "@schemas/Cart";
 
 const orderApi = shopApi.injectEndpoints({
 	endpoints: (build) => ({

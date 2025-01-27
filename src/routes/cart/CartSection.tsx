@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { baseFadeTime } from "@config/animation";
 import { useEffect, useState } from "react";
-import { FormedCartSection } from "@appTypes/Cart";
+import { CatalogItemCart, DetailedCartSection } from "@appTypes/Cart";
 import { UserCartItem } from "@appTypes/UserItems";
 import { useDeleteCartItemsMutation } from "@api/shop/cart";
 import { CartItem } from "./CartItem";
@@ -69,13 +69,9 @@ const CartSectionItemsWrapper = ({ isMobile, children }: { isMobile: boolean; ch
 
 interface CartSectionProps {
 	isMobile: boolean;
-	data: FormedCartSection;
-	availableItemIds: Set<string> | undefined;
-	availabilityIsLoading: boolean;
-
-	cartItemIds: Set<string> | undefined;
-	cartItemListIsLoading: boolean;
-
+	unavailable: boolean;
+	data: DetailedCartSection;
+	items: CatalogItemCart[];
 	favoriteItemIds: Set<string> | undefined;
 	favoriteItemListIsLoading: boolean;
 	onMakeOrder: (items: UserCartItem[]) => void;
@@ -83,35 +79,33 @@ interface CartSectionProps {
 
 export const CartSection = ({
 	isMobile,
+	unavailable,
 	data,
-	availableItemIds,
-	availabilityIsLoading,
-	cartItemIds,
-	cartItemListIsLoading,
+	items,
 	favoriteItemIds,
 	favoriteItemListIsLoading,
 	onMakeOrder,
 }: CartSectionProps) => {
 	const navigate = useNavigate();
 
-	const [checkedIds, setCheckedIds] = useState<string[]>(data.unavailable ? [] : data.items.map((item) => item.id));
+	const [checkedIds, setCheckedIds] = useState<string[]>(unavailable ? [] : items.map((item) => item.id));
 	const [deleteModalIsOpened, setDeleteModalIsOpened] = useState(false);
 
 	const [removeCartItems] = useDeleteCartItemsMutation();
 
 	useEffect(() => {
-		setCheckedIds((prev) => prev.filter((id) => data.items.some((item) => item.id === id)));
-	}, [data]);
+		setCheckedIds((prev) => prev.filter((id) => items.some((item) => item.id === id)));
+	}, [items]);
 
 	const checkedItemsCount = checkedIds.length;
-	const allChecked = checkedItemsCount === data.items.length;
+	const allChecked = checkedItemsCount === items.length;
 
-	const totalPrice = data.items
+	const totalPrice = items
 		.filter((cartItem) => checkedIds.includes(cartItem.id))
 		.map((cartItem) => cartItem.price * cartItem.quantity)
 		.reduce((a, b) => a + b, 0);
 
-	const totalDiscount = data.items
+	const totalDiscount = items
 		.filter((cartItem) => checkedIds.includes(cartItem.id))
 		.map((cartItem) => (cartItem.discount ?? 0) * cartItem.quantity)
 		.reduce((a, b) => a + b, 0);
@@ -134,7 +128,7 @@ export const CartSection = ({
 		if (allChecked) {
 			setCheckedIds([]);
 		} else {
-			setCheckedIds(data.items.map((item) => item.id));
+			setCheckedIds(items.map((item) => item.id));
 		}
 	};
 
@@ -163,15 +157,22 @@ export const CartSection = ({
 				</DialogActions>
 			</Dialog>
 
-			<Typography variant="h5">{data.preorder && "Предзаказ"} {data.title}</Typography>
-			{data.preorder && data.preorder.expectedArrival && (
-				<Box display={"flex"} flexDirection={"row"} gap={"8px"}>
-					<Typography color="typography.secondary" variant="subtitle1">
-						На складе ожидается:
+			{data.type === "PREORDER" && (
+				<>
+					<Typography variant="h5">
+						{data.preorder && "Предзаказ"} {data.title}
 					</Typography>
-					<Typography variant="subtitle1">{data.preorder.expectedArrival ?? "Неизвестно"}</Typography>
-				</Box>
+					{data.preorder.expectedArrival && (
+						<Box display={"flex"} flexDirection={"row"} gap={"8px"}>
+							<Typography color="typography.secondary" variant="subtitle1">
+								На складе ожидается:
+							</Typography>
+							<Typography variant="subtitle1">{data.preorder.expectedArrival ?? "Неизвестно"}</Typography>
+						</Box>
+					)}
+				</>
 			)}
+
 			<CartSectionWrapper isMobile={isMobile}>
 				<CartSectionItemsWrapper isMobile={isMobile}>
 					<CartSectionHeader
@@ -180,7 +181,7 @@ export const CartSection = ({
 						anySelected={checkedIds.length > 0}
 						onDeleteSelected={() => setDeleteModalIsOpened(true)}
 					/>
-					{data.items.map((cartItem, cartItemIndex) => {
+					{items.map((cartItem, cartItemIndex) => {
 						return (
 							<Grow key={cartItem.id} in timeout={(cartItemIndex + 1) * baseFadeTime}>
 								<Box display="flex" flexDirection="column" gap={2}>
@@ -189,12 +190,8 @@ export const CartSection = ({
 										isMobile={isMobile}
 										key={cartItem.id}
 										item={cartItem}
-										isAvailable={availableItemIds?.has(cartItem.id)}
-										availabilityIsLoading={availabilityIsLoading}
 										isFavorite={favoriteItemIds?.has(cartItem.id)}
 										favoriteItemListIsLoading={favoriteItemListIsLoading}
-										isInCart={cartItemIds?.has(cartItem.id)}
-										cartItemListIsLoading={cartItemListIsLoading}
 										checked={checkedIds.includes(cartItem.id)}
 										onClick={() => {
 											const variationParam =
@@ -210,7 +207,7 @@ export const CartSection = ({
 						);
 					})}
 				</CartSectionItemsWrapper>
-				{!data.unavailable ? (
+				{!unavailable ? (
 					<Box
 						position={isMobile ? "relative" : "sticky"}
 						top={16}
@@ -255,7 +252,7 @@ export const CartSection = ({
 									{checkedItemsCount} {getRuGoodsWord(checkedItemsCount)}
 								</Typography>
 							</Box>
-							{data.creditAvailable && (
+							{data.type === "PREORDER" && data.creditAvailable && (
 								<Typography variant="body2" color="typography.success">
 									Доступна рассрочка
 								</Typography>
@@ -263,7 +260,7 @@ export const CartSection = ({
 						</Box>
 						<Button
 							onClick={() => {
-								const checkedItems = data.items.filter((item) => checkedIds.includes(item.id));
+								const checkedItems = items.filter((item) => checkedIds.includes(item.id));
 								onMakeOrder(checkedItems.map((item) => ({ id: item.id, quantity: item.quantity })));
 							}}
 							variant="contained"
@@ -271,7 +268,7 @@ export const CartSection = ({
 						>
 							Оформить
 						</Button>
-						{data.preorder && data.shippingCostIncluded !== "FULL" && (
+						{data.type === "PREORDER" && data.shippingCostIncluded !== "FULL" && (
 							<Typography variant="caption" color="typography.disabled">
 								В сумме заказа не учитывается стоимость доставки до склада. Она будет известна после его
 								приезда.

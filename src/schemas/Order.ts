@@ -5,25 +5,12 @@ import { IdSchema, ISOToDateSchema } from "./Primitives";
 import { DeliverySchema } from "./Delivery";
 import { PreorderGetSchema, ShippingCostIncludedSchema } from "./Preorder";
 import { PhysicalPropertiesSchema } from "./PhysicalProperties";
-import { CatalogItemGetSchema } from "./CatalogItem";
 
 export const PaymentUrlGetSchema = z
 	.object({
 		paymentUrl: z.string().url(),
 	})
 	.describe("PaymentUrlGet");
-
-export const CheckoutDataSchema = z.object({
-	items: CatalogItemGetSchema.extend({ quantity: z.number() }).array(),
-	shouldSelectDelivery: z.boolean(),
-	packages: PhysicalPropertiesSchema.array(),
-	preorder: PreorderGetSchema.nullable(),
-	price: z.object({
-		original: z.number(),
-		discount: z.number().nullable(),
-		total: z.number(),
-	}),
-});
 
 export const OrderStatusSchema = z.enum([
 	"CANCELLED",

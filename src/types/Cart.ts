@@ -1,19 +1,7 @@
-import { CatalogItem } from "./CatalogItem";
-import { PreorderShop } from "./Preorder";
+import { DetailedCartGetSchema, DetailedCartSectionSchema } from "@schemas/Cart";
+import { CatalogItemCartSchema } from "@schemas/CatalogItem";
+import { z } from "zod";
 
-export type CatalogItemCart = CatalogItem & {
-	quantity: number;
-};
-
-export type FormedCartSection = {
-	title: string;
-	unavailable: boolean;
-	preorder: PreorderShop | null;
-	shippingCostIncluded: "FOREIGN" | "FULL" | "NOT" | null;
-	creditAvailable: boolean;
-	items: CatalogItemCart[];
-};
-
-export type FormedCart = {
-	sections: FormedCartSection[];
-};
+export type CatalogItemCart = z.infer<typeof CatalogItemCartSchema>;
+export type DetailedCartSection = z.infer<typeof DetailedCartSectionSchema>;
+export type DetailedCartGet = z.infer<typeof DetailedCartGetSchema>;

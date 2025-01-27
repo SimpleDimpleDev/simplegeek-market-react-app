@@ -10,16 +10,12 @@ const ControlButtons = ({
 	isFavorite,
 	onFavoriteClick,
 	favoriteLoading,
-	isInCart,
 	onDelete,
-	cartLoading,
 }: {
 	isFavorite: boolean | undefined;
 	onFavoriteClick: () => void;
 	favoriteLoading: boolean;
-	isInCart: boolean | undefined;
 	onDelete: () => void;
-	cartLoading: boolean;
 }) => (
 	<Box display={"flex"} flexDirection={"row"} gap={1}>
 		<IconButton disabled={favoriteLoading} onClick={onFavoriteClick}>
@@ -31,8 +27,8 @@ const ControlButtons = ({
 				<FavoriteBorder color="secondary" />
 			)}
 		</IconButton>
-		<IconButton disabled={cartLoading || !isInCart} onClick={onDelete}>
-			{cartLoading ? <CircularProgress sx={{ color: "icon.primary" }} /> : <Delete />}
+		<IconButton onClick={onDelete}>
+			<Delete />
 		</IconButton>
 	</Box>
 );
@@ -83,12 +79,6 @@ interface CartItemProps {
 	isMobile: boolean;
 	item: CatalogItemCart;
 
-	isAvailable?: boolean;
-	availabilityIsLoading: boolean;
-
-	isInCart?: boolean;
-	cartItemListIsLoading: boolean;
-
 	isFavorite?: boolean;
 	favoriteItemListIsLoading: boolean;
 
@@ -100,10 +90,6 @@ interface CartItemProps {
 const CartItem = ({
 	isMobile,
 	item,
-	isAvailable,
-	availabilityIsLoading,
-	isInCart,
-	cartItemListIsLoading,
 	isFavorite,
 	favoriteItemListIsLoading,
 	checked,
@@ -190,21 +176,9 @@ const CartItem = ({
 								)}
 
 								<Typography variant="body2">{item.product.title}</Typography>
-								{availabilityIsLoading ? (
-									<Typography variant="body2">Загрузка...</Typography>
-								) : isAvailable === undefined ? null : isAvailable ? (
-									item.preorder !== null ? (
-										<Typography color="typography.success" variant="body2">
-											Доступно для предзаказа
-										</Typography>
-									) : (
-										<Typography color="typography.success" variant="body2">
-											В наличии
-										</Typography>
-									)
-								) : (
-									<Typography color="typography.attention" variant="body2">
-										Нет в наличии
+								{item.quantityRestriction && (
+									<Typography color="typography.secondary" variant="body2">
+										Ограничение на аккаунт: {item.quantityRestriction}
 									</Typography>
 								)}
 							</Box>
@@ -214,9 +188,7 @@ const CartItem = ({
 									isFavorite={isFavorite}
 									onFavoriteClick={handleToggleFavorite}
 									favoriteLoading={favoriteItemListIsLoading}
-									isInCart={isInCart}
 									onDelete={handleDelete}
-									cartLoading={cartItemListIsLoading}
 								/>
 							)}
 						</Box>
@@ -258,9 +230,7 @@ const CartItem = ({
 							isFavorite={isFavorite}
 							onFavoriteClick={handleToggleFavorite}
 							favoriteLoading={favoriteItemListIsLoading}
-							isInCart={isInCart}
 							onDelete={handleDelete}
-							cartLoading={cartItemListIsLoading}
 						/>
 						<QuantityButtons
 							quantity={item.quantity}
