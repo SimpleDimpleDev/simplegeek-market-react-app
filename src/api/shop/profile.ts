@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { shopApi } from "./root";
-import { OrderListGetSchema, OrderGetSchema } from "@schemas/Order";
+import { OrderListGetSchema, OrderGetSchema, OrderActionsSchema, OrderDeliverySetSchema } from "@schemas/Order";
 import { validateData } from "@utils/validation";
 import { DeliverySchema } from "@schemas/Delivery";
 
@@ -21,6 +21,21 @@ const profileApi = shopApi.injectEndpoints({
 			}),
 			transformResponse: (response) => validateData(OrderGetSchema, response),
 		}),
+		setOrderDelivery: build.mutation<void, z.infer<typeof OrderDeliverySetSchema>>({
+			query: (data) => ({
+				url: "/profile/order/delivery",
+				method: "PUT",
+				body: data,
+			}),
+		}),
+		getOrderActions: build.query<z.infer<typeof OrderActionsSchema>, { id: string }>({
+			query: ({ id }) => ({
+				url: "/profile/order/actions",
+				method: "GET",
+				params: { id },
+			}),
+			transformResponse: (response) => validateData(OrderActionsSchema, response),
+		}),
 		getSavedDelivery: build.query<z.infer<typeof DeliverySchema>, void>({
 			query: () => ({
 				url: "/profile/saved-delivery",
@@ -31,4 +46,10 @@ const profileApi = shopApi.injectEndpoints({
 	}),
 });
 
-export const { useGetOrderListQuery, useGetOrderQuery, useGetSavedDeliveryQuery } = profileApi;
+export const {
+	useGetOrderListQuery,
+	useGetOrderQuery,
+	useGetSavedDeliveryQuery,
+	useGetOrderActionsQuery,
+	useSetOrderDeliveryMutation,
+} = profileApi;

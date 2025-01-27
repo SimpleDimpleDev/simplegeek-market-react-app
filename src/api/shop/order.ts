@@ -3,7 +3,7 @@ import { shopApi } from "./root";
 import { z } from "zod";
 import { validateData } from "@utils/validation";
 import { UserCartItem } from "@appTypes/UserItems";
-import { CheckoutItemListSchema, PaymentUrlGetSchema } from "@schemas/Order";
+import { CheckoutDataSchema, PaymentUrlGetSchema } from "@schemas/Order";
 
 const orderApi = shopApi.injectEndpoints({
 	endpoints: (build) => ({
@@ -14,12 +14,12 @@ const orderApi = shopApi.injectEndpoints({
 				body,
 			}),
 		}),
-		getCheckoutItems: build.query<z.infer<typeof CheckoutItemListSchema>, void>({
+		getCheckoutData: build.query<z.infer<typeof CheckoutDataSchema>, void>({
 			query: () => ({
 				url: "/checkout",
 				method: "GET",
 			}),
-			transformResponse: (response) => validateData(CheckoutItemListSchema, response),
+			transformResponse: (response) => validateData(CheckoutDataSchema, response),
 		}),
 		createOrder: build.mutation<z.infer<typeof PaymentUrlGetSchema>, OrderCreate>({
 			query: (body) => ({
@@ -43,7 +43,7 @@ const orderApi = shopApi.injectEndpoints({
 
 export const {
 	useCheckoutMutation,
-	useGetCheckoutItemsQuery,
+	useGetCheckoutDataQuery,
 	useCreateOrderMutation,
 	useGetPaymentUrlQuery,
 	useLazyGetPaymentUrlQuery,

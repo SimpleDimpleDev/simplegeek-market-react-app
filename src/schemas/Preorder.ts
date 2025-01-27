@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const PreorderStatusSchema = z
-	.enum(["NEW", "FUNDING", "WAITING_FOR_RELEASE", "FOREIGN_SHIPPING", "LOCAL_SHIPPING", "DISPATCH", "FINISHED"])
+	.enum(["WAITING_FOR_RELEASE", "FOREIGN_SHIPPING", "LOCAL_SHIPPING", "DISPATCH", "FINISHED"])
 	.describe("PreorderStatus");
 export const ShippingCostIncludedSchema = z.enum(["FOREIGN", "FULL", "NOT"]).describe("ShippingCostIncluded");
 

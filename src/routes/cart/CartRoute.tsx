@@ -116,6 +116,9 @@ export function Component() {
 						details = checkoutError.data.details;
 					}
 					message = checkoutError.data.message;
+				} else if ( checkoutError.data.title === "UnverifiedError") {
+					message = checkoutError.data.message;
+					navigate("/auth/verification?return_to=https://simplegeek.ru/cart");
 				}
 			}
 			setOrderError({ message: message, details });

@@ -1,22 +1,45 @@
-import { ChevronLeft } from "@mui/icons-material";
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Stack, Typography } from "@mui/material";
+import { ChevronLeft, OpenInNew, PriorityHigh } from "@mui/icons-material";
+import {
+	Button,
+	CircularProgress,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+	Divider,
+	IconButton,
+	Modal,
+	Snackbar,
+	Stack,
+	Tooltip,
+	Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import React, { useEffect, useMemo, useState } from "react";
-import { orderStatusBadges } from "@components/Badges";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { orderStatusBadges, preorderBadge, preorderStatusBadges } from "@components/Badges";
 import CountdownTimer from "@components/CountdownTimer";
-import { DeliveryPackage, DeliveryService } from "@appTypes/Delivery";
+import { Delivery, DeliveryService } from "@appTypes/Delivery";
 import { DateFormatter, getRuGoodsWord } from "@utils/format";
 import { getImageUrl } from "@utils/image";
 import { useParams } from "react-router-dom";
-import { useGetOrderQuery } from "@api/shop/profile";
+import { useGetOrderActionsQuery, useGetOrderQuery, useSetOrderDeliveryMutation } from "@api/shop/profile";
 import { useLazyGetPaymentUrlQuery } from "@api/shop/order";
 import SomethingWentWrong from "@components/SomethingWentWrong";
 import { useIsMobile } from "src/hooks/useIsMobile";
 import { CreditGet } from "@appTypes/Credit";
-import { DeliveryForm } from "@components/DeliveryForm";
 import { Helmet } from "react-helmet";
 import { PageHeading } from "@components/PageHeading";
 import { isExpectedApiError } from "@utils/api";
+import { DeliveryFormRef, DeliveryForm } from "@components/DeliveryForm";
+import { PreorderStatus } from "@appTypes/Preorder";
+
+const preorderStatusListToRender: PreorderStatus[] = [
+	"WAITING_FOR_RELEASE",
+	"FOREIGN_SHIPPING",
+	"LOCAL_SHIPPING",
+	"DISPATCH",
+];
 
 const deliveryServiceMapping: Record<DeliveryService, string> = {
 	CDEK: "СДЭК",
@@ -68,94 +91,100 @@ const OrderItemCredit: React.FC<OrderItemCreditProps> = ({ credit, onPayClick })
 };
 
 export function Component() {
-	const isMobile = useIsMobile();
-
-	const navigate = useNavigate();
 	const params = useParams();
 	const orderId = params.orderId;
 	if (orderId === undefined) {
 		throw new Response("No order id provided", { status: 404 });
 	}
-	const { data: order, isLoading: orderIsLoading } = useGetOrderQuery({ id: orderId });
-	const [initPayment, { data: initPaymentData, isSuccess: initPaymentIsSuccess, isError: initPaymentIsError, error: initPaymentError }] = useLazyGetPaymentUrlQuery();
+
+	const isMobile = useIsMobile();
+	const navigate = useNavigate();
+
+	const deliveryFormRef = useRef<DeliveryFormRef>(null);
+	const [editingDelivery, setEditingDelivery] = useState(false);
+
+	const [snackbarOpen, setSnackbarOpen] = useState(false);
+	const [snackbarMessage, setSnackbarMessage] = useState("");
+
+	const {
+		data: order,
+		isLoading: orderIsLoading,
+		refetch: refetchOrder,
+		isFetching: orderIsFetching,
+	} = useGetOrderQuery({ id: orderId });
+	const { data: orderActions, isLoading: orderActionsIsLoading } = useGetOrderActionsQuery({ id: orderId });
+
+	const hasAdditionalPayments = useMemo(() => {
+		const preorder = order?.preorder;
+		if (!preorder) {
+			return false;
+		}
+		return (
+			!!preorder.credit ||
+			!!preorder.foreignShippingInvoice ||
+			!!(!preorder.foreignShippingInvoice && preorder.shippingCostIncluded === "NOT") ||
+			!!preorder.localShippingInvoice ||
+			!!(!preorder.localShippingInvoice && preorder.shippingCostIncluded !== "FULL")
+		);
+	}, [order]);
+
+	const [
+		setOrderDelivery,
+		{
+			isLoading: setOrderDeliveryIsLoading,
+			isSuccess: setOrderDeliveryIsSuccess,
+			isError: setOrderDeliveryIsError,
+		},
+	] = useSetOrderDeliveryMutation();
+
+	useEffect(() => {
+		if (setOrderDeliveryIsSuccess) {
+			setSnackbarMessage("Способ доставки успешно изменён");
+			setSnackbarOpen(true);
+			refetchOrder();
+			setEditingDelivery(false);
+		}
+	}, [setOrderDeliveryIsSuccess, refetchOrder]);
+
+	useEffect(() => {
+		if (setOrderDeliveryIsError) {
+			setSnackbarMessage("Не удалось изменить способ доставки");
+			setSnackbarOpen(true);
+			setEditingDelivery(false);
+		}
+	}, [setOrderDeliveryIsError]);
+
+	const changeDelivery = ({ delivery, saveDelivery }: { delivery: Delivery; saveDelivery: boolean }) => {
+		setOrderDelivery({
+			orderId,
+			delivery,
+			saveDelivery,
+		});
+	};
+
+	const handleDeliveryFormSubmit = (delivery: Delivery, saveDelivery: boolean) => {
+		changeDelivery({ delivery, saveDelivery });
+	};
+
+	const handleChangeDelivery = () => {
+		if (orderActions?.setDelivery.enabled && deliveryFormRef.current) {
+			deliveryFormRef.current.submit();
+		}
+	};
+
+	const [
+		initPayment,
+		{
+			data: initPaymentData,
+			isLoading: initPaymentIsLoading,
+			isSuccess: initPaymentIsSuccess,
+			isError: initPaymentIsError,
+			error: initPaymentError,
+		},
+	] = useLazyGetPaymentUrlQuery();
 
 	const [paymentErrorDialogOpen, setPaymentErrorDialogOpen] = useState(false);
 	const [paymentError, setPaymentError] = useState<{ message: string; orderId: string } | null>(null);
-	
-	const packages: DeliveryPackage[] = useMemo(() => {
-		if (!order) return [];
-		const packages: DeliveryPackage[] = [];
-		for (const item of order.items) {
-			if (!item.physicalProperties) continue;
-			for (let i = 0; i < item.quantity; i++) {
-				packages.push(item.physicalProperties);
-			}
-		}
-		return packages;
-	}, [order]);
-
-	const canChangeDelivery = useMemo(() => {
-		// TODO: check if it's possible to change delivery
-		return false;
-	}, []);
-
-	const { paidCreditAmount, unpaidCreditAmount, orderHasCredit } = useMemo(() => {
-		if (!order) return { paidCreditAmount: undefined, unpaidCreditAmount: undefined, orderHasCredit: undefined };
-		let paidCreditAmount = 0;
-		let unpaidCreditAmount = 0;
-		let orderHasCredit = false;
-		for (const item of order.items) {
-			const credit = item.credit;
-			if (!credit) continue;
-			orderHasCredit = true;
-			for (const payment of credit.payments) {
-				if (payment.invoice.isPaid) {
-					paidCreditAmount += payment.invoice.amount;
-				} else {
-					unpaidCreditAmount += payment.invoice.amount;
-				}
-			}
-		}
-		return { paidCreditAmount, unpaidCreditAmount, orderHasCredit };
-	}, [order]);
-
-	const foreignShippingInvoice = useMemo(() => {
-		if (!order) return undefined;
-		return order.preorder?.foreignShippingInvoice || null;
-	}, [order]);
-
-	const foreignShippingInvoicePending = useMemo(() => {
-		if (!order) return undefined;
-		if (!order.preorder) return false;
-		return !foreignShippingInvoice && order.preorder.shippingCostIncluded === "NOT";
-	}, [order, foreignShippingInvoice]);
-
-	const localShippingInvoice = useMemo(() => {
-		if (!order) return undefined;
-		return order.preorder?.localShippingInvoice || null;
-	}, [order]);
-
-	const localShippingInvoicePending = useMemo(() => {
-		if (!order) return undefined;
-		if (!order.preorder) return false;
-		return !localShippingInvoice && order.preorder.shippingCostIncluded !== "FULL";
-	}, [order, localShippingInvoice]);
-
-	const showDetailedOrder = useMemo(() => {
-		return (
-			!!orderHasCredit ||
-			!!foreignShippingInvoice ||
-			!!foreignShippingInvoicePending ||
-			!!localShippingInvoice ||
-			!!localShippingInvoicePending
-		);
-	}, [
-		orderHasCredit,
-		foreignShippingInvoice,
-		foreignShippingInvoicePending,
-		localShippingInvoice,
-		localShippingInvoicePending,
-	]);
 
 	useEffect(() => {
 		if (initPaymentIsSuccess) {
@@ -180,8 +209,8 @@ export function Component() {
 			}
 		}
 	}, [initPaymentIsError, initPaymentError]);
-	
-	const handlePay = async (invoiceId: string) => {
+
+	const handlePay = (invoiceId: string) => {
 		initPayment({ invoiceId });
 	};
 
@@ -190,14 +219,25 @@ export function Component() {
 			<Helmet>
 				<title>{order ? `Заказ от ${DateFormatter.DDMMYYYY(order.createdAt)} - ` : ""}SimpleGeek</title>
 			</Helmet>
-			{orderIsLoading ? (
+			{orderIsLoading || orderActionsIsLoading ? (
 				<div className="w-100 h-100 ai-c d-f jc-c">
 					<CircularProgress />
 				</div>
-			) : !order ? (
+			) : !order || !orderActions ? (
 				<SomethingWentWrong />
 			) : (
 				<>
+					<Modal open={setOrderDeliveryIsLoading || initPaymentIsLoading || orderIsFetching}>
+						<div className="w-100v h-100v ai-c d-f jc-c" style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+							<CircularProgress />
+						</div>
+					</Modal>
+					<Snackbar
+						autoHideDuration={3000}
+						open={snackbarOpen}
+						message={snackbarMessage}
+						onClose={() => setSnackbarOpen(false)}
+					/>
 					<Dialog
 						open={paymentErrorDialogOpen}
 						onClose={() => setPaymentErrorDialogOpen(false)}
@@ -211,15 +251,11 @@ export function Component() {
 									<DialogContentText id="error-dialog-description">
 										{paymentError.message}
 										<br />
-										Попробуйте ещё раз. При повторной ошибке свяжитесь с
-										администратором.
+										Попробуйте ещё раз. При повторной ошибке свяжитесь с администратором.
 									</DialogContentText>
 								</DialogContent>
 								<DialogActions>
-									<Button
-										variant="contained"
-										onClick={() => setPaymentErrorDialogOpen(false)}
-									>
+									<Button variant="contained" onClick={() => setPaymentErrorDialogOpen(false)}>
 										Понятно
 									</Button>
 								</DialogActions>
@@ -238,71 +274,149 @@ export function Component() {
 					</div>
 
 					<PageHeading
-						title={`Заказ от ${DateFormatter.DDMMYYYY(order.createdAt)}`}
+						title={
+							<div className="gap-1 ai-c d-f fd-r">
+								<Typography sx={{ verticalAlign: "baseline" }} variant={"h4"}>
+									Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}
+								</Typography>
+								{order.preorder && preorderBadge}
+							</div>
+						}
 						subText={`ID: ${order.id}`}
+						additional={
+							<div className="gap-1 d-f fd-r">
+								{orderStatusBadges[order.status]}
+								{order.preorder &&
+									order.status === "ACCEPTED" &&
+									preorderStatusListToRender.includes(order.preorder.status) && (
+										<>{preorderStatusBadges[order.preorder.status]}</>
+									)}
+							</div>
+						}
 					/>
-
-					<div className="gap-1 pb-4 d-f fd-r">{orderStatusBadges[order.status]}</div>
+					{order.preorder?.expectedArrival && (
+						<Typography variant="subtitle0" sx={{ paddingBottom: "16px" }}>
+							Ожидаемая дата прибытия предзаказа на склад: {order.preorder.expectedArrival}
+						</Typography>
+					)}
 					<div className="gap-2 w-100 d-f" style={{ flexDirection: isMobile ? "column" : "row" }}>
 						<div className="gap-2 w-100 d-f fd-c">
-							<div className="section">
-								{order.delivery === null ? (
-									order.preorder ? (
-										order.preorder.status === "DISPATCH" &&
-										unpaidCreditAmount === 0 &&
-										!(foreignShippingInvoice && !foreignShippingInvoice.isPaid) &&
-										!(localShippingInvoice && !localShippingInvoice.isPaid) ? (
+							{order.delivery === null ? (
+								orderActions.setDelivery.enabled ? (
+									editingDelivery ? (
+										<div className="gap-1 d-f fd-c">
 											<DeliveryForm
+												ref={deliveryFormRef}
 												isMobile={isMobile}
-												delivery={null}
-												packages={packages}
-												defaultEditing={true}
-												canModify={false}
-												onChange={(data) => {
-													console.log(data);
-												}}
+												defaultDelivery={order.delivery}
+												packages={orderActions.setDelivery.packages}
+												onSubmit={handleDeliveryFormSubmit}
 											/>
-										) : (
+											<div className="gap-1 d-f fd-r jc-fe">
+												<Button
+													sx={{ color: "white" }}
+													color="error"
+													variant="contained"
+													onClick={() => setEditingDelivery(false)}
+												>
+													Оформить
+												</Button>
+												<Button
+													sx={{ color: "white" }}
+													color="success"
+													variant="contained"
+													onClick={() => handleChangeDelivery()}
+												>
+													Сохранить
+												</Button>
+											</div>
+										</div>
+									) : (
+										<div className="section">
 											<div className="gap-1">
-												<Typography variant="subtitle1">
-													Доставка к вам оформляется после полной оплаты заказа и его прибытия
-													на склад в Москве.
-												</Typography>
 												<div className="gap-1 d-f fd-r">
-													<Typography
-														variant="subtitle1"
-														sx={{ color: "typography.secondary" }}
-													>
-														На складе ожидается:
-													</Typography>
-													<Typography variant="body1">
-														{order.preorder?.expectedArrival ?? "Неизвестно"}
+													<PriorityHigh />
+													<Typography variant="subtitle1">
+														Необходимо указать способ доставки.
 													</Typography>
 												</div>
+												<Button
+													sx={{ width: "fit-content" }}
+													variant="contained"
+													onClick={() => setEditingDelivery(true)}
+												>
+													Выбрать
+												</Button>
 											</div>
-										)
-									) : (
-										<>Ошибка</>
+										</div>
 									)
-								) : canChangeDelivery ? (
-									<DeliveryForm
-										isMobile={isMobile}
-										delivery={order.delivery}
-										packages={packages}
-										defaultEditing={false}
-										canModify={true}
-										onChange={(data) => {
-											console.log(data);
-										}}
-									/>
 								) : (
+									<div className="section">
+										<div className="gap-1">
+											<Typography variant="subtitle1">
+												Доставка к вам оформляется после полной оплаты заказа и его прибытия на
+												склад в Москве.
+											</Typography>
+											{/* <div className="gap-1 d-f fd-r">
+												<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+													На складе ожидается:
+												</Typography>
+												<Typography variant="body1">
+													{order.preorder?.expectedArrival ?? "Неизвестно"}
+												</Typography>
+											</div> */}
+										</div>
+									</div>
+								)
+							) : editingDelivery ? (
+								<div className="gap-1 d-f fd-c">
+									<DeliveryForm
+										ref={deliveryFormRef}
+										isMobile={isMobile}
+										defaultDelivery={order.delivery}
+										packages={orderActions.setDelivery.packages}
+										onSubmit={handleDeliveryFormSubmit}
+									/>
+									<div className="gap-1 d-f fd-r jc-fe">
+										<Button
+											sx={{ color: "white" }}
+											color="error"
+											variant="contained"
+											onClick={() => setEditingDelivery(false)}
+										>
+											Отменить
+										</Button>
+										<Button
+											sx={{ color: "white" }}
+											color="success"
+											variant="contained"
+											onClick={() => handleChangeDelivery()}
+										>
+											Сохранить
+										</Button>
+									</div>
+								</div>
+							) : (
+								<div className="section">
 									<Stack
 										gap={1}
 										direction={"column"}
 										divider={<Divider orientation="horizontal" flexItem />}
 									>
 										<div className="gap-2 d-f fd-c">
-											<Typography variant={"h5"}>Доставка</Typography>
+											<div className="d-f fd-r jc-sb">
+												<Typography variant={"h5"}>Доставка</Typography>
+												{orderActions.setDelivery.enabled && (
+													<Button
+														sx={{ width: "fit-content" }}
+														variant="contained"
+														onClick={() => setEditingDelivery(true)}
+													>
+														Изменить
+													</Button>
+												)}
+											</div>
+
 											<div className={`d-f ${isMobile ? " fd-c gap-1" : " fd-r jc-sb"}`}>
 												<div className="gap-05 w-100 d-f fd-c">
 													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
@@ -327,6 +441,30 @@ export function Component() {
 												</Typography>
 												<Typography variant="body1">{order.delivery.point?.address}</Typography>
 											</div>
+											{order.delivery.tracking?.code && (
+												<div className="gap-05 d-f fd-c">
+													<Typography variant="body1" sx={{ color: "typography.secondary" }}>
+														Трек-номер
+													</Typography>
+													<div className="gap-1 ai-c d-f fd-r">
+														<Typography variant="body1">
+															{order.delivery.tracking.code}
+														</Typography>
+														<Tooltip title="Открыть в новой вкладке">
+															<IconButton
+																onClick={() =>
+																	window.open(
+																		order.delivery!.tracking!.link,
+																		"_blank"
+																	)
+																}
+															>
+																<OpenInNew />
+															</IconButton>
+														</Tooltip>
+													</div>
+												</div>
+											)}
 										</div>
 										<div className="gap-2 d-f fd-c">
 											<Typography variant="h5">Получатель</Typography>
@@ -350,8 +488,8 @@ export function Component() {
 											</div>
 										</div>
 									</Stack>
-								)}
-							</div>
+								</div>
+							)}
 
 							<div className="section">
 								<Typography variant="h5">
@@ -369,7 +507,6 @@ export function Component() {
 																src={getImageUrl(item.image, "small")}
 															/>
 														</div>
-
 														<div className="gap-1">
 															<Typography variant="h6">{item.title}</Typography>
 															<Typography variant="body1">{item.quantity} шт.</Typography>
@@ -393,21 +530,35 @@ export function Component() {
 							style={{ width: isMobile ? "100%" : 360 }}
 						>
 							{order.status === "CANCELLED" ? (
-								<Typography variant="subtitle1">Заказ отменен</Typography>
-							) : order.status === "UNPAID" ? (
 								<>
-									<Typography variant="h6" sx={{ color: "typography.error" }}>
-										Заказ не оплачен
-									</Typography>
-									<Button
-										onClick={() => handlePay(order.initialInvoice.id)}
-										variant="contained"
-										sx={{ width: "fit-content", display: "flex", gap: 1 }}
-									>
-										{"Оплатить "} <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
-									</Button>
+									<Typography variant="subtitle1">Заказ отменен</Typography>
+									<Divider orientation="horizontal" flexItem />
+									{order.initialInvoice.status === "REFUNDED" ? (
+										<Typography variant="subtitle0">Произведён возврат средств</Typography>
+									) : (
+										order.initialInvoice.status === "UNPAID" && (
+											<Typography variant="subtitle0">Платёж просрочен</Typography>
+										)
+									)}
 								</>
-							) : order.preorder !== null && showDetailedOrder ? (
+							) : order.status === "UNPAID" ? (
+								order.initialInvoice.status === "WAITING" ? (
+									<Typography variant="subtitle1">Ожидаем подтверждение банка</Typography>
+								) : (
+									<>
+										<Typography variant="subtitle1" sx={{ color: "typography.error" }}>
+											Заказ не оплачен
+										</Typography>
+										<Button
+											onClick={() => handlePay(order.initialInvoice.id)}
+											variant="contained"
+											sx={{ width: "fit-content", display: "flex", gap: 1 }}
+										>
+											Оплатить <CountdownTimer deadline={order.initialInvoice.expiresAt!} />
+										</Button>
+									</>
+								)
+							) : order.preorder !== null && hasAdditionalPayments ? (
 								<>
 									<Typography variant="h6">Оплачено</Typography>
 									<Stack direction="column" divider={<Divider />} spacing={1}>
@@ -415,61 +566,96 @@ export function Component() {
 											<Typography variant="body1">Депозит:</Typography>
 											<Typography variant="subtitle0">{order.initialInvoice.amount} ₽</Typography>
 										</div>
-										{paidCreditAmount && (
+										{order.preorder.credit?.paidAmount && (
 											<div className="d-f fd-r jc-sb">
 												<Typography variant="body1">Рассрочка:</Typography>
-												<Typography variant="subtitle0">{paidCreditAmount} ₽</Typography>
-											</div>
-										)}
-										{foreignShippingInvoice && foreignShippingInvoice.isPaid && (
-											<div className="d-f fd-r jc-sb">
-												<Typography variant="body1">Доставка на зарубежный склад:</Typography>
 												<Typography variant="subtitle0">
-													{foreignShippingInvoice.amount} ₽
+													{order.preorder.credit.paidAmount} ₽
 												</Typography>
 											</div>
 										)}
-										{localShippingInvoice && localShippingInvoice.isPaid && (
-											<div className="d-f fd-r jc-sb">
-												<Typography variant="body1">Доставка в Россию:</Typography>
-												<Typography variant="subtitle0">
-													{localShippingInvoice.amount} ₽
-												</Typography>
-											</div>
-										)}
-									</Stack>
-									<Typography variant="h6">Доплата</Typography>
-									<Stack direction="column" divider={<Divider />} spacing={1}>
-										{unpaidCreditAmount && (
-											<div className="d-f fd-r jc-sb">
-												<Typography variant="body1">Рассрочка:</Typography>
-												<Typography variant="subtitle0">{unpaidCreditAmount} ₽</Typography>
-											</div>
-										)}
-										{foreignShippingInvoicePending && (
-											<div className="gap-05 d-f fd-c">
-												<Typography variant="body1">Доставка на зарубежный склад:</Typography>
-												<Typography variant="body2">
-													TODO: Стоимость доставки станет известна
-												</Typography>
-											</div>
-										)}
-										{foreignShippingInvoice && !foreignShippingInvoice.isPaid && (
-											<div className="gap-1 d-f fd-c">
+										{order.preorder.foreignShippingInvoice &&
+											order.preorder.foreignShippingInvoice.isPaid && (
 												<div className="d-f fd-r jc-sb">
 													<Typography variant="body1">
 														Доставка на зарубежный склад:
 													</Typography>
 													<Typography variant="subtitle0">
-														{foreignShippingInvoice.amount} ₽
+														{order.preorder.foreignShippingInvoice.amount} ₽
 													</Typography>
 												</div>
-												<Button onClick={() => handlePay(foreignShippingInvoice.id)}>
-													Оплатить
-												</Button>
+											)}
+										{order.preorder.localShippingInvoice &&
+											order.preorder.localShippingInvoice.isPaid && (
+												<div className="d-f fd-r jc-sb">
+													<Typography variant="body1">Доставка в Россию:</Typography>
+													<Typography variant="subtitle0">
+														{order.preorder.localShippingInvoice.amount} ₽
+													</Typography>
+												</div>
+											)}
+									</Stack>
+									<Typography variant="h6">Доплата</Typography>
+									<Stack direction="column" divider={<Divider />} spacing={1}>
+										{order.preorder.credit?.unpaidAmount && (
+											<div className="d-f fd-r jc-sb">
+												<Typography variant="body1">Рассрочка:</Typography>
+												<Typography variant="subtitle0">
+													{order.preorder.credit.unpaidAmount} ₽
+												</Typography>
 											</div>
 										)}
-										{localShippingInvoicePending && (
+										{order.preorder.foreignShippingInvoice
+											? !order.preorder.foreignShippingInvoice.isPaid && (
+													<div className="gap-1 d-f fd-c">
+														<div className="d-f fd-r jc-sb">
+															<Typography variant="body1">
+																Доставка на зарубежный склад:
+															</Typography>
+															<Typography variant="subtitle0">
+																{order.preorder.foreignShippingInvoice.amount} ₽
+															</Typography>
+														</div>
+														<Button
+															onClick={() =>
+																// TODO: Check for correct way
+																handlePay(order.preorder!.foreignShippingInvoice!.id)
+															}
+														>
+															Оплатить
+														</Button>
+													</div>
+											  )
+											: order.preorder.shippingCostIncluded === "NOT" && (
+													<div className="gap-05 d-f fd-c">
+														<Typography variant="body1">
+															Доставка на зарубежный склад:
+														</Typography>
+														<Typography variant="body2">
+															TODO: Стоимость доставки станет известна
+														</Typography>
+													</div>
+											  )}
+										{order.preorder.localShippingInvoice ? (
+											!order.preorder.localShippingInvoice.isPaid && (
+												<div className="gap-1 d-f fd-c">
+													<div className="d-f fd-r jc-sb">
+														<Typography variant="body1">Доставка в Россию:</Typography>
+														<Typography variant="subtitle0">
+															{order.preorder.localShippingInvoice.amount} ₽
+														</Typography>
+													</div>
+													<Button
+														onClick={() =>
+															// TODO: Check for correct way
+															handlePay(order.preorder!.localShippingInvoice!.id)
+														}
+													>
+														Оплатить
+													</Button>
+												</div>
+											)
+										) : (
 											<div className="gap-05 d-f fd-c">
 												<Typography variant="body1">Доставка в Россию:</Typography>
 												<Typography variant="caption">
@@ -477,35 +663,20 @@ export function Component() {
 												</Typography>
 											</div>
 										)}
-										{localShippingInvoice && !localShippingInvoice.isPaid && (
-											<div className="gap-1 d-f fd-c">
-												<div className="d-f fd-r jc-sb">
-													<Typography variant="body1">Доставка в Россию:</Typography>
-													<Typography variant="subtitle0">
-														{localShippingInvoice.amount} ₽
-													</Typography>
-												</div>
-												<Button onClick={() => handlePay(localShippingInvoice.id)}>
-													Оплатить
-												</Button>
-											</div>
-										)}
 									</Stack>
 								</>
 							) : (
 								<>
-									<>
-										<div className="gap-1">
-											<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
-												Итого:
-											</Typography>
-											<Typography variant="subtitle0">{order.initialInvoice.amount} ₽</Typography>
-										</div>
-										<Divider orientation="horizontal" flexItem />
-										<Typography variant="h6" sx={{ color: "typography.success" }}>
-											Оплачено!
+									<div className="gap-1">
+										<Typography variant="subtitle1" sx={{ color: "typography.secondary" }}>
+											Итого:
 										</Typography>
-									</>
+										<Typography variant="subtitle0">{order.initialInvoice.amount} ₽</Typography>
+									</div>
+									<Divider orientation="horizontal" flexItem />
+									<Typography variant="h6" sx={{ color: "typography.success" }}>
+										Оплачено!
+									</Typography>
 								</>
 							)}
 						</div>

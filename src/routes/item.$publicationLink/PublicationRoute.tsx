@@ -146,6 +146,16 @@ export function Component() {
 					<Helmet>
 						<title>{selectedVariation.product.title} - SimpleGeek</title>
 						<meta name="description" content={selectedVariation.product.description || ""} />
+						<meta
+							name="keywords"
+							content={
+								selectedVariation.product.category.title +
+								", " +
+								selectedVariation.product.filterGroups
+									.flatMap((g) => g.filters.map((f) => f.value))
+									.join(", ")
+							}
+						/>
 					</Helmet>
 					{isMobile ? (
 						<Suspense

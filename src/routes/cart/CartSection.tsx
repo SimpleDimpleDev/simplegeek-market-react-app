@@ -163,7 +163,7 @@ export const CartSection = ({
 				</DialogActions>
 			</Dialog>
 
-			<Typography variant="h5">{data.title}</Typography>
+			<Typography variant="h5">{data.preorder && "Предзаказ"} {data.title}</Typography>
 			{data.preorder && data.preorder.expectedArrival && (
 				<Box display={"flex"} flexDirection={"row"} gap={"8px"}>
 					<Typography color="typography.secondary" variant="subtitle1">
@@ -271,7 +271,7 @@ export const CartSection = ({
 						>
 							Оформить
 						</Button>
-						{data.preorder && (
+						{data.preorder && data.shippingCostIncluded !== "FULL" && (
 							<Typography variant="caption" color="typography.disabled">
 								В сумме заказа не учитывается стоимость доставки до склада. Она будет известна после его
 								приезда.

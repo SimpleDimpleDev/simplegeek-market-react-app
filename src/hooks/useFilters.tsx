@@ -1,8 +1,19 @@
 import { CatalogItem } from "@appTypes/CatalogItem";
-import { AvailabilityFilter, CheckedFilter, FilterGroupGet, PreorderFilter, PriceRangeFilter } from "@appTypes/Filters";
+import {
+	AvailabilityFilter,
+	CheckedFilter,
+	FilterGroupGet,
+	PreorderFilter,
+	PriceRangeFilter,
+	TypeFilter,
+} from "@appTypes/Filters";
 import { PreorderShop } from "@appTypes/Preorder";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+
+const setTypeFilterParam = (searchParams: URLSearchParams, typeFilter: TypeFilter): void => {
+	searchParams.set("t", typeFilter);
+};
 
 const setPreorderFilterParam = (searchParams: URLSearchParams, preorderFilter: PreorderFilter): void => {
 	if (!preorderFilter) {
@@ -22,9 +33,15 @@ const setFiltersParam = (searchParams: URLSearchParams, checkedFilters: CheckedF
 
 const parseFilterParams = (
 	searchParams: URLSearchParams
-): { preorderIdFilter: PreorderFilter; checkedFilters: CheckedFilter[] } => {
+): { typeFilter: TypeFilter; preorderIdFilter: PreorderFilter; checkedFilters: CheckedFilter[] } => {
+	let typeFilter: TypeFilter = "STOCK";
 	let preorderFilter: PreorderFilter = null;
 	const checkedFilters: CheckedFilter[] = [];
+
+	const typeParam = searchParams.get("t");
+	if (typeParam && (typeParam === "PREORDER" || typeParam === "STOCK")) {
+		typeFilter = typeParam;
+	}
 
 	const preorderIdParam = searchParams.get("p");
 	if (preorderIdParam) {
@@ -43,6 +60,7 @@ const parseFilterParams = (
 	}
 
 	return {
+		typeFilter,
 		preorderIdFilter: preorderFilter,
 		checkedFilters,
 	};
@@ -60,6 +78,9 @@ interface useFiltersReturn {
 
 	availabilityFilter: AvailabilityFilter;
 	handleToggleAvailabilityFilter: () => void;
+
+	typeFilter: TypeFilter;
+	handleChangeTypeFilter: (type: TypeFilter) => void;
 
 	preorderIdFilter: PreorderFilter;
 	handleChangePreorderIdFilter: (preorderId: string | null) => void;
@@ -135,13 +156,27 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 	const priceMin = useMemo(() => 0, []);
 	const priceMax = useMemo(() => Math.max(...(items?.map((item) => item.price) || [Infinity])), [items]);
 
-	const { preorderIdFilter, checkedFilters } = parseFilterParams(searchParams);
+	const { typeFilter, preorderIdFilter, checkedFilters } = parseFilterParams(searchParams);
 	const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>(true);
 	const [priceRangeFilter, setPriceRangeFilter] = useState<PriceRangeFilter>([0, Infinity]);
 
 	useEffect(() => {
 		setPriceRangeFilter([priceMin, priceMax]);
 	}, [priceMin, priceMax]);
+
+	const setTypeFilter = useCallback(
+		(type: TypeFilter) => {
+			setSearchParams(
+				(prevSearchParams) => {
+					const newSearchParams = new URLSearchParams(prevSearchParams);
+					setTypeFilterParam(newSearchParams, type);
+					return newSearchParams;
+				},
+				{ replace: true, preventScrollReset: true }
+			);
+		},
+		[setSearchParams]
+	);
 
 	const setPreorderIdFilter = useCallback(
 		(preorderId: string | null) => {
@@ -178,6 +213,27 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		[setSearchParams]
 	);
 
+	const handleToggleAvailabilityFilter = useCallback(() => {
+		setAvailabilityFilter((value) => !value);
+	}, []);
+
+	const handleChangeTypeFilter = useCallback(
+		(type: TypeFilter) => {
+			if (type === "STOCK") {
+				setPreorderIdFilter(null);
+			}
+			setTypeFilter(type);
+		},
+		[setTypeFilter, setPreorderIdFilter]
+	);
+
+	const handleChangePreorderIdFilter = useCallback(
+		(preorderId: string | null) => {
+			setPreorderIdFilter(preorderId);
+		},
+		[setPreorderIdFilter]
+	);
+
 	const handleToggleFilter = useCallback(
 		(filterGroupId: string, id: string) => {
 			const newCheckedFilters = [...checkedFilters];
@@ -192,17 +248,6 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 			setCheckedFilters(newCheckedFilters);
 		},
 		[checkedFilters, setCheckedFilters]
-	);
-
-	const handleToggleAvailabilityFilter = useCallback(() => {
-		setAvailabilityFilter((value) => !value);
-	}, []);
-
-	const handleChangePreorderIdFilter = useCallback(
-		(preorderId: string | null) => {
-			setPreorderIdFilter(preorderId);
-		},
-		[setPreorderIdFilter]
 	);
 
 	const handleChangePriceRangeFilter = useCallback((price: "min" | "max", value: number) => {
@@ -225,6 +270,10 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 				if (availabilityFilter && !availableItemIds.has(item.id)) return false;
 			}
 
+			//type
+			if (typeFilter === "STOCK" && item.preorder !== null) return false;
+			if (typeFilter === "PREORDER" && item.preorder === null) return false;
+
 			// preorder
 			if (preorderIdFilter !== null && preorderList.some((preorder) => preorder.id === preorderIdFilter)) {
 				const itemPreorder = item.preorder;
@@ -234,7 +283,6 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 
 			// filters
 			if (checkedFilters.length !== 0) {
-
 				const itemFilterGroups = item.product.filterGroups;
 				let filterMatched = false;
 
@@ -268,6 +316,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		},
 		[
 			availableItemIds,
+			typeFilter,
 			availabilityFilter,
 			preorderList,
 			preorderIdFilter,
@@ -281,6 +330,7 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		setSearchParams(
 			(prevSearchParams) => {
 				const newSearchParams = new URLSearchParams(prevSearchParams);
+				setTypeFilterParam(newSearchParams, "STOCK");
 				setPreorderFilterParam(newSearchParams, null);
 				setFiltersParam(newSearchParams, []);
 				return newSearchParams;
@@ -295,9 +345,12 @@ function useFilters({ items, availableItemIds }: useFiltersArgs): useFiltersRetu
 		filterGroupList,
 		preorderList,
 		priceLimits: { min: priceMin, max: priceMax },
-		
+
 		availabilityFilter,
 		handleToggleAvailabilityFilter,
+
+		typeFilter,
+		handleChangeTypeFilter,
 
 		preorderIdFilter,
 		handleChangePreorderIdFilter,

@@ -13,6 +13,7 @@ export function formCart({ catalogItems, userCart, availableItemIds }: FormCartA
 		title: "В наличии",
 		unavailable: false,
 		preorder: null,
+		shippingCostIncluded: null,
 		creditAvailable: false,
 		items: [],
 	};
@@ -20,6 +21,7 @@ export function formCart({ catalogItems, userCart, availableItemIds }: FormCartA
 		title: "Нет в наличии",
 		unavailable: true,
 		preorder: null,
+		shippingCostIncluded: null,
 		creditAvailable: false,
 		items: [],
 	};
@@ -39,11 +41,13 @@ export function formCart({ catalogItems, userCart, availableItemIds }: FormCartA
 			if (itemPreorder !== null) {
 				const preorderSection = preorderSections.find((section) => section.title === itemPreorder.title);
 				const itemCreditAvailable = item.creditInfo !== null;
+				const itemShippingCostIncluded = item.shippingCostIncluded;
 				if (preorderSection === undefined) {
 					preorderSections.push({
 						title: itemPreorder.title,
 						unavailable: false,
 						preorder: itemPreorder,
+						shippingCostIncluded: itemShippingCostIncluded,
 						creditAvailable: itemCreditAvailable,
 						items: [item],
 					});
@@ -51,6 +55,11 @@ export function formCart({ catalogItems, userCart, availableItemIds }: FormCartA
 					preorderSection.items.push(item);
 					if (itemCreditAvailable) {
 						preorderSection.creditAvailable = true;
+					}
+					if (itemShippingCostIncluded && preorderSection.shippingCostIncluded !== null) {
+						if (preorderSection.shippingCostIncluded === "FULL") {
+							preorderSection.shippingCostIncluded = itemShippingCostIncluded;
+						}
 					}
 				}
 			} else {

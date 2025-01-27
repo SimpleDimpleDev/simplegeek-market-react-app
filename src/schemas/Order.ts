@@ -4,8 +4,8 @@ import { CreditGetSchema, InvoiceGetSchema } from "./Credit";
 import { IdSchema, ISOToDateSchema } from "./Primitives";
 import { DeliverySchema } from "./Delivery";
 import { PreorderGetSchema, ShippingCostIncludedSchema } from "./Preorder";
-import { UserCartItemSchema } from "./UserItems";
 import { PhysicalPropertiesSchema } from "./PhysicalProperties";
+import { CatalogItemGetSchema } from "./CatalogItem";
 
 export const PaymentUrlGetSchema = z
 	.object({
@@ -13,8 +13,16 @@ export const PaymentUrlGetSchema = z
 	})
 	.describe("PaymentUrlGet");
 
-export const CheckoutItemListSchema = z.object({
-	items: UserCartItemSchema.array(),
+export const CheckoutDataSchema = z.object({
+	items: CatalogItemGetSchema.extend({ quantity: z.number() }).array(),
+	shouldSelectDelivery: z.boolean(),
+	packages: PhysicalPropertiesSchema.array(),
+	preorder: PreorderGetSchema.nullable(),
+	price: z.object({
+		original: z.number(),
+		discount: z.number().nullable(),
+		total: z.number(),
+	}),
 });
 
 export const OrderStatusSchema = z.enum([
@@ -25,6 +33,14 @@ export const OrderStatusSchema = z.enum([
 	"READY_FOR_PICKUP",
 	"FINISHED",
 ]);
+
+export const OrderDeliverySetSchema = z
+	.object({
+		orderId: IdSchema,
+		delivery: DeliverySchema,
+		saveDelivery: z.boolean(),
+	})
+	.describe("OrderDeliverySet");
 
 export const OrderCreateSchema = z
 	.object({
@@ -59,19 +75,33 @@ export const OrderPreorderGetSchema = PreorderGetSchema.extend({
 	shippingCostIncluded: ShippingCostIncludedSchema,
 	foreignShippingInvoice: InvoiceGetSchema.nullable(),
 	localShippingInvoice: InvoiceGetSchema.nullable(),
+	credit: z
+		.object({
+			paidAmount: z.number(),
+			unpaidAmount: z.number(),
+		})
+		.nullable(),
 }).describe("OrderPreorderGet");
 
 export const OrderGetSchema = z
 	.object({
 		id: IdSchema,
-		status: OrderStatusSchema,
 		createdAt: ISOToDateSchema,
+		status: OrderStatusSchema,
 		delivery: OrderDeliveryGetSchema.nullable(),
 		preorder: OrderPreorderGetSchema.nullable(),
 		items: OrderItemGetSchema.array(),
 		initialInvoice: InvoiceGetSchema,
 	})
 	.describe("OrderGet");
+
+export const OrderActionsSchema = z.object({
+	setDelivery: z.object({
+		enabled: z.boolean(),
+		packages: PhysicalPropertiesSchema.array(),
+	}),
+	cancel: z.boolean(),
+});
 
 export const OrderListGetSchema = z
 	.object({

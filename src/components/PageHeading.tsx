@@ -1,14 +1,15 @@
 import { Box, Typography } from "@mui/material";
 
 interface Props {
-	title: string;
+	title: string | React.ReactNode;
 	infoText?: string;
 	subText?: string;
+	additional?: React.ReactNode;
 }
 
-export const PageHeading: React.FC<Props> = ({ title, infoText, subText }) => {
+export const PageHeading: React.FC<Props> = ({ title, infoText, subText, additional }) => {
 	return (
-		<Box width={"100%"} padding={"16px 0px"}>
+		<Box width={"100%"} padding={"16px 0px"} display={"flex"} flexDirection={"column"} gap={1}>
 			<Box display={"flex"} flexDirection={"row"} alignItems={"baseline"} gap={2}>
 				<Typography sx={{ verticalAlign: "baseline" }} variant={"h4"}>
 					{title}
@@ -25,6 +26,7 @@ export const PageHeading: React.FC<Props> = ({ title, infoText, subText }) => {
 					{subText}
 				</Typography>
 			)}
+			{additional && additional}
 		</Box>
 	);
 };

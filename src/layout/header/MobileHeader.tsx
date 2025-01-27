@@ -1,4 +1,4 @@
-import { Favorite, ShoppingCart, Menu as MenuIcon } from "@mui/icons-material";
+import { Favorite, ShoppingCart, Menu as MenuIcon, AdminPanelSettings } from "@mui/icons-material";
 import { useScrollTrigger, IconButton, Slide } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { CatalogSearch } from "./CatalogSearch";
@@ -76,6 +76,15 @@ const MobileHeader: React.FC = () => {
 				<HeaderButtons
 					isMobile
 					buttons={[
+						...(user?.isAdmin
+							? [
+									{
+										text: "Админка",
+										icon: <AdminPanelSettings />,
+										onClick: () => window.location.assign("https://admin.simplegeek.ru"),
+									},
+							  ]
+							: []),
 						{
 							text: "Избранное",
 							icon: <Favorite />,

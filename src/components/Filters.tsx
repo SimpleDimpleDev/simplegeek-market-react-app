@@ -1,4 +1,11 @@
-import { AvailabilityFilter, CheckedFilter, FilterGroupGet, PreorderFilter, PriceRangeFilter } from "@appTypes/Filters";
+import {
+	AvailabilityFilter,
+	CheckedFilter,
+	FilterGroupGet,
+	PreorderFilter,
+	PriceRangeFilter,
+	TypeFilter,
+} from "@appTypes/Filters";
 import { useState } from "react";
 
 import {
@@ -11,6 +18,7 @@ import {
 	Button,
 	Collapse,
 	ListItemText,
+	Radio,
 } from "@mui/material";
 import { PreorderShop } from "@appTypes/Preorder";
 import { handleIntChange } from "@utils/input";
@@ -26,6 +34,8 @@ interface FilterGroupProps {
 const FilterGroup = ({ data, checkedFiltersIds, onToggleFilter, defaultExpanded = false }: FilterGroupProps) => {
 	const [expanded, setExpanded] = useState(defaultExpanded ? true : checkedFiltersIds.length > 0);
 
+	const filters = [...data.filters];
+
 	return (
 		<>
 			<ListItemButton key={data.title} onClick={() => setExpanded(!expanded)}>
@@ -34,27 +44,29 @@ const FilterGroup = ({ data, checkedFiltersIds, onToggleFilter, defaultExpanded 
 			</ListItemButton>
 			<Collapse mountOnEnter unmountOnExit orientation="vertical" in={expanded}>
 				<List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper", padding: 0 }}>
-					{data.filters.map((filter) => {
-						return (
-							<ListItem key={filter.id} disablePadding>
-								<ListItemButton
-									role={undefined}
-									onClick={() => onToggleFilter(data.id, filter.id)}
-									sx={{ height: 42, padding: 0 }}
-								>
-									<Checkbox
-										checked={checkedFiltersIds.includes(filter.id)}
-										tabIndex={-1}
-										disableRipple
-										color="warning"
-									/>
-									<div className="gap-0.5 ai-c d-f fd-r">
-										<Typography variant="body1">{filter.value}</Typography>
-									</div>
-								</ListItemButton>
-							</ListItem>
-						);
-					})}
+					{filters
+						.sort((a, b) => a.value.localeCompare(b.value))
+						.map((filter) => {
+							return (
+								<ListItem key={filter.id} disablePadding>
+									<ListItemButton
+										role={undefined}
+										onClick={() => onToggleFilter(data.id, filter.id)}
+										sx={{ height: 42, padding: 0 }}
+									>
+										<Checkbox
+											checked={checkedFiltersIds.includes(filter.id)}
+											tabIndex={-1}
+											disableRipple
+											color="warning"
+										/>
+										<div className="gap-0.5 ai-c d-f fd-r">
+											<Typography variant="body1">{filter.value}</Typography>
+										</div>
+									</ListItemButton>
+								</ListItem>
+							);
+						})}
 				</List>
 			</Collapse>
 		</>
@@ -70,6 +82,9 @@ interface CatalogFiltersProps {
 
 	availabilityFilter: AvailabilityFilter;
 	handleToggleAvailabilityFilter: () => void;
+
+	typeFilter: TypeFilter;
+	onTypeFilterChange: (type: TypeFilter) => void;
 
 	preorderIdFilter: PreorderFilter;
 	handleChangePreorderIdFilter: (preorderId: string | null) => void;
@@ -94,6 +109,9 @@ export const CatalogFilters = ({
 	availabilityFilter,
 	handleToggleAvailabilityFilter,
 
+	typeFilter,
+	onTypeFilterChange,
+
 	preorderIdFilter,
 	handleChangePreorderIdFilter,
 
@@ -113,6 +131,8 @@ export const CatalogFilters = ({
 	const handleChangeMaxPriceFilter = (value: number) => {
 		handleChangePriceRangeFilter("max", value);
 	};
+
+	const filterGroupListCopy = [...filterGroupList];
 
 	return (
 		<div className="gap-1 bg-primary pt-2 w-100 h-mc br-3 d-f fd-c fs-0">
@@ -134,11 +154,44 @@ export const CatalogFilters = ({
 							sx={{ height: 42, padding: 0 }}
 						>
 							<Checkbox checked={availabilityFilter} tabIndex={-1} disableRipple color="warning" />
-							<Typography variant="subtitle0">В наличии</Typography>
+							<Typography variant="subtitle0">Доступны к покупке</Typography>
 						</ListItemButton>
 					</ListItem>
-
 					{preorderList.length > 0 && (
+						<>
+							<ListItem disablePadding>
+								<ListItemButton
+									role={undefined}
+									onClick={() => onTypeFilterChange("STOCK")}
+									sx={{ height: 42, padding: 0 }}
+								>
+									<Radio
+										checked={typeFilter === "STOCK"}
+										tabIndex={-1}
+										disableRipple
+										color="warning"
+									/>
+									<Typography variant="subtitle0">В наличии</Typography>
+								</ListItemButton>
+							</ListItem>
+							<ListItem disablePadding>
+								<ListItemButton
+									role={undefined}
+									onClick={() => onTypeFilterChange("PREORDER")}
+									sx={{ height: 42, padding: 0 }}
+								>
+									<Radio
+										checked={typeFilter === "PREORDER"}
+										tabIndex={-1}
+										disableRipple
+										color="warning"
+									/>
+									<Typography variant="subtitle0">Предзаказы</Typography>
+								</ListItemButton>
+							</ListItem>
+						</>
+					)}
+					{typeFilter === "PREORDER" && (
 						<FilterGroup
 							data={{
 								id: "preorder",
@@ -153,7 +206,7 @@ export const CatalogFilters = ({
 						/>
 					)}
 
-					{filterGroupList
+					{filterGroupListCopy
 						.sort((a, b) => a.title.localeCompare(b.title))
 						.map((group, index) => {
 							const filterGroupId = group.id;

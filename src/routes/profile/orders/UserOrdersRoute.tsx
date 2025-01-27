@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
 
-import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Tab, Tabs } from "@mui/material";
+import {
+	Box,
+	Button,
+	CircularProgress,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+	Divider,
+	Tab,
+	Tabs,
+} from "@mui/material";
 import { ShoppingBag } from "@mui/icons-material";
 
 import { Empty } from "@components/Empty";
@@ -14,6 +26,7 @@ import SomethingWentWrong from "@components/SomethingWentWrong";
 import { Helmet } from "react-helmet";
 import { PageHeading } from "@components/PageHeading";
 import { isExpectedApiError } from "@utils/api";
+import { useNavigate } from "react-router-dom";
 
 function tabsProps(index: number) {
 	return {
@@ -40,8 +53,25 @@ const getOrdersByTab = ({ currentTab, orders }: { currentTab: number; orders: Or
 
 export function Component() {
 	const isMobile = useIsMobile();
+	const navigate = useNavigate();
 
-	const { data: orderList, isLoading: orderListIsLoading } = useGetOrderListQuery();
+	const {
+		data: orderList,
+		isLoading: orderListIsLoading,
+		isError: orderListIsError,
+		error: orderListError,
+	} = useGetOrderListQuery();
+
+	useEffect(() => {
+		if (orderListIsError) {
+			if (isExpectedApiError(orderListError)) {
+				if (orderListError.data.title === "UnverifiedError") {
+					navigate("/auth/verification?return_to=https://simplegeek.ru/profile/orders");
+				}
+			}
+		}
+	})
+
 	const [currentTab, setCurrentTab] = useState<number>(0);
 
 	const [paymentErrorDialogOpen, setPaymentErrorDialogOpen] = useState(false);
@@ -49,7 +79,12 @@ export function Component() {
 
 	const [
 		initPayment,
-		{ data: initPaymentData, isSuccess: initPaymentIsSuccess, isError: initPaymentIsError, error: initPaymentError },
+		{
+			data: initPaymentData,
+			isSuccess: initPaymentIsSuccess,
+			isError: initPaymentIsError,
+			error: initPaymentError,
+		},
 	] = useLazyGetPaymentUrlQuery();
 
 	const ordersToRender = !orderList
@@ -116,15 +151,11 @@ export function Component() {
 									<DialogContentText id="error-dialog-description">
 										{paymentError.message}
 										<br />
-										Попробуйте ещё раз. При повторной ошибке свяжитесь с
-										администратором.
+										Попробуйте ещё раз. При повторной ошибке свяжитесь с администратором.
 									</DialogContentText>
 								</DialogContent>
 								<DialogActions>
-									<Button
-										variant="contained"
-										onClick={() => setPaymentErrorDialogOpen(false)}
-									>
+									<Button variant="contained" onClick={() => setPaymentErrorDialogOpen(false)}>
 										Понятно
 									</Button>
 								</DialogActions>

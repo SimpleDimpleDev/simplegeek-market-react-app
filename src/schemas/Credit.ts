@@ -2,11 +2,14 @@ import { z } from "zod";
 
 import { IdSchema, ISOToDateSchema } from "./Primitives";
 
+export const InvoiceStatusSchema = z.enum(["UNPAID", "WAITING", "PAID", "REFUNDED"]).describe("InvoiceStatus");
+
 export const InvoiceGetSchema = z
 	.object({
 		id: IdSchema,
 		amount: z.number(),
 		isPaid: z.boolean(),
+		status: InvoiceStatusSchema,
 		expiresAt: ISOToDateSchema.nullable(),
 	})
 	.describe("InvoiceGet");

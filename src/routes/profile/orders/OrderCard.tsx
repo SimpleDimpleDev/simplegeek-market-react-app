@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { orderStatusBadges, preorderStatusBadges } from "@components/Badges";
+import { orderStatusBadges, preorderBadge, preorderStatusBadges } from "@components/Badges";
 import CountdownTimer from "@components/CountdownTimer";
 import { SmallItemCard } from "@components/ItemCard";
 import { OrderGet } from "@appTypes/Order";
@@ -53,7 +53,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 						</Typography>
 					</div>
 				)}
-
 				{order.preorder && (
 					<>
 						{order.preorder.status === "DISPATCH" && order.delivery === null && (
@@ -76,7 +75,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 			<div>
 				{isMobile ? (
 					<div className="gap-1 pb-12px d-f fd-c">
-						<Typography variant="h5">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
+						<div className="gap-1 d-f fd-r">
+							<Typography variant="h5">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
+							{order.preorder && preorderBadge}
+						</div>
 						<Typography variant="body1" sx={{ color: "typography.secondary" }}>
 							ID: {order.id}
 						</Typography>
@@ -85,7 +87,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ isMobile, order, onPay }) => {
 				) : (
 					<div className="gap-1 pb-12px d-f fd-c jc-sb">
 						<div className="d-f fd-r jc-sb">
-							<Typography variant="h5">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
+							<div className="gap-1 d-f fd-r">
+								<Typography variant="h5">Заказ от {DateFormatter.DDMMYYYY(order.createdAt)}</Typography>
+								{order.preorder && preorderBadge}
+							</div>
 							<Typography variant="h5">{total} ₽</Typography>
 						</div>
 						<Typography variant="body1" sx={{ color: "typography.secondary" }}>
