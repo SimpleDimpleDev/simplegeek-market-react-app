@@ -42,7 +42,7 @@ const PublicationAvailability: React.FC<VariationAvailabilityProps> = ({
 						<Typography variant="body2" color={"typography.success"}>
 							Доступно для предзаказа
 						</Typography>
-						<Box display="flex" flexDirection="row">
+						<Box display="flex" flexDirection="row" gap={1}>
 							<Typography variant="body2" color={"typography.secondary"}>
 								На складе ожидается:
 							</Typography>{" "}

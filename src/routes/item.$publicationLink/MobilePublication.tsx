@@ -160,7 +160,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 					/>
 					{publication.shippingCostIncluded && publication.shippingCostIncluded !== "FULL" && (
 						<Typography variant="body1" color="warning">
-							Доставка НЕ включена в стоимость товара. Отдельно потребуется оплатить доставку
+							Доставка до склада НЕ включена в стоимость товара. Её потребуется оплатить отдельно.
 							{publication.shippingCostIncluded === "NOT" && "до промежуточного склада форвардера и "} до
 							склада в РФ(Москва).
 						</Typography>
