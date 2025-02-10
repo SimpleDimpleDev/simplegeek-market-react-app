@@ -104,7 +104,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 	return (
 		<Box component={"section"}>
 			<Box display="flex" flexDirection="column" width="100%" alignItems={"center"} gap={2}>
-				<ImageCarousel imageUrls={imageUrls} />
+				<ImageCarousel imageUrls={imageUrls} alt={selectedVariation.product.title} />
 			</Box>
 			<PageHeading title={selectedVariation.product.title} />
 			<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={2}>

@@ -60,9 +60,10 @@ const RightButton = ({ onClick, ...rest }: ArrowProps) => (
 
 interface ImageCarouselProps {
 	imageUrls: string[]; // Array of image URLs
+	alt: string;
 }
 
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ imageUrls }) => {
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ imageUrls, alt }) => {
 	const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 	const selectedImageUrl = imageUrls[selectedImageIndex];
 
@@ -78,7 +79,8 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ imageUrls }) => {
 					style={isMobile ? { width: 345, height: 345 } : { width: 630, height: 630 }}
 					className="contain"
 					src={selectedImageUrl}
-					alt={"Selected image"}
+					alt={alt}
+					loading="lazy"
 				/>
 			</div>
 			<div className="pt-2 w-100">
@@ -117,6 +119,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ imageUrls }) => {
 										key={index}
 										src={imageUrl}
 										alt={`Thumbnail ${index}`}
+										loading="lazy"
 									/>
 								</ThumbnailContainer>
 							</IconButton>

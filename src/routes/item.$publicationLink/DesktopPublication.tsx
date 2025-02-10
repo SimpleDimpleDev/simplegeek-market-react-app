@@ -163,7 +163,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 							</div>
 						}
 					>
-						<ImageCarousel imageUrls={imageUrls} />
+						<ImageCarousel imageUrls={imageUrls} alt={selectedVariation.product.title} />
 					</Suspense>
 				</Box>
 				{!isTablet && (

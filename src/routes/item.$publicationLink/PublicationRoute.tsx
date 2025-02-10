@@ -156,6 +156,26 @@ export function Component() {
 									.join(", ")
 							}
 						/>
+						<script type="application/ld+json">
+							{JSON.stringify({
+								"@context": "https://schema.org/",
+								"@type": "Product",
+								name: selectedVariation.product.title,
+								image: getImageUrl(selectedVariation.product.images.at(0)?.url || "", "large"),
+								description: selectedVariation.product.description,
+								category: selectedVariation.product.category.title,
+								offers: {
+									"@type": "Offer",
+									priceCurrency: "RUB",
+									price: selectedVariation.price,
+									availability: publication.preorder
+										? "https://schema.org/PreOrder"
+										: selectedVariationIsAvailable
+										? "https://schema.org/InStock"
+										: "https://schema.org/OutOfStock",
+								},
+							})}
+						</script>
 					</Helmet>
 					{isMobile ? (
 						<Suspense
