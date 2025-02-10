@@ -176,6 +176,11 @@ export function Component() {
 								},
 							})}
 						</script>
+						<link
+							rel="preload"
+							href={getImageUrl(selectedVariation.product.images.at(0)?.url || "", "large")}
+							as="image"
+						/>
 					</Helmet>
 					{isMobile ? (
 						<Suspense
