@@ -80,7 +80,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ imageUrls, alt }) => {
 					className="contain"
 					src={selectedImageUrl}
 					alt={alt}
-					loading="lazy"
 				/>
 			</div>
 			<div className="pt-2 w-100">
