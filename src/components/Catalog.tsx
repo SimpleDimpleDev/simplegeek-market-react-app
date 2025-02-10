@@ -18,7 +18,6 @@ import {
 	Badge,
 	Button,
 	Grid2,
-	Grow,
 	Box,
 } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -28,7 +27,6 @@ import { useItemsToRender } from "src/hooks/useItemsToRender";
 import { Empty } from "./Empty";
 import { CatalogFilters } from "./Filters";
 import ItemCard from "./ItemCard";
-import LazyLoad from "./LazyLoad";
 import { ScrollTop } from "./ScrollToTopButton";
 import SomethingWentWrong from "./SomethingWentWrong";
 import { PageHeading } from "./PageHeading";
@@ -162,7 +160,7 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 					<Modal open={filtersOpen} onClose={() => setFiltersOpen(false)}>
 						<div className="top-0 left-0 bg-primary w-100v h-100v ai-fs d-f fd-c jc-fs of-a">
 							<div
-								className="bg-primary px-2 w-100 h-7 ai-c d-f fd-r jc-sb ps-a"
+								className="bg-primary px-2 ps-a w-100 h-7 ai-c d-f fd-r jc-sb"
 								style={{ zIndex: 1000 }}
 							>
 								<IconButton>
@@ -203,7 +201,7 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 							</Box>
 						</div>
 					</Modal>
-					<div ref={catalogRef}/>
+					<div ref={catalogRef} />
 					<PageHeading title={title} />
 					<div className="gap-2 d-f fd-r">
 						{!isMobile && (
@@ -308,31 +306,19 @@ const Catalog: React.FC<CatalogProps> = ({ sectionFilter, title, emptyElement })
 											alignItems={"center"}
 											key={index}
 										>
-											<LazyLoad
-												key={index}
-												width={"100%"}
-												height={424}
-												observerOptions={{
-													rootMargin: "100px",
-												}}
-												once
-											>
-												<Grow key={index} in={true} timeout={200}>
-													<div>
-														<ItemCard
-															data={data}
-															isAvailable={availableItemIds.has(data.id)}
-															availabilityIsLoading={availabilityIsLoading}
-															isInCart={cartItemIds?.has(data.id)}
-															cartItemListIsLoading={cartItemListIsLoading}
-															isFavorite={favoriteItemIds?.has(data.id)}
-															favoriteItemListIsLoading={favoriteItemListIsLoading}
-															isTracked={trackedItemIds?.has(data.id)}
-															trackedItemListIsLoading={trackedItemListIsLoading}
-														/>
-													</div>
-												</Grow>
-											</LazyLoad>
+											<div>
+												<ItemCard
+													data={data}
+													isAvailable={availableItemIds.has(data.id)}
+													availabilityIsLoading={availabilityIsLoading}
+													isInCart={cartItemIds?.has(data.id)}
+													cartItemListIsLoading={cartItemListIsLoading}
+													isFavorite={favoriteItemIds?.has(data.id)}
+													favoriteItemListIsLoading={favoriteItemListIsLoading}
+													isTracked={trackedItemIds?.has(data.id)}
+													trackedItemListIsLoading={trackedItemListIsLoading}
+												/>
+											</div>
 										</Grid2>
 									))}
 								</Grid2>

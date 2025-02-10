@@ -7,7 +7,7 @@ import {
 	NotificationsOff,
 	ShoppingCart,
 } from "@mui/icons-material";
-import { CircularProgress, Collapse, Divider, IconButton, Radio, Tooltip, Typography } from "@mui/material";
+import { CircularProgress, Collapse, Divider, Grow, IconButton, Radio, Tooltip, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -49,6 +49,8 @@ export default function ItemCard({
 }: ItemCardProps) {
 	const navigate = useNavigate();
 
+	const [imageLoaded, setImageLoaded] = useState(false);
+
 	const [addCartItem] = useAddCartItemMutation();
 
 	const [addFavoriteItem] = useAddFavoriteItemMutation();
@@ -82,56 +84,62 @@ export default function ItemCard({
 	};
 
 	return (
-		<article className="gap-2 p-1 pb-2 w-mc h-mc br-2 d-f fd-c hov-item tr-a-2" style={{ textDecoration: "none" }}>
-			<Link
-				to={`/item/${data.publicationLink}${data.variationIndex !== null ? `?v=${data.variationIndex}` : ""}`}
-				title={data.product.title}
-				className="bg-primary w-mc h-mc br-2 d-f jc-c of-h"
+		<Grow in={imageLoaded} timeout={200}>
+			<article
+				className="gap-2 p-1 pb-2 w-mc h-mc br-2 d-f fd-c hov-item tr-a-2"
+				style={{ textDecoration: "none" }}
 			>
-				<img
-					style={{ width: "300px", height: "300px" }}
-					src={getImageUrl(data.product.images.at(0)?.url ?? "", "medium")}
-					alt={data.product.title}
-					loading="lazy"
-				/>
-			</Link>
-			<div className="gap-1 px-1 d-f fd-c">
-				<Tooltip leaveTouchDelay={5000} enterTouchDelay={10} enterDelay={500} title={data.product.title}>
-					<Typography	
-						variant="subtitle0"
-						sx={{
-							userSelect: "none",
-							// msUserSelect: "none",
-							// mozUserSelect: "none",
-							// WebkitUserSelect: "none",
-							fontWeight: 600,
-							maxWidth: 280,
-							overflow: "hidden",
-							textOverflow: "ellipsis",
-							WebkitLineClamp: 1,
-							display: "-webkit-box",
-							WebkitBoxOrient: "vertical",
-						}}
-					>
-						{data.product.title}
-					</Typography>
-				</Tooltip>
-				<div className="d-f fd-r jc-sb">
-					<div className="d-f fd-c">
-						{availabilityIsLoading ? (
-							<Typography variant="body2">Загрузка...</Typography>
-						) : isAvailable === undefined ? null : isAvailable ? (
-							data.preorder ? (
-								<Typography variant="body2" color="typography.success">
-									Доступно для предзаказа
-								</Typography>
-							) : (
-								<Typography variant="body2" color="typography.success">
-									В наличии
-								</Typography>
-							)
-						) : (
-							data.preorder ? (
+				<Link
+					to={`/item/${data.publicationLink}${
+						data.variationIndex !== null ? `?v=${data.variationIndex}` : ""
+					}`}
+					title={data.product.title}
+					className="bg-primary w-mc h-mc br-2 d-f jc-c of-h"
+				>
+					<img
+						style={{ width: "300px", height: "300px" }}
+						src={getImageUrl(data.product.images.at(0)?.url ?? "", "medium")}
+						alt={data.product.title}
+						loading="lazy"
+						onLoad={() => setImageLoaded(true)}
+					/>
+				</Link>
+				<div className="gap-1 px-1 d-f fd-c">
+					<Tooltip leaveTouchDelay={5000} enterTouchDelay={10} enterDelay={500} title={data.product.title}>
+						<Typography
+							variant="subtitle0"
+							sx={{
+								userSelect: "none",
+								// msUserSelect: "none",
+								// mozUserSelect: "none",
+								// WebkitUserSelect: "none",
+								fontWeight: 600,
+								maxWidth: 280,
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+								WebkitLineClamp: 1,
+								display: "-webkit-box",
+								WebkitBoxOrient: "vertical",
+							}}
+						>
+							{data.product.title}
+						</Typography>
+					</Tooltip>
+					<div className="d-f fd-r jc-sb">
+						<div className="d-f fd-c">
+							{availabilityIsLoading ? (
+								<Typography variant="body2">Загрузка...</Typography>
+							) : isAvailable === undefined ? null : isAvailable ? (
+								data.preorder ? (
+									<Typography variant="body2" color="typography.success">
+										Доступно для предзаказа
+									</Typography>
+								) : (
+									<Typography variant="body2" color="typography.success">
+										В наличии
+									</Typography>
+								)
+							) : data.preorder ? (
 								<Typography variant="body2" color="typography.success">
 									Недоступно для предзаказа
 								</Typography>
@@ -139,81 +147,83 @@ export default function ItemCard({
 								<Typography variant="body2" color="typography.success">
 									Нет в наличии
 								</Typography>
-							)
-						)}
-						<div className="gap-1 d-f fd-r">
-							{data.discount ? (
-								<>
-									<Typography
-										variant="h6"
-										sx={{ textDecoration: "line-through", color: "typography.secondary" }}
-									>
-										{data.price} ₽
-									</Typography>
-									<Typography variant="h6" color="warning">
-										{data.price - data.discount} ₽
-									</Typography>
-								</>
-							) : (
-								<Typography variant="h6">{data.price} ₽</Typography>
 							)}
+							<div className="gap-1 d-f fd-r">
+								{data.discount ? (
+									<>
+										<Typography
+											variant="h6"
+											sx={{ textDecoration: "line-through", color: "typography.secondary" }}
+										>
+											{data.price} ₽
+										</Typography>
+										<Typography variant="h6" color="warning">
+											{data.price - data.discount} ₽
+										</Typography>
+									</>
+								) : (
+									<Typography variant="h6">{data.price} ₽</Typography>
+								)}
+							</div>
+						</div>
+						<div className="gap-1 w-mc d-f fd-r" style={{ zIndex: 1 }}>
+							<IconButton
+								onClick={handleToggleFavorite}
+								disabled={favoriteItemListIsLoading}
+								style={{
+									width: 48,
+									height: 48,
+									borderRadius: 8,
+								}}
+							>
+								{favoriteItemListIsLoading ? (
+									<CircularProgress sx={{ color: "icon.primary" }} />
+								) : isFavorite ? (
+									<Favorite sx={{ color: "icon.attention" }} />
+								) : (
+									<FavoriteBorder color="secondary" />
+								)}
+							</IconButton>
+							<IconButton
+								disabled={
+									isAvailable === undefined || isInCart === undefined || isTracked === undefined
+								}
+								onClick={handleAddToCart}
+								style={{
+									width: 48,
+									height: 48,
+									borderRadius: 8,
+								}}
+								sx={
+									isAvailable
+										? {
+												backgroundColor: "primary.main",
+												"&:hover": {
+													backgroundColor: "primary.dark",
+												},
+										  }
+										: {}
+								}
+							>
+								{availabilityIsLoading || cartItemListIsLoading || trackedItemListIsLoading ? (
+									<CircularProgress sx={{ color: "icon.primary" }} />
+								) : isAvailable ? (
+									isInCart ? (
+										<ShoppingCart sx={{ color: "icon.primary" }} />
+									) : (
+										<AddShoppingCart sx={{ color: "icon.primary" }} />
+									)
+								) : isTracked ? (
+									<NotificationsOff sx={{ color: "icon.primary" }} />
+								) : (
+									<NotificationAdd sx={{ color: "icon.primary" }} />
+								)}
+							</IconButton>
 						</div>
 					</div>
-					<div className="gap-1 w-mc d-f fd-r" style={{ zIndex: 1 }}>
-						<IconButton
-							onClick={handleToggleFavorite}
-							disabled={favoriteItemListIsLoading}
-							style={{
-								width: 48,
-								height: 48,
-								borderRadius: 8,
-							}}
-						>
-							{favoriteItemListIsLoading ? (
-								<CircularProgress sx={{ color: "icon.primary" }} />
-							) : isFavorite ? (
-								<Favorite sx={{ color: "icon.attention" }} />
-							) : (
-								<FavoriteBorder color="secondary" />
-							)}
-						</IconButton>
-						<IconButton
-							disabled={isAvailable === undefined || isInCart === undefined || isTracked === undefined}
-							onClick={handleAddToCart}
-							style={{
-								width: 48,
-								height: 48,
-								borderRadius: 8,
-							}}
-							sx={
-								isAvailable
-									? {
-											backgroundColor: "primary.main",
-											"&:hover": {
-												backgroundColor: "primary.dark",
-											},
-									  }
-									: {}
-							}
-						>
-							{availabilityIsLoading || cartItemListIsLoading || trackedItemListIsLoading ? (
-								<CircularProgress sx={{ color: "icon.primary" }} />
-							) : isAvailable ? (
-								isInCart ? (
-									<ShoppingCart sx={{ color: "icon.primary" }} />
-								) : (
-									<AddShoppingCart sx={{ color: "icon.primary" }} />
-								)
-							) : isTracked ? (
-								<NotificationsOff sx={{ color: "icon.primary" }} />
-							) : (
-								<NotificationAdd sx={{ color: "icon.primary" }} />
-							)}
-						</IconButton>
-					</div>
 				</div>
-			</div>
-		</article>
+			</article>
+		</Grow>
 	);
 }
 
@@ -266,7 +276,9 @@ export const ShopOrderItemCard: React.FC<ShopOrderItemCardProps> = ({ imgUrl, ti
 				</div>
 			</div>
 			<div className="ml-2">
-				<Typography variant="subtitle0" sx={{ width: "max-content", display: "flex" }}>{price} ₽</Typography>
+				<Typography variant="subtitle0" sx={{ width: "max-content", display: "flex" }}>
+					{price} ₽
+				</Typography>
 			</div>
 		</div>
 	);
