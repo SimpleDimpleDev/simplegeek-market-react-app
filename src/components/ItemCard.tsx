@@ -91,6 +91,8 @@ export default function ItemCard({
 				<img
 					style={{ width: "300px", height: "300px" }}
 					src={getImageUrl(data.product.images.at(0)?.url ?? "", "medium")}
+					alt={data.product.title}
+					loading="lazy"
 				/>
 			</Link>
 			<div className="gap-1 px-1 d-f fd-c">
