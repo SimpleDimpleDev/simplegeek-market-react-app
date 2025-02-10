@@ -1,2 +1,25 @@
 User-agent: *
-Disallow:
+Host: https://simplegeek.ru
+Sitemap: https://simplegeek.ru/sitemap.xml
+Disallow: /auth/login/
+Disallow: /auth/registration/
+Disallow: /auth/verification/
+Disallow: /auth/password/reset/
+Disallow: /auth/recovery/
+Disallow: /profile/
+Disallow: /profile/orders/
+Disallow: /profile/settings/
+Disallow: /cart/
+Disallow: /favorites/
+
+User-agent: Yandex
+Disallow: /auth/login/
+Disallow: /auth/registration/
+Disallow: /auth/verification/
+Disallow: /auth/password/reset/
+Disallow: /auth/recovery/
+Disallow: /profile/
+Disallow: /profile/orders/
+Disallow: /profile/settings/
+Disallow: /cart/
+Disallow: /favorites/

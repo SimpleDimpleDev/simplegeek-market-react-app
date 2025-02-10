@@ -1,9 +1,8 @@
-import { Grid2, Grow } from "@mui/material";
+import { Grid2 } from "@mui/material";
 
 import { CatalogItem } from "@appTypes/CatalogItem";
 
 import ItemCard from "@components/ItemCard";
-import LazyLoad from "@components/LazyLoad";
 import { useGetCartItemListQuery } from "@api/shop/cart";
 import { useGetFavoriteItemListQuery } from "@api/shop/favorites";
 import { useMemo } from "react";
@@ -67,31 +66,19 @@ export const FavoritesSection = ({ items }: FavoritesSectionProps) => {
 					alignItems={"center"}
 					key={index}
 				>
-					<LazyLoad
-						key={index}
-						width={"100%"}
-						height={424}
-						observerOptions={{
-							rootMargin: "100px",
-						}}
-						once
-					>
-						<Grow key={index} in={true} timeout={200}>
-							<div>
-								<ItemCard
-									data={data}
-									isAvailable={availableItemIds?.has(data.id)}
-									availabilityIsLoading={availabilityIsLoading}
-									isInCart={cartItemIds?.has(data.id)}
-									cartItemListIsLoading={cartItemListIsLoading}
-									isFavorite={favoriteItemIds?.has(data.id)}
-									favoriteItemListIsLoading={favoriteItemListIsLoading}
-									isTracked={trackedItemIds?.has(data.id)}
-									trackedItemListIsLoading={trackedItemListIsLoading}
-								/>
-							</div>
-						</Grow>
-					</LazyLoad>
+					<div>
+						<ItemCard
+							data={data}
+							isAvailable={availableItemIds?.has(data.id)}
+							availabilityIsLoading={availabilityIsLoading}
+							isInCart={cartItemIds?.has(data.id)}
+							cartItemListIsLoading={cartItemListIsLoading}
+							isFavorite={favoriteItemIds?.has(data.id)}
+							favoriteItemListIsLoading={favoriteItemListIsLoading}
+							isTracked={trackedItemIds?.has(data.id)}
+							trackedItemListIsLoading={trackedItemListIsLoading}
+						/>
+					</div>
 				</Grid2>
 			))}
 		</Grid2>

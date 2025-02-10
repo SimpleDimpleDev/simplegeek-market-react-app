@@ -102,9 +102,9 @@ const MobilePublication: React.FC<PublicationProps> = ({
 	selectedVariationIsTracked,
 }) => {
 	return (
-		<>
+		<Box component={"section"}>
 			<Box display="flex" flexDirection="column" width="100%" alignItems={"center"} gap={2}>
-				<ImageCarousel imageUrls={imageUrls} />
+				<ImageCarousel imageUrls={imageUrls} alt={selectedVariation.product.title} />
 			</Box>
 			<PageHeading title={selectedVariation.product.title} />
 			<Box sx={{ width: "100%" }} display="flex" flexDirection="column" gap={2}>
@@ -160,7 +160,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 					/>
 					{publication.shippingCostIncluded && publication.shippingCostIncluded !== "FULL" && (
 						<Typography variant="body1" color="warning">
-							Доставка НЕ включена в стоимость товара. Отдельно потребуется оплатить доставку
+							Доставка до склада НЕ включена в стоимость товара. Её потребуется оплатить отдельно.
 							{publication.shippingCostIncluded === "NOT" && "до промежуточного склада форвардера и "} до
 							склада в РФ(Москва).
 						</Typography>
@@ -171,7 +171,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 
 				<AttributesSection selectedVariation={selectedVariation} />
 				{selectedVariation.product.description && selectedVariation.product.description.length > 0 && (
-					<Box component={"section"} display="flex" flexDirection="column" paddingTop={4} gap={3}>
+					<Box display="flex" flexDirection="column" paddingTop={4} gap={3}>
 						<Typography variant="h6">Описание</Typography>
 						<Typography variant="body1" color="typography.secondary">
 							{selectedVariation.product.description.split("\n").map((line, index) => (
@@ -184,7 +184,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 					</Box>
 				)}
 			</Box>
-		</>
+		</Box>
 	);
 };
 

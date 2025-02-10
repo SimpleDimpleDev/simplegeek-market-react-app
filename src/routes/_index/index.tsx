@@ -10,11 +10,6 @@ export function Component() {
 	return (
 		<>
 			<Helmet>
-				<title>SimpleGeek - товары для гиков</title>
-				<meta
-					name="description"
-					content="Коллекционные статуи, фигурки и саундтреки на виниле из любимых игр и вселенных. SimpleGeek — ваш проводник в мир совершенства форм милых сердцу персонажей по ещё более милым сердцу ценам."
-				/>
 				<script type="application/ld+json">
 					{`{
 						"@context": "https://schema.org",
