@@ -102,7 +102,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 	selectedVariationIsTracked,
 }) => {
 	return (
-		<>
+		<Box component={"section"}>
 			<Box display="flex" flexDirection="column" width="100%" alignItems={"center"} gap={2}>
 				<ImageCarousel imageUrls={imageUrls} />
 			</Box>
@@ -171,7 +171,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 
 				<AttributesSection selectedVariation={selectedVariation} />
 				{selectedVariation.product.description && selectedVariation.product.description.length > 0 && (
-					<Box component={"section"} display="flex" flexDirection="column" paddingTop={4} gap={3}>
+					<Box display="flex" flexDirection="column" paddingTop={4} gap={3}>
 						<Typography variant="h6">Описание</Typography>
 						<Typography variant="body1" color="typography.secondary">
 							{selectedVariation.product.description.split("\n").map((line, index) => (
@@ -184,7 +184,7 @@ const MobilePublication: React.FC<PublicationProps> = ({
 					</Box>
 				)}
 			</Box>
-		</>
+		</Box>
 	);
 };
 

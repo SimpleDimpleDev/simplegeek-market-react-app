@@ -82,7 +82,7 @@ export default function ItemCard({
 	};
 
 	return (
-		<div className="gap-2 p-1 pb-2 w-mc h-mc br-2 d-f fd-c hov-item tr-a-2" style={{ textDecoration: "none" }}>
+		<article className="gap-2 p-1 pb-2 w-mc h-mc br-2 d-f fd-c hov-item tr-a-2" style={{ textDecoration: "none" }}>
 			<Link
 				to={`/item/${data.publicationLink}${data.variationIndex !== null ? `?v=${data.variationIndex}` : ""}`}
 				title={data.product.title}
@@ -211,7 +211,7 @@ export default function ItemCard({
 					</div>
 				</div>
 			</div>
-		</div>
+		</article>
 	);
 }
 

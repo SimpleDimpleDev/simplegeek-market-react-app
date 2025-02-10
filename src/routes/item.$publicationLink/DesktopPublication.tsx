@@ -152,7 +152,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 }) => {
 	const isTablet = useMediaQuery("(max-width: 1442px)");
 	return (
-		<>
+		<Box component={"section"}>
 			<PageHeading title={selectedVariation.product.title} />
 			<Box display="flex" flexDirection="row" justifyContent={"space-between"}>
 				<Box display="flex" flexDirection="column" gap={2}>
@@ -229,7 +229,6 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 			</Box>
 			{selectedVariation.product.description && selectedVariation.product.description.length > 0 && (
 				<Box
-					component={"section"}
 					display="flex"
 					flexDirection="column"
 					paddingTop={3}
@@ -247,7 +246,7 @@ const DesktopPublication: React.FC<PublicationProps> = ({
 					</Typography>
 				</Box>
 			)}
-		</>
+		</Box>
 	);
 };
 
