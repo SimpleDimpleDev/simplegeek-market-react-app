@@ -156,6 +156,21 @@ export function Component() {
 									.join(", ")
 							}
 						/>
+
+						<meta property="og:locale" content="ru_RU" />
+						<meta property="og:type" content="product" />
+						<meta property="og:site_name" content="SimpleGeek" />
+						<meta property="og:title" content={selectedVariation.product.title} />
+						<meta property="og:description" content={selectedVariation.product.description || ""} />
+						<meta property="og:image" content={getImageUrl(selectedVariation.product.images.at(0)?.url || "", "large")} />
+						<meta property="og:url" content={window.location.href} />
+						
+						<meta name="twitter:card" content="summary_large_image" />
+						<meta name="twitter:title" content={selectedVariation.product.title} />
+						<meta name="twitter:description" content={selectedVariation.product.description || ""} />
+						<meta name="twitter:image" content={getImageUrl(selectedVariation.product.images.at(0)?.url || "", "large")} />
+						<meta name="twitter:url" content={window.location.href} />
+
 						<script type="application/ld+json">
 							{JSON.stringify({
 								"@context": "https://schema.org/",
